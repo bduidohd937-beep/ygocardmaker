@@ -234,8 +234,11 @@ export function parseImport(raw: unknown): Card[] {
         item.unsupported.every((v) => typeof v === "string")
       )
         c.unsupported = item.unsupported;
-      if (item.artCrop !== undefined && !validArtworkCrop(item.artCrop))
-        throw Error("일러스트 자르기 영역이 올바르지 않습니다.");
+      if (item.artCrop !== undefined) {
+        if (!validArtworkCrop(item.artCrop))
+          throw Error("일러스트 자르기 영역이 올바르지 않습니다.");
+        c.artCrop = item.artCrop;
+      }
       if (
         typeof c.pendulum !== "boolean" ||
         [c.zoom, c.offsetX, c.offsetY].some(
