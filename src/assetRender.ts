@@ -264,25 +264,35 @@ function drawMonsterKind(ctx: CanvasRenderingContext2D, card: Card) {
  * right anchors are 999 and 1282. All four elements share one baseline.
  */
 export const STAT_LAYOUT = {
-  atkLabelX: 739,
-  atkValueRight: 999,
-  defLabelX: 1029,
-  defValueRight: 1282,
-  // Keep the corrected baseline, but scale numerals to the available width.
-  // Four-digit values should look like full-size OCG statistics; longer values shrink.
+  // Move both groups slightly right, retaining a safe margin inside the frame.
+  atkLabelX: 751,
+  atkValueRight: 1011,
+  defLabelX: 1039,
+  defValueRight: 1288,
   baseline: 1879,
   labelSize: 35,
-  maxNumberSize: 64,
+  maxNumberSize: 50,
   minNumberSize: 27,
   gap: 14,
 } as const;
 
+/** The stat numbers should never grow just because they contain fewer digits.
+ * Each length has an optical ceiling; long values can shrink further to fit.
+ */
 export function chooseStatNumberSize(
   content: string,
   available: number,
   measureAtSize: (size: number, content: string) => number,
 ): number {
-  for (let size = STAT_LAYOUT.maxNumberSize; size > STAT_LAYOUT.minNumberSize; size--) {
+  const length = [...content].length;
+  const opticalCap = length <= 2 ? 40
+    : length === 3 ? 45
+    : length === 4 ? 50
+    : length === 5 ? 45
+    : length === 6 ? 40
+    : 34;
+  for (let size = Math.min(opticalCap, STAT_LAYOUT.maxNumberSize);
+    size > STAT_LAYOUT.minNumberSize; size--) {
     if (measureAtSize(size, content) <= available) return size;
   }
   return STAT_LAYOUT.minNumberSize;
