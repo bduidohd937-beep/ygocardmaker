@@ -9,6 +9,12 @@ describe("asset catalog filename classification", () => {
     expect(classifyAsset("folder/card-synchro-pendulum.png")?.key).toBe("frame:synchro-pendulum");
     expect(classifyAsset("folder/card-link-pendulum.png")).toBeNull();
   });
+  it("recognizes Korean card face fonts in a local resource ZIP", () => {
+    expect(classifyAsset("yugioh/font/ygo-kr-name.woff2")?.key).toBe("font:name");
+    expect(classifyAsset("yugioh/font/ygo-kr-race.woff2")?.key).toBe("font:type");
+    expect(classifyAsset("yugioh/font/ygo-kr.woff2")?.key).toBe("font:body");
+    expect(classifyAsset("yugioh/font/unrelated.woff2")).toBeNull();
+  });
   it("recognizes artwork overlay masks", () => {
     expect(classifyAsset("image/card-mask.png")?.key).toBe("mask:default");
     expect(classifyAsset("image/card-mask-pendulum.png")?.key).toBe("mask:pendulum");
@@ -25,7 +31,7 @@ describe("asset catalog filename classification", () => {
         .toBe("link_arrow:" + dir + ":" + state);
   });
   it("ignores unrecognized names, fonts, and layout scripts", () => {
-    expect(classifyAsset("ygo-kr.woff2")).toBeNull();
+    expect(classifyAsset("ygo-atk-def.woff2")).toBeNull();
     expect(classifyAsset("kr-style.js")).toBeNull();
     expect(classifyAsset("../image.png")).toBeNull();
   });
