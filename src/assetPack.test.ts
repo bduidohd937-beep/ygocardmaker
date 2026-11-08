@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { classifyAsset, requiredAssets } from "./assetPack";
 import { newCard } from "./model";
-import { ASSET_LAYOUT, LINK_POSITIONS, spellTrapHeadingPositions, STAT_LAYOUT } from "./assetRender";
+import { ASSET_LAYOUT, LINK_POSITIONS, spellTrapHeadingPositions, STAT_LAYOUT, chooseStatNumberSize } from "./assetRender";
 
 describe("asset catalog filename classification", () => {
   it("recognizes blank frames including pendulum", () => {
@@ -114,10 +114,23 @@ describe("ATK/DEF original card placement", () => {
     expect(STAT_LAYOUT.baseline).toBeLessThan(1932);
   });
   it("keeps number size proportional and off the bottom border", () => {
-    expect(STAT_LAYOUT.maxNumberSize).toBeLessThanOrEqual(STAT_LAYOUT.labelSize * 1.5);
+    expect(STAT_LAYOUT.maxNumberSize).toBeLessThanOrEqual(STAT_LAYOUT.labelSize * 1.9);
     expect(STAT_LAYOUT.baseline).toBeLessThanOrEqual(1880);
     expect(STAT_LAYOUT.baseline).toBeGreaterThan(1860);
     expect(STAT_LAYOUT.gap).toBeGreaterThanOrEqual(12);
+  });
+  it("grows 4-digit ATK/DEF and shrinks longer numbers within the same slot", () => {
+    const approximate = (size: number, content: string) => size * 0.55 * content.length;
+    const short = chooseStatNumberSize("1600", 145, approximate);
+    const long = chooseStatNumberSize("111111", 145, approximate);
+    expect(short).toBe(STAT_LAYOUT.maxNumberSize);
+    expect(long).toBeLessThan(short);
+    expect(approximate(long, "111111")).toBeLessThanOrEqual(145);
+  });
+  it("never exceeds the configured size limits on extremely long custom stats", () => {
+    const measure = (size: number, content: string) => size * content.length;
+    expect(chooseStatNumberSize("1", 1000, measure)).toBe(STAT_LAYOUT.maxNumberSize);
+    expect(chooseStatNumberSize("111111111111", 50, measure)).toBe(STAT_LAYOUT.minNumberSize);
   });
   it("reserves spaces between labels and values within each stat group", () => {
     expect(STAT_LAYOUT.atkLabelX + STAT_LAYOUT.gap).toBeLessThan(STAT_LAYOUT.atkValueRight);
