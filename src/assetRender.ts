@@ -157,6 +157,10 @@ async function drawArtwork(ctx: CanvasRenderingContext2D, card: Card) {
       ctx.strokeStyle = "#759c8b";
       ctx.lineWidth = 3;
       ctx.strokeRect(p.x - 8, p.y - 7, p.w + 16, p.h + 14);
+      // A separate light strip protects the monster type line below the
+      // pendulum description until the original overlay PNG is imported.
+      ctx.fillStyle = "rgba(245,243,234,0.98)";
+      ctx.fillRect(109, 1519, 1175, 65);
     } else {
       ctx.strokeStyle = "#b5b6ac";
       ctx.lineWidth = 5;
