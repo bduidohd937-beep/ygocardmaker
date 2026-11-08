@@ -45,7 +45,7 @@ import {
   type Project,
 } from "./model";
 import { renderCard } from "./render";
-import { importAssetZip, loadAssetPack, saveAssetPack, setActivePack } from "./assetPack";
+import { getActivePack, importAssetZip, loadAssetPack, saveAssetPack, setActivePack } from "./assetPack";
 import { demoProject } from "./samples";
 import { loadProject, saveProject } from "./storage";
 import { download, exportOne, exportZip } from "./export";
@@ -74,6 +74,9 @@ function App() {
     artInput = useRef<HTMLInputElement>(null),
     assetInput = useRef<HTMLInputElement>(null);
   const card = project?.cards.find((c) => c.id === active);
+  const packFiles = assetCount ? getActivePack()?.files : undefined;
+  const packMissingMask = !!packFiles && (card?.pendulum ? !packFiles["mask:pendulum"] : !packFiles["mask:default"]);
+  const packMissingNameFont = !!packFiles && !packFiles["font:name"];
   useEffect(() => {
     let live = true;
     loadProject()
@@ -502,6 +505,12 @@ function App() {
               <span className="dot" />
               {assetCount > 0 ? assetName + " · " + assetCount + "종 자동 적용" : "카드 프레임은 현재 기본 디자인입니다."}
             </div>
+            {assetCount > 0 && (packMissingMask || packMissingNameFont) && (
+              <div className="local-note" role="status">
+                {packMissingMask ? "마스크 누락 · " : ""}
+                {packMissingNameFont ? "원본 한국어 카드명 폰트 누락" : ""}
+              </div>
+            )}
             <div className="local-note">리소스 파일은 이 브라우저에 저장되며 공개 서버로 업로드되지 않습니다.</div>
           </div>
         </aside>
@@ -554,6 +563,11 @@ function App() {
             {renderError && (
               <div role="alert" className="render-error">
                 {renderError}
+              </div>
+            )}
+            {packMissingMask && (
+              <div role="alert" className="render-error">
+                카드 마스크가 자산 ZIP에 없습니다. 펜듈럼/일반 마스크 2개를 포함한 새 ZIP을 불러오세요.
               </div>
             )}
             <div className="preview-zoom">
