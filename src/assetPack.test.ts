@@ -71,6 +71,8 @@ describe("source asset geometry regression", () => {
     expect(ASSET_LAYOUT.artwork).toEqual({ x: 170, y: 375, w: 1054, h: 1054 });
     expect(ASSET_LAYOUT.pendulumArtwork).toEqual({ x: 94, y: 364, w: 1205, h: 1205 });
     expect(ASSET_LAYOUT.artworkMask).toEqual({ x: 117, y: 322 });
+    expect(ASSET_LAYOUT.name.opticalYOffset).toBe(18);
+    expect(ASSET_LAYOUT.name.y + ASSET_LAYOUT.name.opticalYOffset).toBe(108);
   });
   it("matches all eight source arrow placements and EDOPro bits", () => {
     expect(LINK_POSITIONS).toEqual([
