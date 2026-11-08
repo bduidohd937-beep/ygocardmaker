@@ -15,7 +15,7 @@ export const ASSET_LAYOUT = {
   pendulumArtworkMask: { x: 68, y: 342 },
   attribute: { x: 1163, y: 96, w: 128, h: 128 },
   level: { y: 247, size: 88, step: 92 },
-  name: { x: 116, y: 90, maxW: 1033 },
+  name: { x: 116, y: 90, maxW: 1033, opticalYOffset: 18 },
   effect: { x: 109, y: 1526, maxW: 1175 },
   stats: { y: 1844 },
   pendulumPanel: { x: 221, y: 1282, w: 950, h: 230 },
@@ -193,7 +193,8 @@ function drawName(ctx: CanvasRenderingContext2D, card: Card) {
   const hasOriginalNameFont = Boolean(assetUrl("font:name"));
   const nameFont = assetFont("name");
   // The Noto fallback sits higher than the source font at identical top coordinates.
-  const nameY = hasOriginalNameFont ? ASSET_LAYOUT.name.y : ASSET_LAYOUT.name.y + 22;
+  // Move Korean card titles down slightly within the top nameplate; leave font size unchanged.
+  const nameY = ASSET_LAYOUT.name.y + ASSET_LAYOUT.name.opticalYOffset + (hasOriginalNameFont ? 0 : 22);
   let size = hasOriginalNameFont ? 106 : 90;
   while (size > 41) {
     ctx.font = "600 " + size + "px " + nameFont;
