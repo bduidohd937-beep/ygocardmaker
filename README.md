@@ -3,6 +3,10 @@
 React + TypeScript + Vite로 만든 브라우저 전용 커스텀 카드 이미지 제작기.
 카드 효과의 Lua 구현이나 기존 EDOPro 설치본 수정은 하지 않습니다.
 
+실행 사이트: https://bduidohd937-beep.github.io/ygocardmaker/
+
+![편집기 화면](docs/studio-preview.png)
+
 ## 실행
 
 Node.js 24 권장.
