@@ -1285,3 +1285,135 @@ a {
     font-size: 8px;
   }
 }
+
+
+/* In-browser card deletion: scoped selection with explicit confirmation. */
+.delete-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 15px 11px;
+}
+.delete-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  font-size: 9px;
+  border-radius: 5px;
+}
+.delete-action {
+  background: #402a2c;
+  color: #e7b3ae;
+  border: 1px solid #6f4145;
+}
+.delete-action:not(:disabled):hover {
+  background: #5d3136;
+}
+.delete-actions button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+.undo-action {
+  background: #304136;
+  color: #c7e4bf;
+  border: 1px solid #55785d;
+}
+.deletion-modal .deletion-icon {
+  color: #e9aca8;
+  border-color: #a3555880;
+  background: #6e383830;
+}
+.deletion-target-list {
+  overflow: auto;
+  max-height: min(270px, 35vh);
+  padding: 8px 12px;
+  border: 1px solid #3e4951;
+  background: #151d25;
+  border-radius: 7px;
+  margin: 12px 0;
+}
+.deletion-target-list > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 0;
+  border-bottom: 1px solid #333c43;
+}
+.deletion-target-list > div:last-child {
+  border-bottom: 0;
+}
+.deletion-target-list strong {
+  font-size: 11px;
+  font-weight: 550;
+}
+.deletion-target-list span,
+.deletion-target-list p {
+  font-size: 10px;
+  color: #98a6ac;
+}
+.deletion-hint {
+  color: #dac092 !important;
+  margin-bottom: 13px !important;
+  font-size: 10px !important;
+}
+.deletion-backup {
+  width: 100%;
+  justify-content: center;
+  padding: 10px;
+  border-color: #4d6470;
+  background: #2c3b45;
+  font-size: 11px;
+}
+.deletion-footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.deletion-footer button {
+  flex: 1;
+  justify-content: center;
+  padding: 11px;
+  font-size: 11px;
+}
+.deletion-confirm {
+  color: #ffdad7;
+  background: #8a3d40;
+  border-color: #bf6265;
+}
+.deletion-confirm:hover {
+  background: #a04b4e;
+}
+.empty-workspace {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 17px;
+  text-align: center;
+  padding: 28px;
+  color: #dbe3df;
+  background: #12171c;
+}
+.empty-workspace > svg {
+  color: var(--lime);
+}
+.empty-workspace h1 {
+  font-size: 23px;
+  font-weight: 600;
+}
+.empty-workspace p {
+  color: #9ca8b0;
+  font-size: 12px;
+}
+.empty-workspace-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+}
+.empty-workspace-actions button {
+  padding: 12px 15px;
+  font-size: 12px;
+}
