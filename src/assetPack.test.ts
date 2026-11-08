@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { classifyAsset, requiredAssets } from "./assetPack";
 import { newCard } from "./model";
-import { ASSET_LAYOUT, LINK_POSITIONS } from "./assetRender";
+import { ASSET_LAYOUT, LINK_POSITIONS, spellTrapHeadingPositions } from "./assetRender";
 
 describe("asset catalog filename classification", () => {
   it("recognizes blank frames including pendulum", () => {
@@ -77,5 +77,23 @@ describe("source asset geometry regression", () => {
       [8, "left", 71, 758],
       [64, "left-up", 95, 299],
     ]);
+  });
+});
+
+describe("pendulum text layer protection", () => {
+  it("fits the separate panel before the monster type line", () => {
+    const p = ASSET_LAYOUT.pendulumPanel;
+    expect(p.y).toBeGreaterThan(ASSET_LAYOUT.pendulumArtwork.y);
+    expect(p.y + p.h).toBeLessThan(ASSET_LAYOUT.effect.y);
+    expect(ASSET_LAYOUT.pendulumScaleY).toBeGreaterThan(p.y);
+    expect(ASSET_LAYOUT.pendulumScaleY).toBeLessThan(p.y + p.h);
+  });
+  it("lays out spell/trap text, subtype icon and closing bracket without overlap", () => {
+    const p = spellTrapHeadingPositions(320, 36, true);
+    expect(p.textX + 320).toBeLessThanOrEqual(p.iconX);
+    expect(p.iconX + 72).toBeLessThanOrEqual(p.bracketX);
+    expect(p.bracketX + 36).toBe(1394 - 142);
+    const without = spellTrapHeadingPositions(320, 36, false);
+    expect(without.textX + 320).toBe(without.bracketX);
   });
 });
