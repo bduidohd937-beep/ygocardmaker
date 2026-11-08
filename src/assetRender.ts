@@ -258,16 +258,52 @@ function drawMonsterKind(ctx: CanvasRenderingContext2D, card: Card) {
   ctx.fillText("[" + labels.join(" / ") + "]", ASSET_LAYOUT.effect.x, ASSET_LAYOUT.effect.y);
 }
 
+/**
+ * Source atk-def.svg uses an origin of (109, 1844). Its printed labels begin
+ * at native x ~= 739 (ATK) and x ~= 1030 (DEF), while the original number
+ * right anchors are 999 and 1282. All four elements share one baseline.
+ */
+export const STAT_LAYOUT = {
+  atkLabelX: 739,
+  atkValueRight: 999,
+  defLabelX: 1029,
+  defValueRight: 1282,
+  baseline: 1898,
+  labelSize: 36,
+  maxNumberSize: 62,
+  minNumberSize: 27,
+  gap: 12,
+} as const;
+
 function drawStats(ctx: CanvasRenderingContext2D, card: Card) {
-  ctx.fillStyle = "#171b17";
-  ctx.textBaseline = "top";
-  ctx.font = "600 52px " + FONT;
-  ctx.textAlign = "right";
-  ctx.fillText(card.atk, 1000, 1839);
-  ctx.fillText(card.frame === "link" ? String(card.level) : card.def, 1280, 1839);
-  ctx.font = "500 36px " + FONT;
-  ctx.fillText("ATK /", 824, 1846);
-  ctx.fillText(card.frame === "link" ? "LINK /" : "DEF /", 1124, 1846);
+  ctx.save();
+  try {
+    ctx.fillStyle = "#171b17";
+    ctx.textBaseline = "alphabetic";
+    // Draw labels at the same baseline as the values, using source SVG anchors.
+    // Measure each value so high ATK/DEF or "?" never overprints its label.
+    const pair = (label: string, value: number | string, labelX: number, valueRight: number) => {
+      ctx.font = "500 " + STAT_LAYOUT.labelSize + "px " + FONT;
+      ctx.textAlign = "left";
+      ctx.fillText(label, labelX, STAT_LAYOUT.baseline);
+      const available = valueRight - labelX - ctx.measureText(label).width - STAT_LAYOUT.gap;
+      let size: number = STAT_LAYOUT.maxNumberSize;
+      const content = String(value);
+      while (size > STAT_LAYOUT.minNumberSize) {
+        ctx.font = "600 " + size + "px " + FONT;
+        if (ctx.measureText(content).width <= available) break;
+        size--;
+      }
+      ctx.textAlign = "right";
+      ctx.fillText(content, valueRight, STAT_LAYOUT.baseline);
+    };
+    pair("ATK /", card.atk, STAT_LAYOUT.atkLabelX, STAT_LAYOUT.atkValueRight);
+    pair(card.frame === "link" ? "LINK /" : "DEF /",
+      card.frame === "link" ? card.arrows.length : card.def,
+      STAT_LAYOUT.defLabelX, STAT_LAYOUT.defValueRight);
+  } finally {
+    ctx.restore();
+  }
 }
 
 function drawPassword(ctx: CanvasRenderingContext2D, card: Card) {
