@@ -277,15 +277,20 @@ export function mergeCards(existing: Card[], incoming: Card[]): Card[] {
     const prev = map.get(c.id);
     map.set(
       c.id,
-      prev?.artwork
-        ? {
-            ...c,
-            artwork: prev.artwork,
-            zoom: prev.zoom,
-            offsetX: prev.offsetX,
-            offsetY: prev.offsetY,
-          }
-        : c,
+      {
+        ...c,
+        // A CDB row does not carry theme metadata. Preserve the editor's
+        // manually assigned theme when refreshing that row from a CDB.
+        ...(prev && c.theme === "가져온 테마" ? { theme: prev.theme } : {}),
+        ...(prev?.artwork
+          ? {
+              artwork: prev.artwork,
+              zoom: prev.zoom,
+              offsetX: prev.offsetX,
+              offsetY: prev.offsetY,
+            }
+          : {}),
+      },
     );
   }
   return [...map.values()];
