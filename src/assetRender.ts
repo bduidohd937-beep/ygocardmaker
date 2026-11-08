@@ -1,4 +1,5 @@
 import { FRAMES, isMonster, monsterKindLabels, type Card } from "./model";
+import { artworkPlacement } from "./artworkCrop";
 import { assetFont, assetUrl, ensureAssetFonts } from "./assetPack";
 
 const FONT = '"Noto Sans KR Variable", sans-serif';
@@ -126,15 +127,15 @@ async function drawArtwork(ctx: CanvasRenderingContext2D, card: Card) {
   const b = card.pendulum ? ASSET_LAYOUT.pendulumArtwork : ASSET_LAYOUT.artwork;
   if (card.artwork) {
     const img = await image(card.artwork);
-    const scale = Math.max(b.w / img.naturalWidth, b.h / img.naturalHeight) * card.zoom;
-    const w = img.naturalWidth * scale, h = img.naturalHeight * scale;
-    const x = b.x - (w - b.w) * (card.offsetX + 100) / 200;
-    const y = b.y - (h - b.h) * (card.offsetY + 100) / 200;
+    const p = artworkPlacement(
+      img.naturalWidth, img.naturalHeight, b,
+      card.artCrop, card.zoom, card.offsetX, card.offsetY,
+    );
     ctx.save();
     ctx.beginPath();
     ctx.rect(b.x, b.y, b.w, b.h);
     ctx.clip();
-    ctx.drawImage(img, x, y, w, h);
+    ctx.drawImage(img, p.sx, p.sy, p.sw, p.sh, p.dx, p.dy, p.dw, p.dh);
     ctx.restore();
   } else {
     ctx.fillStyle = "#e2e7e2";

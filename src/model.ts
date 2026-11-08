@@ -1,3 +1,5 @@
+import { validArtworkCrop, type ArtworkCrop } from "./artworkCrop";
+
 export const FRAMES = {
   effect: "효과",
   normal: "일반",
@@ -83,6 +85,8 @@ export interface Card {
   pendulumEffect: string;
   arrows: number[];
   artwork: string;
+  /** Optional normalized selection; legacy cards render the entire image. */
+  artCrop?: ArtworkCrop;
   zoom: number;
   offsetX: number;
   offsetY: number;
@@ -230,6 +234,8 @@ export function parseImport(raw: unknown): Card[] {
         item.unsupported.every((v) => typeof v === "string")
       )
         c.unsupported = item.unsupported;
+      if (item.artCrop !== undefined && !validArtworkCrop(item.artCrop))
+        throw Error("일러스트 자르기 영역이 올바르지 않습니다.");
       if (
         typeof c.pendulum !== "boolean" ||
         [c.zoom, c.offsetX, c.offsetY].some(
@@ -285,6 +291,7 @@ export function mergeCards(existing: Card[], incoming: Card[]): Card[] {
         ...(prev?.artwork
           ? {
               artwork: prev.artwork,
+              ...("artCrop" in prev ? { artCrop: prev.artCrop } : {}),
               zoom: prev.zoom,
               offsetX: prev.offsetX,
               offsetY: prev.offsetY,

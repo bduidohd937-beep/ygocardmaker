@@ -198,4 +198,17 @@ describe("monster trait support and backward compatibility", () => {
     expect(merged.offsetX).toEqual(10);
     expect(merged.theme).toEqual("코스모코드");
   });
+  it("round-trips crop selection and rejects malformed coordinates", () => {
+    const c = { ...newCard(), artwork: "data:image/png;base64,AA==",
+      artCrop: {x: .125, y: .2, w: .6, h: .55} };
+    expect(parseImport({cards: [c]})).toEqual([c]);
+    expect(() => parseImport({cards: [{...c, artCrop: {x: .9, y: 0, w: .5, h: 1}}]})).toThrow("자르기");
+  });
+  it("keeps local crop when CDB metadata is refreshed", () => {
+    const original = { ...newCard(910200001), artwork: "local-art",
+      artCrop: {x: .1,y: .1,w: .8,h: .8} };
+    const updated = mergeCards([original], [fromEDO({id: original.id, type: 0x21, name: "갱신", desc: "효과", level: 3})])[0];
+    expect(updated.artCrop).toEqual(original.artCrop);
+  });
+
 });
