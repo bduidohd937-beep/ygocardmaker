@@ -11,6 +11,7 @@ import {
   ChevronRight,
   SlidersHorizontal,
   ImagePlus,
+  Crop,
   FileJson,
   FolderOpen,
   Package,
@@ -49,6 +50,7 @@ import {
   type Project,
 } from "./model";
 import { renderCard } from "./render";
+import { ArtworkCropEditor } from "./CropEditor";
 import { getActivePack, importAssetZip, loadAssetPack, saveAssetPack, setActivePack } from "./assetPack";
 import { demoProject } from "./samples";
 import { loadProject, saveProject } from "./storage";
@@ -68,6 +70,7 @@ function App() {
     [previewState, setPreviewState] = useState<"loading" | "ready" | "error">("loading"),
     [renderedFontSize, setRenderedFontSize] = useState<number | null>(null),
     [modal, setModal] = useState(false),
+    [cropEditorOpen, setCropEditorOpen] = useState(false),
     [format, setFormat] = useState<"png" | "jpg">("png"),
     [size, setSize] = useState(1263),
     [busy, setBusy] = useState(""),
@@ -275,7 +278,7 @@ function App() {
       await img.decode();
       if (img.width * img.height > 40_000_000)
         throw Error("4000만 픽셀 이하 이미지를 선택하세요.");
-      update({ artwork: data, zoom: 1, offsetX: 0, offsetY: 0 });
+      update({ artwork: data, artCrop: undefined, zoom: 1, offsetX: 0, offsetY: 0 });
       setToast("일러스트를 적용했습니다.");
     } catch (e) {
       setToast(e instanceof Error ? e.message : "이미지를 읽을 수 없습니다.");
@@ -1043,6 +1046,15 @@ function App() {
                 <div className="section-label effect-heading">
                   이미지 위치 <span>02</span>
                 </div>
+                <button
+                  type="button"
+                  className="full-width crop-open-button"
+                  disabled={!card.artwork}
+                  onClick={() => setCropEditorOpen(true)}
+                >
+                  <Crop size={16} /> 고급 자르기 · 영역 직접 선택
+                </button>
+                {card.artCrop && <p className="crop-applied-label">자르기 영역 적용됨 · 고급 자르기에서 변경 가능</p>}
                 {(
                   [
                     ["확대", "zoom", 1, 3, 0.01],
@@ -1106,6 +1118,16 @@ function App() {
           </div>
         </aside>
       </div>
+      {cropEditorOpen && card?.artwork && (
+        <ArtworkCropEditor key={card.id} card={card}
+          onCancel={() => setCropEditorOpen(false)}
+          onSave={draft => {
+            update(draft);
+            setCropEditorOpen(false);
+            setToast("자르기 영역과 위치를 저장했습니다.");
+          }}
+        />
+      )}
       {modal && (
         <div
           className="modal-backdrop"
