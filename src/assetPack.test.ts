@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { classifyAsset, requiredAssets } from "./assetPack";
 import { newCard } from "./model";
-import { ASSET_LAYOUT, LINK_POSITIONS, spellTrapHeadingPositions } from "./assetRender";
+import { ASSET_LAYOUT, LINK_POSITIONS, spellTrapHeadingPositions, STAT_LAYOUT } from "./assetRender";
 
 describe("asset catalog filename classification", () => {
   it("recognizes blank frames including pendulum", () => {
@@ -101,5 +101,21 @@ describe("pendulum text layer protection", () => {
     expect(p.bracketX + 36).toBe(1394 - 142);
     const without = spellTrapHeadingPositions(320, 36, false);
     expect(without.textX + 320).toBe(without.bracketX);
+  });
+});
+
+describe("ATK/DEF original card placement", () => {
+  it("anchors both labels and numerical values to one baseline", () => {
+    expect(STAT_LAYOUT.atkLabelX).toBe(109 + 630);
+    expect(STAT_LAYOUT.defLabelX).toBe(109 + 920);
+    expect(STAT_LAYOUT.atkValueRight).toBe(999);
+    expect(STAT_LAYOUT.defValueRight).toBe(1282);
+    expect(STAT_LAYOUT.baseline).toBeGreaterThan(1844);
+    expect(STAT_LAYOUT.baseline).toBeLessThan(1932);
+  });
+  it("reserves spaces between labels and values within each stat group", () => {
+    expect(STAT_LAYOUT.atkLabelX + STAT_LAYOUT.gap).toBeLessThan(STAT_LAYOUT.atkValueRight);
+    expect(STAT_LAYOUT.defLabelX + STAT_LAYOUT.gap).toBeLessThan(STAT_LAYOUT.defValueRight);
+    expect(STAT_LAYOUT.atkValueRight + STAT_LAYOUT.gap).toBeLessThan(STAT_LAYOUT.defLabelX);
   });
 });
