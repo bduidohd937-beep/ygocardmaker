@@ -1,6 +1,7 @@
 import { isMonster, monsterKindLabels, FRAMES, type Card } from "./model";
 import { getActivePack } from "./assetPack";
 import { frameKey, renderWithAssetPack } from "./assetRender";
+import { artworkPlacement } from "./artworkCrop";
 export const WIDTH = 842,
   HEIGHT = 1228;
 const COLORS = {
@@ -207,16 +208,15 @@ export async function renderCard(
   rect(art.x, art.y, art.w, art.h, "#182e36");
   if (card.artwork) {
     const img = await loadImage(card.artwork);
-    const ratio = Math.max(art.w / img.width, art.h / img.height) * card.zoom;
-    const dw = img.width * ratio,
-      dh = img.height * ratio;
-    const dx = art.x - ((dw - art.w) * (card.offsetX + 100)) / 200,
-      dy = art.y - ((dh - art.h) * (card.offsetY + 100)) / 200;
+    const p = artworkPlacement(
+      img.width, img.height, art,
+      card.artCrop, card.zoom, card.offsetX, card.offsetY,
+    );
     ctx.save();
     ctx.beginPath();
     ctx.rect(art.x, art.y, art.w, art.h);
     ctx.clip();
-    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.drawImage(img, p.sx, p.sy, p.sw, p.sh, p.dx, p.dy, p.dw, p.dh);
     ctx.restore();
   } else {
     ctx.textAlign = "center";
