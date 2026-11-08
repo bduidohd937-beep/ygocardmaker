@@ -1,7 +1,7 @@
 import { unzipSync } from "fflate";
 import type { Card } from "./model";
 
-export type AssetKind = "frame" | "mask" | "attribute" | "star" | "spell_trap_icon" | "link_arrow";
+export type AssetKind = "frame" | "mask" | "attribute" | "star" | "spell_trap_icon" | "link_arrow" | "font";
 export type AssetPack = {
   version: 1;
   name: string;
@@ -38,6 +38,9 @@ export function classifyAsset(path: string): { key: string; kind: AssetKind } | 
   const name = path.replace(/\\/g, "/").split("/").pop()?.toLowerCase() ?? "";
   if (name === "card-mask.png") return { key: "mask:default", kind: "mask" };
   if (name === "card-mask-pendulum.png") return { key: "mask:pendulum", kind: "mask" };
+  if (name === "ygo-kr-name.woff2") return { key: "font:name", kind: "font" };
+  if (name === "ygo-kr-race.woff2") return { key: "font:type", kind: "font" };
+  if (name === "ygo-kr.woff2") return { key: "font:body", kind: "font" };
   let m = /^card-([a-z]+?)(-pendulum)?\.png$/.exec(name);
   if (m && FRAMES.has(m[1]) && (!m[2] || PENDULUM.has(m[1])))
     return { key: "frame:" + m[1] + (m[2] ?? ""), kind: "frame" };
@@ -80,6 +83,16 @@ function sourcePriority(path: string): number {
   return 2;
 }
 
+function asFontDataUri(bytes: Uint8Array): string {
+  if (bytes.length < 4 || bytes[0] !== 0x77 || bytes[1] !== 0x4f ||
+    bytes[2] !== 0x46 || bytes[3] !== 0x32)
+    throw Error("WOFF2 서명이 올바르지 않습니다.");
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 16384)
+    binary += String.fromCharCode(...bytes.subarray(i, i + 16384));
+  return "data:font/woff2;base64," + btoa(binary);
+}
+
 function asPngDataUri(bytes: Uint8Array): string {
   const sig = [137, 80, 78, 71, 13, 10, 26, 10];
   if (bytes.length < 24 || !sig.every((n, i) => bytes[i] === n))
@@ -116,11 +129,11 @@ export async function importAssetZip(file: File): Promise<ImportReport> {
   if (!chosen.has("frame:effect") || !chosen.has("frame:spell") || !chosen.has("frame:trap"))
     throw Error("효과 몬스터·마법·함정 기본 프레임이 포함된 ZIP이 필요합니다.");
   const counts: Record<AssetKind, number> = {
-    frame: 0, mask: 0, attribute: 0, star: 0, spell_trap_icon: 0, link_arrow: 0,
+    frame: 0, mask: 0, attribute: 0, star: 0, spell_trap_icon: 0, link_arrow: 0, font: 0,
   };
   const files: Record<string, string> = {};
   for (const [key, value] of chosen) {
-    files[key] = asPngDataUri(value.bytes);
+    files[key] = value.kind === "font" ? asFontDataUri(value.bytes) : asPngDataUri(value.bytes);
     counts[value.kind]++;
   }
   return {
@@ -165,4 +178,35 @@ export async function loadAssetPack(): Promise<AssetPack | null> {
       req.onerror = () => reject(req.error);
     });
   } finally { db.close(); }
+}
+
+export type AssetFontRole = "name" | "type" | "body";
+const FONT_FALLBACK = '"Noto Sans KR Variable", sans-serif';
+const loadedFaces = new Map<string, Promise<void>>();
+
+export function assetFont(role: AssetFontRole): string {
+  const pack = getActivePack();
+  if (!pack?.files["font:" + role]) return FONT_FALLBACK;
+  const family = "DUELMIND-YGO-KR-" + role + "-" + pack.importedAt.replace(/[^a-zA-Z0-9]/g, "");
+  return '"' + family + '", ' + FONT_FALLBACK;
+}
+
+export async function ensureAssetFonts(): Promise<void> {
+  const pack = getActivePack();
+  if (!pack) return;
+  await Promise.all((["name", "type", "body"] as const).map(async (role) => {
+    const source = pack.files["font:" + role];
+    if (!source) return;
+    const family = "DUELMIND-YGO-KR-" + role + "-" + pack.importedAt.replace(/[^a-zA-Z0-9]/g, "");
+    if (!loadedFaces.has(family)) {
+      const pending = (async () => {
+        const face = new FontFace(family, 'url("' + source + '") format("woff2")');
+        const loaded = await face.load();
+        document.fonts.add(loaded);
+      })();
+      loadedFaces.set(family, pending);
+      void pending.catch(() => loadedFaces.delete(family));
+    }
+    await loadedFaces.get(family);
+  }));
 }
