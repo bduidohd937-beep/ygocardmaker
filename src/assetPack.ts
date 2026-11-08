@@ -1,7 +1,7 @@
 import { unzipSync } from "fflate";
 import type { Card } from "./model";
 
-export type AssetKind = "frame" | "attribute" | "star" | "spell_trap_icon" | "link_arrow";
+export type AssetKind = "frame" | "mask" | "attribute" | "star" | "spell_trap_icon" | "link_arrow";
 export type AssetPack = {
   version: 1;
   name: string;
@@ -36,6 +36,8 @@ const ARROW_MAP: Record<number, string> = {
 
 export function classifyAsset(path: string): { key: string; kind: AssetKind } | null {
   const name = path.replace(/\\/g, "/").split("/").pop()?.toLowerCase() ?? "";
+  if (name === "card-mask.png") return { key: "mask:default", kind: "mask" };
+  if (name === "card-mask-pendulum.png") return { key: "mask:pendulum", kind: "mask" };
   let m = /^card-([a-z]+?)(-pendulum)?\.png$/.exec(name);
   if (m && FRAMES.has(m[1]) && (!m[2] || PENDULUM.has(m[1])))
     return { key: "frame:" + m[1] + (m[2] ?? ""), kind: "frame" };
@@ -114,7 +116,7 @@ export async function importAssetZip(file: File): Promise<ImportReport> {
   if (!chosen.has("frame:effect") || !chosen.has("frame:spell") || !chosen.has("frame:trap"))
     throw Error("효과 몬스터·마법·함정 기본 프레임이 포함된 ZIP이 필요합니다.");
   const counts: Record<AssetKind, number> = {
-    frame: 0, attribute: 0, star: 0, spell_trap_icon: 0, link_arrow: 0,
+    frame: 0, mask: 0, attribute: 0, star: 0, spell_trap_icon: 0, link_arrow: 0,
   };
   const files: Record<string, string> = {};
   for (const [key, value] of chosen) {
