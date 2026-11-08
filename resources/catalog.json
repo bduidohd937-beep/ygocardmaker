@@ -1,0 +1,2763 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-08",
+  "policy": "local_review_only_not_cleared_for_redistribution",
+  "sources": [
+    {
+      "repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "license": "MIT (repository); underlying artwork permissions unverified",
+      "selected_file_count": 54
+    },
+    {
+      "repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "license": "AGPL-3.0-only (template package); third-party rights unverified",
+      "selected_file_count": 70
+    },
+    {
+      "repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "license": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "selected_file_count": 51
+    }
+  ],
+  "assets": [
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-down-off.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-down-off.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-down-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 12057,
+      "sha256": "5e0025c6a4816d51621e3a678ab59a767e160ba6ef882e331548f12d6fbd2648",
+      "dimensions": {
+        "width": 281,
+        "height": 98
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-down-on.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-down-on.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-down-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13924,
+      "sha256": "16b56b81f7876f41661345c5575be5d539253f3d87d5eb488b9242578eac8060",
+      "dimensions": {
+        "width": 281,
+        "height": 98
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-left-down-off.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-left-down-off.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-left-down-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 14523,
+      "sha256": "452bbd3fe846751c18ef9788c7b1fa73fb47bfd86109c0c36935c04909cb68d4",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-left-down-on.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-left-down-on.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-left-down-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13779,
+      "sha256": "e64788bb2e84fea506fc81b0070a3f3fbac353c9b2d1c436ed8b82b2fddf317c",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-left-off.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-left-off.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-left-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 11859,
+      "sha256": "2015683041ab5319637e3262c58e3f551340c46b5aef1b94509acb5afa50501c",
+      "dimensions": {
+        "width": 100,
+        "height": 287
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-left-on.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-left-on.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-left-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 14292,
+      "sha256": "9504113c320515037f27c7f301587db65d3a7d15325e6e3eabfe48e2b7b239f2",
+      "dimensions": {
+        "width": 100,
+        "height": 287
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-left-up-off.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-left-up-off.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-left-up-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 12759,
+      "sha256": "22ffa595827638170f1ab9a869037790ed0be30c7cb4dab4551dcede152afbf8",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-left-up-on.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-left-up-on.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-left-up-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13075,
+      "sha256": "c8405a5e72c257a2400ab022d1ffc969024afafe6b58bee6b15d9740bd2ebaea",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-right-down-off.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-right-down-off.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-right-down-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 14829,
+      "sha256": "457eadf8aac53aaa851f12e815cde9627aed92787b8aa29f56c9699006a8e9d4",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-right-down-on.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-right-down-on.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-right-down-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 12789,
+      "sha256": "aa49f4fc9a657c0e98ff1fad313586257327b6199c4836b5afce058ff6d93eb1",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-right-off.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-right-off.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-right-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13502,
+      "sha256": "07a8ab1147fe0cb24c4b51bf6b4691a83b2a57b6d4f284b98cb1d4cc2fb60171",
+      "dimensions": {
+        "width": 98,
+        "height": 281
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-right-on.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-right-on.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-right-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13804,
+      "sha256": "eefd546c6fff6e77d2b607bca6555200f4f47285e53bb882268bdd1b7a278603",
+      "dimensions": {
+        "width": 98,
+        "height": 281
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-right-up-off.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-right-up-off.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-right-up-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 12725,
+      "sha256": "6f4efc4311fc71c88592a18ccc4589dfb77717bc358f90cb6b4c29f35d2d7a00",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-right-up-on.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-right-up-on.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-right-up-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13837,
+      "sha256": "90d28c237938717e1933fb6bcbb2234ad148c81107ab65ff88e7e8796ffdc068",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-up-off.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-up-off.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-up-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 11923,
+      "sha256": "96afc9e4b27e7a4a770cb2fd7167941c6e1aa85a23b87e40b108e50850c40f16",
+      "dimensions": {
+        "width": 281,
+        "height": 98
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/arrow-up-on.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/arrow-up-on.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/arrow-up-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13629,
+      "sha256": "38e0597b0aae83cde4ae075d3b6723486c23cf3d9a2f22b8bb45e00e5b2f449a",
+      "dimensions": {
+        "width": 281,
+        "height": 98
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/attribute-dark-kr.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/attribute-dark-kr.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/attribute-dark-kr.png",
+      "category": "attribute",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 23471,
+      "sha256": "7124b2cbd3ad002680a94137c1c8ca5b31d63ce1500c7c7d5040a47549256633",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/attribute-divine-kr.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/attribute-divine-kr.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/attribute-divine-kr.png",
+      "category": "attribute",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 23778,
+      "sha256": "2890d158fc8d1434c9360618569fc58d362e0f702fbcde425271ad47cbfdca4a",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/attribute-earth-kr.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/attribute-earth-kr.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/attribute-earth-kr.png",
+      "category": "attribute",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 24974,
+      "sha256": "880885a6d0e005fbbc5489b1d09d9c1c46a26e9274f421c905a23966ea20dc8f",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/attribute-fire-kr.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/attribute-fire-kr.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/attribute-fire-kr.png",
+      "category": "attribute",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 27455,
+      "sha256": "cbf104b19b79a65e12228e4166160cc8fa450ba6ec2d5ad26fb58f1c0e3d93c8",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/attribute-light-kr.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/attribute-light-kr.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/attribute-light-kr.png",
+      "category": "attribute",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 23613,
+      "sha256": "e82246a61c339fb3c69df17bf6c7c93a04738a2c64af7fccc1049ce3622c2020",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/attribute-spell-kr.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/attribute-spell-kr.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/attribute-spell-kr.png",
+      "category": "attribute",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 30787,
+      "sha256": "05e029033a178525db2d264191d27fefba002501053082dc847f16fa567a9ce1",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/attribute-trap-kr.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/attribute-trap-kr.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/attribute-trap-kr.png",
+      "category": "attribute",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 26265,
+      "sha256": "3a713e253e0feccc9569252415750923c225ebea0bf670dba0f766c6f1508c54",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/attribute-water-kr.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/attribute-water-kr.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/attribute-water-kr.png",
+      "category": "attribute",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 29369,
+      "sha256": "d97626e2d38a459ad2719c8831dd3a933a7bd43f77d04558f3a7c987bd612cb3",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/attribute-wind-kr.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/attribute-wind-kr.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/attribute-wind-kr.png",
+      "category": "attribute",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 28043,
+      "sha256": "f29a2cbb49d6d25e0401a7652cc4d384e8c45f2021873754d409034a2152debe",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-effect-pendulum.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-effect-pendulum.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-effect-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1198895,
+      "sha256": "3a40b4198a2aa3393d91762b93d512c7c7403db758c71c249d55b43215f2138c",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-effect.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-effect.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-effect.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1872756,
+      "sha256": "600c3a5fc84deb4d0dee243b4879e69b3237819b2e8f3e968c40f0055e71303b",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-fusion-pendulum.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-fusion-pendulum.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-fusion-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 944692,
+      "sha256": "959f391eae4796daebed9dfa6eb1321701536b17f0469d940934167ac8555187",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-fusion.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-fusion.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-fusion.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1246897,
+      "sha256": "8f42589e23cf20a2a365a4b710206a35da49a7e772a82089152a64d2d8a69c72",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-link.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-link.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-link.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 2225858,
+      "sha256": "5912784c3aea5ba326b424803ac27a1f9a681944d547550b2ced8de1aa136a20",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-normal-pendulum.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-normal-pendulum.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-normal-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 957692,
+      "sha256": "5dfa5abb0c03d010bdbd555460d849ffa1bce251a4e41b6ce6619500360e2bbd",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-normal.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-normal.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-normal.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1230563,
+      "sha256": "b65fd49945cc802e1597883fde54ea46d8364a0bca38a1978c8204cec2f8e368",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-ritual-pendulum.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-ritual-pendulum.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-ritual-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1115265,
+      "sha256": "7b57518a7f23af2c63a1a77721e7ca8b7e95cdae8f74157281b3ecd654addcbc",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-ritual.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-ritual.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-ritual.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1689319,
+      "sha256": "1336588bd8b5363920c6a034a664f7ff73a191cb2d32197ef70b5981dd44dc97",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-spell.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-spell.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-spell.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1759863,
+      "sha256": "c59fdec8bcdfd3222641aa724f88fe136cb90d36b40cd03074efa957dbff64a4",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-synchro-pendulum.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-synchro-pendulum.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-synchro-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1088832,
+      "sha256": "e06c183bf1c200d4bdb23f26b8ea027f45edc67afa537984fcf6ffe6d77ad7b3",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-synchro.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-synchro.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-synchro.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1627955,
+      "sha256": "86c68ed1b79da0a0290c95ee4e04ae67daebe6ec249d13414427554f6fd53f18",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-token.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-token.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-token.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1057428,
+      "sha256": "8d2141cbc3bd6c85432b9dd76545bd92cc8d78b0a43986b1ff9f91f30d4e2f16",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-trap.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-trap.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-trap.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 2091505,
+      "sha256": "7e91510eef55a28b991b4d936f45d5f3d55cf406b8a9b85a5953e8a9d961b3f5",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-xyz-pendulum.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-xyz-pendulum.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-xyz-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1251664,
+      "sha256": "64e4cc870b7aef78b54e81dfe54c4f8e8b03e37418bcf72ec8615cb5487bc76f",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/card-xyz.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/card-xyz.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/card-xyz.png",
+      "category": "frame",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 2195182,
+      "sha256": "c347b2720d67dc3b941d2ac900cce34b836f329dfa57b22f61c9d16ae1be3014",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/icon-continuous.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/icon-continuous.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/icon-continuous.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13814,
+      "sha256": "264430f0a04f16fe629ff87aaa25adcc696109c46e58ebafed309d0f86593d43",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/icon-counter.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/icon-counter.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/icon-counter.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13827,
+      "sha256": "2a347c32e8d0a6255311574dd164bd0c4e1f2eaac392f5e12a4ff71869529d42",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/icon-equip.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/icon-equip.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/icon-equip.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13236,
+      "sha256": "caf48cab689d8a987f5f558173399ba0b12a97ded66e26f257cb718fb2b84771",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/icon-field.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/icon-field.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/icon-field.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13988,
+      "sha256": "aca3b2f652486c8023b4f5c5517b6a1e049d2c4350dc510d77b06dcce745145a",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/icon-quick-play.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/icon-quick-play.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/icon-quick-play.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 15135,
+      "sha256": "48f5b6defcf9754d54ec8f53b9a3288c6fd925ca729f0cc4f8e3630415386ccd",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/icon-ritual.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/icon-ritual.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/icon-ritual.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 13186,
+      "sha256": "a5a81488ccb991bba2c43b4941b6f8183cd9f003ddaaf78a19600b9a21b5ebe9",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/level.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/level.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/level.png",
+      "category": "level_rank",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 15944,
+      "sha256": "a162207062d75a1c350aa9bf1e1775af835edcbb8968e571f615c74f5d111af7",
+      "dimensions": {
+        "width": 88,
+        "height": 88
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/image/rank.png",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/image/rank.png",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/image/rank.png",
+      "category": "level_rank",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 16561,
+      "sha256": "9e5efe839106a339ed3cf82bcd0f207a7e1983df9a0e1abd7e98eca8258a1a41",
+      "dimensions": {
+        "width": 88,
+        "height": 88
+      }
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "LICENSE",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/LICENSE",
+      "local_path": "resources/review-only/kooriookami/LICENSE",
+      "category": "license_evidence",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1076,
+      "sha256": "ba4c58c2e76a26242d766613ce939843ae9e685e9df666e67e8332d83eb62ecb"
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "packages/src/yugioh-card/style/kr-style.js",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/packages/src/yugioh-card/style/kr-style.js",
+      "local_path": "resources/review-only/kooriookami/packages/src/yugioh-card/style/kr-style.js",
+      "category": "layout_component",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 816,
+      "sha256": "787ba90aa9fb8f78643f61a275683ea961e90975b9f628f6ca309cf8fc826039"
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/font/ygo-kr.woff2",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/font/ygo-kr.woff2",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/font/ygo-kr.woff2",
+      "category": "font",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 193448,
+      "sha256": "e72f387b5b29b383b95664b70a046a113a909a03974c393800755d6d932b620a"
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/font/ygo-kr-name.woff2",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/font/ygo-kr-name.woff2",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/font/ygo-kr-name.woff2",
+      "category": "font",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 3606492,
+      "sha256": "389b323828e9f2c409cb3c33b4837c5897a995736c837b3ad671a77835f30ece"
+    },
+    {
+      "source_repository": "kooriookami/yugioh-card",
+      "commit": "92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac",
+      "source_path": "src/assets/yugioh-card/yugioh/font/ygo-kr-race.woff2",
+      "source_url": "https://github.com/kooriookami/yugioh-card/blob/92462bbd2aa3aa0075ebcc9b633bdc05137fd7ac/src/assets/yugioh-card/yugioh/font/ygo-kr-race.woff2",
+      "local_path": "resources/review-only/kooriookami/src/assets/yugioh-card/yugioh/font/ygo-kr-race.woff2",
+      "category": "font",
+      "license_claim": "MIT (repository); underlying artwork permissions unverified",
+      "redistribution_status": "review_required",
+      "bytes": 333056,
+      "sha256": "b8494afc0671e5f64fb7859d88f1a0e87955143d04e2aa738c4260070caf9ba8"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/artwork-box-shadow.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/artwork-box-shadow.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/artwork-box-shadow.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 6580,
+      "sha256": "033421fc772e7d89ad728f6dc7c457360f93d9b302ea2b8b5dd653c56a732ec0",
+      "dimensions": {
+        "width": 681,
+        "height": 681
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/artwork-box.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/artwork-box.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/artwork-box.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 35221,
+      "sha256": "fc514a1bb8c10e9e48315b178d6072c642d30fb785144596a8eb7c5e9eab17c0",
+      "dimensions": {
+        "width": 641,
+        "height": 641
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/artwork-mask.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/artwork-mask.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/artwork-mask.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 4441,
+      "sha256": "3da75ee3308e48960f32eb4d452c873495829985a235ae02d6a6a50d6b53e400",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/attribute-dark.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/attribute-dark.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/attribute-dark.png",
+      "category": "attribute",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 9431,
+      "sha256": "f588cca6f50c6371b897c2c8413563a857f913888811cad5917459372efb0797",
+      "dimensions": {
+        "width": 76,
+        "height": 76
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/attribute-earth.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/attribute-earth.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/attribute-earth.png",
+      "category": "attribute",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 9696,
+      "sha256": "efb540aacdfbc1c383dda7712ccef1d4b53a56043de2b151837b97b0eca656e6",
+      "dimensions": {
+        "width": 76,
+        "height": 76
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/attribute-fire.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/attribute-fire.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/attribute-fire.png",
+      "category": "attribute",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 8091,
+      "sha256": "5a997f77e1a4d289240fd1c2398b82a7828f495c85e01374ed11d429a020ec36",
+      "dimensions": {
+        "width": 76,
+        "height": 76
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/attribute-light-divine.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/attribute-light-divine.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/attribute-light-divine.png",
+      "category": "attribute",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 9226,
+      "sha256": "ecbe8abb9a91a0e54f654ee496fa940b5fe1ed8c90adac29936282c1c4404e55",
+      "dimensions": {
+        "width": 76,
+        "height": 76
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/attribute-spell.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/attribute-spell.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/attribute-spell.png",
+      "category": "attribute",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 12498,
+      "sha256": "a7580856dd56662c93740833ead3461516ae3b59e6e7d0923e790f42ca71e013",
+      "dimensions": {
+        "width": 76,
+        "height": 76
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/attribute-trap.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/attribute-trap.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/attribute-trap.png",
+      "category": "attribute",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 9854,
+      "sha256": "cc245f1ddd193b2cc43688287a56e6d1bc1627fb0d0379f60acaf95753532d50",
+      "dimensions": {
+        "width": 76,
+        "height": 76
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/attribute-water.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/attribute-water.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/attribute-water.png",
+      "category": "attribute",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 10915,
+      "sha256": "6c580bde17507af97d06aeb89503e9d00053333c743fae6f4f03ca5fb1459714",
+      "dimensions": {
+        "width": 76,
+        "height": 76
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/attribute-wind.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/attribute-wind.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/attribute-wind.png",
+      "category": "attribute",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 10984,
+      "sha256": "bc48eb610b7bbc14684e9d8d7e5715f940ae53eae4261856618b00f365bfc2cc",
+      "dimensions": {
+        "width": 76,
+        "height": 76
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/effects-border-shadow.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/effects-border-shadow.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/effects-border-shadow.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 8235,
+      "sha256": "df2bdd5ffc5a6f824c84ffe5e1716c730c3d4ee6d12e291aadc80685be5dfea4",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/effects-border.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/effects-border.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/effects-border.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 261788,
+      "sha256": "c1ee546e978d60afe34ea6ae67d30d02251912187b806bb9548dab8205aa26ea",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-bottom-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-bottom-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-bottom-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 7162,
+      "sha256": "046695da73893a2a3edef972640de8e67ab0354f9e83cd148f88efde0432220c",
+      "dimensions": {
+        "width": 142,
+        "height": 45
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-bottom-left.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-bottom-left.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-bottom-left.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 5673,
+      "sha256": "ae0cad6f364a851db0bc5869994d34f2bda67c758c340a3b2aded52680f2edeb",
+      "dimensions": {
+        "width": 74,
+        "height": 74
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-bottom-right.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-bottom-right.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-bottom-right.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 5187,
+      "sha256": "d3bd03e14724dbf4fb2319b58f53c69764e4d9077629085b0133bc2de6d7b96f",
+      "dimensions": {
+        "width": 74,
+        "height": 74
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-left-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-left-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-left-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 7132,
+      "sha256": "6fbc856339cf37e4b0ea4cf6944dae1fb3e121aa25dae97171ecfc28a896c3a7",
+      "dimensions": {
+        "width": 45,
+        "height": 141
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-right-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-right-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-right-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 7220,
+      "sha256": "af151c077b350aaec37d96ac54e75399af6dc71cbfe4a112603c48452ec4ba88",
+      "dimensions": {
+        "width": 45,
+        "height": 142
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-top-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-top-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-top-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 7258,
+      "sha256": "34e3f24e90f4ad615e78fb566ba62ed5ec6448a8fe838aa2c0d89cecc5480f29",
+      "dimensions": {
+        "width": 145,
+        "height": 46
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-top-left.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-top-left.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-top-left.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 5793,
+      "sha256": "3ca0f3226dea95416c29dd2202f9ef56b02778ed79e353345c4d3f5d5c14a013",
+      "dimensions": {
+        "width": 74,
+        "height": 74
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-top-right.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-top-right.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-active-top-right.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 6286,
+      "sha256": "ab972be6289aeac85fe7aed62f84e84229f5097bac0fb7e391a60cac7754bb7e",
+      "dimensions": {
+        "width": 74,
+        "height": 74
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-bottom-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-bottom-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-bottom-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 6009,
+      "sha256": "e92ef1b05ae643899c54c234e21c6b11db633b618ec20be91b53b656076a6c81",
+      "dimensions": {
+        "width": 142,
+        "height": 45
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-bottom-left.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-bottom-left.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-bottom-left.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 4610,
+      "sha256": "5ceb67f0bc3f3fff91354d6c2a4237766dbc68bbdb24c1ae33a9ec516afe2e47",
+      "dimensions": {
+        "width": 74,
+        "height": 74
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-bottom-right.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-bottom-right.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-bottom-right.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 4066,
+      "sha256": "50f4f9e840c89c958dd771c0cc9b52f99cccdea93462c1f3d6778658ff9d15f5",
+      "dimensions": {
+        "width": 74,
+        "height": 74
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-left-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-left-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-left-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 6075,
+      "sha256": "a4b93abcfb6fb836008de08764f03df69d64ba6b4b2d8480f8d25496cd99a90d",
+      "dimensions": {
+        "width": 45,
+        "height": 141
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-right-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-right-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-right-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 6068,
+      "sha256": "74b6962c220cc0519574c545a5f5bee1e43d25fd2339ccae29ac936a87919bba",
+      "dimensions": {
+        "width": 45,
+        "height": 142
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-top-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-top-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-top-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 6013,
+      "sha256": "92b0c79cf3b0cd26d0e3ae451deaf823e68c7bad9e48f060ed7bb4c60ed96f85",
+      "dimensions": {
+        "width": 145,
+        "height": 46
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-top-left.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-top-left.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-top-left.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 4284,
+      "sha256": "0c0a2a9e1918987128295eaca3820d814adc38beee94f3eb2c5a951b59b1b6f4",
+      "dimensions": {
+        "width": 74,
+        "height": 74
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-top-right.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-top-right.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-inactive-top-right.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 4935,
+      "sha256": "455281ac16918cf9f792258eb39fe45f8aa581366d9cf0f3bf61ea370336631d",
+      "dimensions": {
+        "width": 74,
+        "height": 74
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-bottom-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-bottom-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-bottom-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1099,
+      "sha256": "2e94a5ba81262a8601e563dd77e765c66960ba90aed4d0155e5d0e5c3f1c4140",
+      "dimensions": {
+        "width": 158,
+        "height": 61
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-bottom-left.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-bottom-left.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-bottom-left.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 972,
+      "sha256": "a3387e2d4a5ad4754c730e48edc8d0b02266fdaed5414e794ac06947fd4d4030",
+      "dimensions": {
+        "width": 90,
+        "height": 90
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-bottom-right.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-bottom-right.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-bottom-right.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 973,
+      "sha256": "a49ece1b37f45c148c88baface687da48db3a6e155cf20d1838edac482887059",
+      "dimensions": {
+        "width": 90,
+        "height": 90
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-left-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-left-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-left-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 2046,
+      "sha256": "6b6a0c4c6aca6827e22e416b962a767bf70744011469a4be1ed157c7e6ba8ee3",
+      "dimensions": {
+        "width": 61,
+        "height": 157
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-right-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-right-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-right-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1270,
+      "sha256": "ad2c5ae81152ddd4ea0fc57fc09a48ecdd05485961fbe154ff7b8fd1105b4ab4",
+      "dimensions": {
+        "width": 61,
+        "height": 158
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-top-center.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-top-center.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-top-center.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1769,
+      "sha256": "0feeb31692a271051755feb7f5db935b94efc2208604b1ae1d5b841e7fe16439",
+      "dimensions": {
+        "width": 161,
+        "height": 61
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-top-left.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-top-left.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-top-left.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 987,
+      "sha256": "7fedfe0177ec9f9b7907e87f2aba0a72583d17cfe3db62196bb22926e3ab1510",
+      "dimensions": {
+        "width": 90,
+        "height": 90
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-top-right.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-top-right.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/link-arrow-shadow-top-right.png",
+      "category": "link_arrow",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 987,
+      "sha256": "7592fb146f767df02f26a1c29b15ba2444ebd49157e6fe628485da6a0c47db62",
+      "dimensions": {
+        "width": 90,
+        "height": 90
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-artwork-mask.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-artwork-mask.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-artwork-mask.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 661,
+      "sha256": "d442fa57624fd60183c029fd8ec67fbb92ac146c1641877b694390b2489dcb90",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-large-lower.svg",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-large-lower.svg",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-large-lower.svg",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 217,
+      "sha256": "5b2f71c53b4e94eba5a84d681f1992f781db377cd052db84b2379dedeb77453f"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-large.svg",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-large.svg",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-large.svg",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 217,
+      "sha256": "944d01e6f284fe61a0cc80f83a798ca2ead0ea5cdbfe7fa0d05be96b8b600b95"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-medium.svg",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-medium.svg",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-medium.svg",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 217,
+      "sha256": "93f2c5f833b5e2df6fb4b723ca52bdef687350dd825f89c85db7d07d2bddc2d2"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-small.svg",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-small.svg",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-effect-mask-small.svg",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 217,
+      "sha256": "f4b03e6be850249e46baa56b86f6aa50b54c15d36d6a91df43660e8ff56a4a3d"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-frame-transition.svg",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-frame-transition.svg",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-frame-transition.svg",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 487,
+      "sha256": "0882d2ac37a4835fc7302e34a490aa63c1297a018a4fbb00a0dc511f539604f0"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-large-artwork-box.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-large-artwork-box.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-large-artwork-box.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 28316,
+      "sha256": "beab0bf00c4f31288b74e5eb898265b60047921d6463faf846b14f341478c07c",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-large-effect-box.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-large-effect-box.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-large-effect-box.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 186771,
+      "sha256": "701134b33c119c2cad760dea81469fc022f5492cb6f92e86a01765a9d32464eb",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-large-unified-shadow.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-large-unified-shadow.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-large-unified-shadow.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 12098,
+      "sha256": "b118d8b83e1730c70f32df507ed04bdcc5e98f976d4d208ed04570831c034301",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-medium-artwork-box.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-medium-artwork-box.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-medium-artwork-box.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 28238,
+      "sha256": "a3054e86c80298bd82d52ef2e8a0c4ed470f3f416464f86db0e4f8dc3b84f128",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-medium-effect-box.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-medium-effect-box.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-medium-effect-box.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 282756,
+      "sha256": "ca069ea7b35c298f00f68cc23fa6f0a7c15e035c5308a8e96f1637546ede97be",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-medium-unified-shadow.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-medium-unified-shadow.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-medium-unified-shadow.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 12215,
+      "sha256": "8f71b039335a083590e1db9ef46c60c597c1b7ef1bd163fea86cdfc26df09fcc",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-small-artwork-box.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-small-artwork-box.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-small-artwork-box.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 29399,
+      "sha256": "d03ea045d29810ee6c7c091d93e20a1399d9da24a4542a21539fbe9fbf254ae1",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-small-effect-box.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-small-effect-box.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-small-effect-box.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 245352,
+      "sha256": "98d5b4a1588096a0b4a65ec997fcdfada039dd2311829fc6918b660eec87ec82",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-small-unified-shadow.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-small-unified-shadow.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-small-unified-shadow.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 12109,
+      "sha256": "9d7747f296e2b933818abc6c283ee4147c8b67d6296f14f53cc4ef963888ca73",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/pendulum-texture-opacity.svg",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/pendulum-texture-opacity.svg",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/pendulum-texture-opacity.svg",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 545,
+      "sha256": "915406825b914b0f72904d0c88a89cb68d1f1aaa837867f038e5c851a4cb035f"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-continuous.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-continuous.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-continuous.png",
+      "category": "spell_trap_icon",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 5394,
+      "sha256": "057a4adfd9c97ffdb3b1165e4369563e18b425c8e1c353da810ed1d3e251962c",
+      "dimensions": {
+        "width": 44,
+        "height": 44
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-counter.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-counter.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-counter.png",
+      "category": "spell_trap_icon",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 5578,
+      "sha256": "b496f0f89d3b30ca67be1395b297e8bba25dac98e53760b22dc2a026323b1a32",
+      "dimensions": {
+        "width": 44,
+        "height": 44
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-equip.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-equip.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-equip.png",
+      "category": "spell_trap_icon",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 5733,
+      "sha256": "6e16baffea51f27c0c84d0f61378bac613772826e3e7d6c0ea99702d9f9b26e9",
+      "dimensions": {
+        "width": 44,
+        "height": 44
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-field.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-field.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-field.png",
+      "category": "spell_trap_icon",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 5683,
+      "sha256": "aac0a76e1bdc597ace89ac2b3a94d33cdc8cb9f9ea3383fad1f33a451d115975",
+      "dimensions": {
+        "width": 44,
+        "height": 44
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-quick-play.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-quick-play.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-quick-play.png",
+      "category": "spell_trap_icon",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 5870,
+      "sha256": "27e22ce3da6d14a31487d0adcc2ebc53da7754087791a3eab8730030264f826b",
+      "dimensions": {
+        "width": 44,
+        "height": 44
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-ritual.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-ritual.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/spell-trap-icon-ritual.png",
+      "category": "spell_trap_icon",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 5776,
+      "sha256": "c8b1ce94a3d0af9300ba9f4010a55d66e3458adcc48d91d425b9177e21d26275",
+      "dimensions": {
+        "width": 44,
+        "height": 44
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/star-level.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/star-level.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/star-level.png",
+      "category": "level_rank",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 4998,
+      "sha256": "f60c604fb3a466388006f1c23b9089fde7d5f980a58afec9efea97b8928163af",
+      "dimensions": {
+        "width": 49,
+        "height": 49
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/assets/star-rank.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/assets/star-rank.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/assets/star-rank.png",
+      "category": "level_rank",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 4393,
+      "sha256": "016ba6f2cfe00f0e7a51f3f596d412eecac5635cee8ff215657c80d8a2eb6103",
+      "dimensions": {
+        "width": 49,
+        "height": 49
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/LICENSE",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/LICENSE",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/LICENSE",
+      "category": "license_evidence",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 35184,
+      "sha256": "e0eedba615d5cd1b986afb6c5b3a4b1ae33713e7e9dc74d19daec5e3221f9d2e"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/template.json",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/template.json",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/template.json",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 117829,
+      "sha256": "f887d6703f2bff36be723722e2f6e0d9e36ce44e2d0fb060ae4d52ac14f90738"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/templates/card/series-10/manifest.json",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/templates/card/series-10/manifest.json",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/templates/card/series-10/manifest.json",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 8277,
+      "sha256": "e9fa08d32d6bb32ab6d999979b2e7e8ef4ddde076d853b942f9bf0a47a6b202d"
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/shared/border.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/shared/border.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/shared/border.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 136983,
+      "sha256": "fab384c4c832c50c28aacf40ded2ccbe1fccd94b60192479bd4f3dbb9495bdb6",
+      "dimensions": {
+        "width": 813,
+        "height": 1185
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/shared/frame-texture.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/shared/frame-texture.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/shared/frame-texture.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 811189,
+      "sha256": "e4a93e61f4ab7f1d4aaba4c36f18a0cccf23aded33a9fdc23a04a07f65d1b362",
+      "dimensions": {
+        "width": 757,
+        "height": 1128
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/shared/link-texture.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/shared/link-texture.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/shared/link-texture.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1226913,
+      "sha256": "fbc41c9d39cf11fae807dc3fe2728debf5064e9bc495d027c15ea9b04f4bc6c9",
+      "dimensions": {
+        "width": 757,
+        "height": 1128
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/shared/xyz-texture.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/shared/xyz-texture.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/shared/xyz-texture.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 1042790,
+      "sha256": "49ed62f9e5157b41fc17783a308860569e265bb1a3310c500b6b2d25e356d9e6",
+      "dimensions": {
+        "width": 757,
+        "height": 1128
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/shared/pendulum-scale-left.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/shared/pendulum-scale-left.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/shared/pendulum-scale-left.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 3926,
+      "sha256": "9f62b8cf837059cb890ae0c1f31e9c4443b6c5045aa4fd3d7b9a8ad84e5d153d",
+      "dimensions": {
+        "width": 51,
+        "height": 39
+      }
+    },
+    {
+      "source_repository": "alixsep/yugilife",
+      "commit": "3daf8f553d70ffecbe2402206ddafe52a0687fdd",
+      "source_path": "packages/yugilife-templates/shared/pendulum-scale-right.png",
+      "source_url": "https://github.com/alixsep/yugilife/blob/3daf8f553d70ffecbe2402206ddafe52a0687fdd/packages/yugilife-templates/shared/pendulum-scale-right.png",
+      "local_path": "resources/review-only/yugilife/packages/yugilife-templates/shared/pendulum-scale-right.png",
+      "category": "layout_component",
+      "license_claim": "AGPL-3.0-only (template package); third-party rights unverified",
+      "redistribution_status": "review_required",
+      "bytes": 3939,
+      "sha256": "87dc4e1f86b982a521e240f66328385e6f0942f145205df9d677cf4643819f0b",
+      "dimensions": {
+        "width": 51,
+        "height": 39
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-down-off.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-down-off.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-down-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 12057,
+      "sha256": "5e0025c6a4816d51621e3a678ab59a767e160ba6ef882e331548f12d6fbd2648",
+      "dimensions": {
+        "width": 281,
+        "height": 98
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-down-on.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-down-on.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-down-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13924,
+      "sha256": "16b56b81f7876f41661345c5575be5d539253f3d87d5eb488b9242578eac8060",
+      "dimensions": {
+        "width": 281,
+        "height": 98
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-left-down-off.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-left-down-off.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-left-down-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 14523,
+      "sha256": "452bbd3fe846751c18ef9788c7b1fa73fb47bfd86109c0c36935c04909cb68d4",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-left-down-on.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-left-down-on.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-left-down-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13779,
+      "sha256": "e64788bb2e84fea506fc81b0070a3f3fbac353c9b2d1c436ed8b82b2fddf317c",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-left-off.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-left-off.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-left-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 11859,
+      "sha256": "2015683041ab5319637e3262c58e3f551340c46b5aef1b94509acb5afa50501c",
+      "dimensions": {
+        "width": 100,
+        "height": 287
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-left-on.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-left-on.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-left-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 14292,
+      "sha256": "9504113c320515037f27c7f301587db65d3a7d15325e6e3eabfe48e2b7b239f2",
+      "dimensions": {
+        "width": 100,
+        "height": 287
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-left-up-off.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-left-up-off.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-left-up-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 12759,
+      "sha256": "22ffa595827638170f1ab9a869037790ed0be30c7cb4dab4551dcede152afbf8",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-left-up-on.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-left-up-on.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-left-up-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13075,
+      "sha256": "c8405a5e72c257a2400ab022d1ffc969024afafe6b58bee6b15d9740bd2ebaea",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-right-down-off.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-right-down-off.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-right-down-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 14829,
+      "sha256": "457eadf8aac53aaa851f12e815cde9627aed92787b8aa29f56c9699006a8e9d4",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-right-down-on.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-right-down-on.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-right-down-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 12789,
+      "sha256": "aa49f4fc9a657c0e98ff1fad313586257327b6199c4836b5afce058ff6d93eb1",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-right-off.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-right-off.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-right-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13502,
+      "sha256": "07a8ab1147fe0cb24c4b51bf6b4691a83b2a57b6d4f284b98cb1d4cc2fb60171",
+      "dimensions": {
+        "width": 98,
+        "height": 281
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-right-on.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-right-on.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-right-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13804,
+      "sha256": "eefd546c6fff6e77d2b607bca6555200f4f47285e53bb882268bdd1b7a278603",
+      "dimensions": {
+        "width": 98,
+        "height": 281
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-right-up-off.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-right-up-off.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-right-up-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 12725,
+      "sha256": "6f4efc4311fc71c88592a18ccc4589dfb77717bc358f90cb6b4c29f35d2d7a00",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-right-up-on.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-right-up-on.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-right-up-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13837,
+      "sha256": "90d28c237938717e1933fb6bcbb2234ad148c81107ab65ff88e7e8796ffdc068",
+      "dimensions": {
+        "width": 168,
+        "height": 168
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-up-off.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-up-off.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-up-off.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 11923,
+      "sha256": "96afc9e4b27e7a4a770cb2fd7167941c6e1aa85a23b87e40b108e50850c40f16",
+      "dimensions": {
+        "width": 281,
+        "height": 98
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/arrow-up-on.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/arrow-up-on.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/arrow-up-on.png",
+      "category": "link_arrow",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13629,
+      "sha256": "38e0597b0aae83cde4ae075d3b6723486c23cf3d9a2f22b8bb45e00e5b2f449a",
+      "dimensions": {
+        "width": 281,
+        "height": 98
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/attribute-dark.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/attribute-dark.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/attribute-dark.png",
+      "category": "attribute",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 22844,
+      "sha256": "3be4a159513e36f91b822bf1cdc86915c5f49153e0733e01c61a00452b204b62",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/attribute-divine.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/attribute-divine.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/attribute-divine.png",
+      "category": "attribute",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 22935,
+      "sha256": "18100354c44635cca916e11aee74059320235b33c625051d424ef9e3525def82",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/attribute-earth.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/attribute-earth.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/attribute-earth.png",
+      "category": "attribute",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 24763,
+      "sha256": "881c8da736134c6330ab29fb5c583b91e6b764e16d90a9f68c5d7e2ab57c7902",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/attribute-fire.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/attribute-fire.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/attribute-fire.png",
+      "category": "attribute",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 26961,
+      "sha256": "cf612c2ce7e79296efed2b6852be3fba7732bcd8a6b376d4b3777300d359b162",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/attribute-light.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/attribute-light.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/attribute-light.png",
+      "category": "attribute",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 23003,
+      "sha256": "ba56140760d6bb0abaaa63e4128b8693acd066a6a7834317cbe1e3fcca3e5932",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/attribute-spell.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/attribute-spell.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/attribute-spell.png",
+      "category": "attribute",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 30366,
+      "sha256": "fe8bdedc914af00bcecc17087bb2c641506375d73a79791f1bf991ac27ffaba4",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/attribute-trap.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/attribute-trap.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/attribute-trap.png",
+      "category": "attribute",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 25857,
+      "sha256": "a51264630ee5087d0f6ea04dce3793a5455ee732343619b9b3d4aeae49d69bb1",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/attribute-water.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/attribute-water.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/attribute-water.png",
+      "category": "attribute",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 28824,
+      "sha256": "e2f1b887e4ae7d0e93b2a62bda4bd2ca4608a054177469e2189923e800da5b11",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/attribute-wind.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/attribute-wind.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/attribute-wind.png",
+      "category": "attribute",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 28168,
+      "sha256": "546f12d05e7e3aaff66b0e49408e7a70ce636434cc2c3793f8af20a40ae2776e",
+      "dimensions": {
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-effect-pendulum.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-effect-pendulum.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-effect-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1198895,
+      "sha256": "3a40b4198a2aa3393d91762b93d512c7c7403db758c71c249d55b43215f2138c",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-effect.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-effect.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-effect.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1872756,
+      "sha256": "600c3a5fc84deb4d0dee243b4879e69b3237819b2e8f3e968c40f0055e71303b",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-fusion-pendulum.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-fusion-pendulum.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-fusion-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 944692,
+      "sha256": "959f391eae4796daebed9dfa6eb1321701536b17f0469d940934167ac8555187",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-fusion.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-fusion.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-fusion.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1246897,
+      "sha256": "8f42589e23cf20a2a365a4b710206a35da49a7e772a82089152a64d2d8a69c72",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-link.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-link.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-link.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 2225858,
+      "sha256": "5912784c3aea5ba326b424803ac27a1f9a681944d547550b2ced8de1aa136a20",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-normal-pendulum.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-normal-pendulum.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-normal-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 957692,
+      "sha256": "5dfa5abb0c03d010bdbd555460d849ffa1bce251a4e41b6ce6619500360e2bbd",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-normal.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-normal.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-normal.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1230563,
+      "sha256": "b65fd49945cc802e1597883fde54ea46d8364a0bca38a1978c8204cec2f8e368",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-ritual-pendulum.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-ritual-pendulum.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-ritual-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1115265,
+      "sha256": "7b57518a7f23af2c63a1a77721e7ca8b7e95cdae8f74157281b3ecd654addcbc",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-ritual.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-ritual.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-ritual.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1689319,
+      "sha256": "1336588bd8b5363920c6a034a664f7ff73a191cb2d32197ef70b5981dd44dc97",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-spell.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-spell.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-spell.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1759863,
+      "sha256": "c59fdec8bcdfd3222641aa724f88fe136cb90d36b40cd03074efa957dbff64a4",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-synchro-pendulum.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-synchro-pendulum.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-synchro-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1088832,
+      "sha256": "e06c183bf1c200d4bdb23f26b8ea027f45edc67afa537984fcf6ffe6d77ad7b3",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-synchro.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-synchro.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-synchro.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1627955,
+      "sha256": "86c68ed1b79da0a0290c95ee4e04ae67daebe6ec249d13414427554f6fd53f18",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-token.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-token.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-token.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1057428,
+      "sha256": "8d2141cbc3bd6c85432b9dd76545bd92cc8d78b0a43986b1ff9f91f30d4e2f16",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-trap.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-trap.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-trap.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 2091505,
+      "sha256": "7e91510eef55a28b991b4d936f45d5f3d55cf406b8a9b85a5953e8a9d961b3f5",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-xyz-pendulum.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-xyz-pendulum.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-xyz-pendulum.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1251664,
+      "sha256": "64e4cc870b7aef78b54e81dfe54c4f8e8b03e37418bcf72ec8615cb5487bc76f",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/card-xyz.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/card-xyz.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/card-xyz.png",
+      "category": "frame",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 2195182,
+      "sha256": "c347b2720d67dc3b941d2ac900cce34b836f329dfa57b22f61c9d16ae1be3014",
+      "dimensions": {
+        "width": 1394,
+        "height": 2031
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/icon-continuous.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/icon-continuous.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/icon-continuous.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13814,
+      "sha256": "264430f0a04f16fe629ff87aaa25adcc696109c46e58ebafed309d0f86593d43",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/icon-counter.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/icon-counter.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/icon-counter.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13827,
+      "sha256": "2a347c32e8d0a6255311574dd164bd0c4e1f2eaac392f5e12a4ff71869529d42",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/icon-equip.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/icon-equip.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/icon-equip.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13236,
+      "sha256": "caf48cab689d8a987f5f558173399ba0b12a97ded66e26f257cb718fb2b84771",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/icon-field.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/icon-field.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/icon-field.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13988,
+      "sha256": "aca3b2f652486c8023b4f5c5517b6a1e049d2c4350dc510d77b06dcce745145a",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/icon-quick-play.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/icon-quick-play.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/icon-quick-play.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 15135,
+      "sha256": "48f5b6defcf9754d54ec8f53b9a3288c6fd925ca729f0cc4f8e3630415386ccd",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/icon-ritual.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/icon-ritual.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/icon-ritual.png",
+      "category": "spell_trap_icon",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 13186,
+      "sha256": "a5a81488ccb991bba2c43b4941b6f8183cd9f003ddaaf78a19600b9a21b5ebe9",
+      "dimensions": {
+        "width": 72,
+        "height": 72
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/level.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/level.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/level.png",
+      "category": "level_rank",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 15944,
+      "sha256": "a162207062d75a1c350aa9bf1e1775af835edcbb8968e571f615c74f5d111af7",
+      "dimensions": {
+        "width": 88,
+        "height": 88
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "src/web/public/assets/yugioh/image/rank.png",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/src/web/public/assets/yugioh/image/rank.png",
+      "local_path": "resources/review-only/paper-yuan/src/web/public/assets/yugioh/image/rank.png",
+      "category": "level_rank",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 16561,
+      "sha256": "9e5efe839106a339ed3cf82bcd0f207a7e1983df9a0e1abd7e98eca8258a1a41",
+      "dimensions": {
+        "width": 88,
+        "height": 88
+      }
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "LICENSE",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/LICENSE",
+      "local_path": "resources/review-only/paper-yuan/LICENSE",
+      "category": "license_evidence",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 1311,
+      "sha256": "81ba18511fdad92a47f292c2822ba3fb05bfa976173c5aa387e02583e1d4a496"
+    },
+    {
+      "source_repository": "Paper-Yuan/yugioh-ai-card-creator",
+      "commit": "2c0dd8105ab258b4ba090a523c784f4ab157c08a",
+      "source_path": "docs/ASSETS.md",
+      "source_url": "https://github.com/Paper-Yuan/yugioh-ai-card-creator/blob/2c0dd8105ab258b4ba090a523c784f4ab157c08a/docs/ASSETS.md",
+      "local_path": "resources/review-only/paper-yuan/docs/ASSETS.md",
+      "category": "license_evidence",
+      "license_claim": "MIT for own code only; third-party assets excluded; documentation conflicts",
+      "redistribution_status": "review_required",
+      "bytes": 5143,
+      "sha256": "ec2b634370e1ac8b3088299c173b897adee6c7391c0a9c0a91318edb2e2a32d0"
+    }
+  ]
+}
