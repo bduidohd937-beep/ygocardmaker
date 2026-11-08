@@ -1,163 +1,288 @@
-import type { Card } from "./model";
-import { FRAMES, isMonster } from "./model";
+import { FRAMES, isMonster, type Card } from "./model";
 import { assetUrl } from "./assetPack";
 
 const FONT = '"Noto Sans KR Variable", sans-serif';
-const ATTR_NAME: Record<string, string> = {
-  "어둠": "闇", "빛": "光", "땅": "地", "물": "水", "불": "火", "바람": "風", "신": "神",
-};
-const ATTR_CODE: Record<string, string> = {
+const NATIVE_W = 1394;
+const NATIVE_H = 2031;
+const VIEW_W = 842;
+const VIEW_H = 1228;
+const loaded = new Map<string, Promise<HTMLImageElement>>();
+
+export const ASSET_LAYOUT = {
+  artwork: { x: 170, y: 375, w: 1054, h: 1054 },
+  pendulumArtwork: { x: 94, y: 364, w: 1205, h: 1205 },
+  artworkMask: { x: 117, y: 322 },
+  pendulumArtworkMask: { x: 68, y: 342 },
+  attribute: { x: 1163, y: 96, w: 128, h: 128 },
+  level: { y: 247, size: 88, step: 92 },
+  name: { x: 116, y: 90, maxW: 1033 },
+  effect: { x: 109, y: 1526, maxW: 1175 },
+  stats: { y: 1844 },
+} as const;
+
+const ATTR_CODES: Record<string, string> = {
   "어둠": "dark", "빛": "light", "땅": "earth", "물": "water",
   "불": "fire", "바람": "wind", "신": "divine",
 };
-const TYPE_CODE: Record<string, string> = {
+const TYPE_CODES: Record<string, string> = {
   "지속": "continuous", "속공": "quick-play", "장착": "equip",
   "필드": "field", "의식": "ritual", "카운터": "counter",
 };
-const LINK_DIRECTIONS: [number, string, number, number, number, number][] = [
-  [64, "left-up", 82, 220, 65, 65],
-  [128, "up", 365, 211, 112, 40],
-  [256, "right-up", 695, 220, 65, 65],
-  [8, "left", 74, 490, 38, 107],
-  [32, "right", 731, 490, 38, 107],
-  [1, "left-down", 82, 817, 65, 65],
-  [2, "down", 365, 848, 112, 40],
-  [4, "right-down", 695, 817, 65, 65],
+const LINK_GEOMETRY: ReadonlyArray<readonly [number, string, number, number]> = [
+  [128, "up", 555, 278],
+  [256, "right-up", 1130, 299],
+  [32, "right", 1223, 761],
+  [4, "right-down", 1130, 1336],
+  [2, "down", 555, 1428],
+  [1, "left-down", 95, 1336],
+  [8, "left", 71, 758],
+  [64, "left-up", 95, 299],
 ];
+export const LINK_POSITIONS = LINK_GEOMETRY;
 
-async function load(src: string): Promise<HTMLImageElement> {
-  const img = new Image();
-  img.src = src;
-  await img.decode();
-  return img;
+function image(src: string): Promise<HTMLImageElement> {
+  const existing = loaded.get(src);
+  if (existing) return existing;
+  const pending = new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(Error("이미지 로딩에 실패했습니다."));
+    img.src = src;
+  });
+  loaded.set(src, pending);
+  // Failed images can be re-imported without retaining a rejected promise.
+  void pending.catch(() => loaded.delete(src));
+  return pending;
 }
-async function draw(ctx: CanvasRenderingContext2D, key: string, x: number, y: number, w: number, h: number) {
-  const url = assetUrl(key);
-  if (!url) return false;
-  ctx.drawImage(await load(url), x, y, w, h);
+
+async function paint(
+  ctx: CanvasRenderingContext2D,
+  key: string,
+  x: number, y: number, w?: number, h?: number,
+): Promise<boolean> {
+  const src = assetUrl(key);
+  if (!src) return false;
+  const img = await image(src);
+  ctx.drawImage(img, x, y, w ?? img.naturalWidth, h ?? img.naturalHeight);
   return true;
 }
-function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
+
+function wrap(ctx: CanvasRenderingContext2D, text: string, maxW: number): string[] {
   const lines: string[] = [];
-  for (const para of text.split("\n")) {
+  for (const paragraph of text.split("\n")) {
     let line = "";
-    for (const ch of Array.from(para)) {
-      if (line && ctx.measureText(line + ch).width > maxWidth) {
-        lines.push(line.trimEnd());
-        line = ch.trimStart();
-      } else line += ch;
+    for (const glyph of Array.from(paragraph)) {
+      if (line && ctx.measureText(line + glyph).width > maxW) {
+        if (/[),.!?:;。，！？、）」』》】]/u.test(glyph)) {
+          // Keep a closing punctuation mark with the preceding phrase.
+          lines.push(line + glyph);
+          line = "";
+        } else {
+          lines.push(line.trimEnd());
+          line = glyph.trimStart();
+        }
+      } else line += glyph;
     }
     lines.push(line);
   }
   return lines;
 }
-function fitText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, width: number, height: number, maxSize = 27) {
-  let size = maxSize, lines: string[] = [];
-  for (; size >= 16; size--) {
+
+function fitText(
+  ctx: CanvasRenderingContext2D, text: string,
+  x: number, y: number, width: number, height: number,
+  fontSize: number, minSize = 29,
+): number {
+  let size = fontSize, lines: string[] = [];
+  for (; size >= minSize; size--) {
     ctx.font = "400 " + size + "px " + FONT;
     lines = wrap(ctx, text, width);
-    if (lines.length * size * 1.35 <= height) break;
+    if (lines.length * size * 1.19 <= height) break;
   }
-  if (size < 16) throw Error("효과 텍스트가 너무 깁니다. 줄바꿈을 조정해 주세요.");
+  if (size < minSize)
+    throw Error("프레임 효과 영역에 들어가지 않는 긴 효과문입니다. 내용을 줄이거나 줄바꿈을 조정해 주세요.");
+  ctx.fillStyle = "#111915";
+  ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], x, y + i * size * 1.35);
+  lines.forEach((line, index) => ctx.fillText(line, x, y + index * size * 1.19));
   return size;
 }
+
 export function frameKey(card: Card): string {
   return "frame:" + card.frame + (card.pendulum ? "-pendulum" : "");
 }
 
-/** Alternative rendering path for a user-imported, local-only asset pack.
- * Coordinates are an initial 842x1228 alignment and require visual QA per frame.
- * The public default renderer is unchanged until a local pack is imported.
- */
-export async function renderWithAssetPack(card: Card, ctx: CanvasRenderingContext2D) {
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, 842, 1228);
-  const frame = await draw(ctx, frameKey(card), 0, 0, 842, 1228);
-  if (!frame) throw Error("이 카드 종류의 프레임이 리소스 ZIP에 없습니다.");
-
-  const box = { x: 101, y: card.pendulum ? 235 : 237, w: 640, h: card.pendulum ? 518 : 617 };
+async function drawArtwork(ctx: CanvasRenderingContext2D, card: Card) {
+  const b = card.pendulum ? ASSET_LAYOUT.pendulumArtwork : ASSET_LAYOUT.artwork;
   if (card.artwork) {
-    const img = await load(card.artwork);
-    const scale = Math.max(box.w / img.width, box.h / img.height) * card.zoom;
-    const w = img.width * scale, h = img.height * scale;
-    const x = box.x - (w - box.w) * (card.offsetX + 100) / 200;
-    const y = box.y - (h - box.h) * (card.offsetY + 100) / 200;
+    const img = await image(card.artwork);
+    const scale = Math.max(b.w / img.naturalWidth, b.h / img.naturalHeight) * card.zoom;
+    const w = img.naturalWidth * scale, h = img.naturalHeight * scale;
+    const x = b.x - (w - b.w) * (card.offsetX + 100) / 200;
+    const y = b.y - (h - b.h) * (card.offsetY + 100) / 200;
     ctx.save();
-    ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
+    ctx.beginPath();
+    ctx.rect(b.x, b.y, b.w, b.h);
+    ctx.clip();
     ctx.drawImage(img, x, y, w, h);
     ctx.restore();
   } else {
-    ctx.fillStyle = "#edf1ea"; ctx.fillRect(box.x, box.y, box.w, box.h);
-    ctx.textAlign = "center"; ctx.font = "22px " + FONT; ctx.fillStyle = "#62756e";
-    ctx.fillText("일러스트를 업로드해 주세요", 421, box.y + box.h / 2);
+    ctx.fillStyle = "#e2e7e2";
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+    ctx.fillStyle = "#5c6e66";
+    ctx.font = "34px " + FONT;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("일러스트를 업로드해 주세요", b.x + b.w / 2, b.y + b.h / 2);
   }
+  const pos = card.pendulum ? ASSET_LAYOUT.pendulumArtworkMask : ASSET_LAYOUT.artworkMask;
+  const mask = card.pendulum ? "mask:pendulum" : "mask:default";
+  if (!(await paint(ctx, mask, pos.x, pos.y))) {
+    ctx.strokeStyle = "#b5b6ac";
+    ctx.lineWidth = 5;
+    ctx.strokeRect(b.x, b.y, b.w, b.h);
+  }
+}
+
+async function drawAttribute(ctx: CanvasRenderingContext2D, card: Card) {
+  const code = isMonster(card) ? ATTR_CODES[card.attribute] ?? "dark" : card.frame;
+  await paint(ctx, "attribute:" + code, ASSET_LAYOUT.attribute.x,
+    ASSET_LAYOUT.attribute.y, ASSET_LAYOUT.attribute.w, ASSET_LAYOUT.attribute.h);
+}
+
+function drawName(ctx: CanvasRenderingContext2D, card: Card) {
   ctx.textAlign = "left";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = card.frame === "xyz" || card.frame === "link" ? "#f4eddb" : "#171817";
-  let nameSize = 46;
-  while (nameSize > 19) {
-    ctx.font = "600 " + nameSize + "px " + FONT;
-    if (ctx.measureText(card.name).width <= 604) break;
-    nameSize--;
+  ctx.textBaseline = "top";
+  ctx.fillStyle = ["xyz", "link", "spell", "trap"].includes(card.frame) ? "#ffffff" : "#111915";
+  const maxW = ASSET_LAYOUT.name.maxW;
+  let size = 106;
+  while (size > 41) {
+    ctx.font = "600 " + size + "px " + FONT;
+    if (ctx.measureText(card.name).width <= maxW) break;
+    size--;
   }
-  ctx.fillText(card.name, 80, 105);
+  ctx.fillText(card.name, ASSET_LAYOUT.name.x, ASSET_LAYOUT.name.y);
+}
 
-  const attrKey = card.frame === "spell" || card.frame === "trap"
-    ? card.frame : (ATTR_CODE[card.attribute] ?? "dark");
-  const hasAttribute = await draw(ctx, "attribute:" + attrKey, 701, 70, 71, 71);
-  if (!hasAttribute) {
-    ctx.fillStyle = "#233"; ctx.textAlign = "center";
-    ctx.font = "600 35px " + FONT;
-    ctx.fillText(card.frame === "spell" ? "魔" : card.frame === "trap" ? "罠" : (ATTR_NAME[card.attribute] ?? "闇"), 736, 105);
-    ctx.textAlign = "left";
+async function drawRanksAndArrows(ctx: CanvasRenderingContext2D, card: Card) {
+  if (card.frame === "link") {
+    for (const [bit, dir, x, y] of LINK_GEOMETRY)
+      await paint(ctx, "link_arrow:" + dir + ":" + (card.arrows.includes(bit) ? "on" : "off"), x, y);
+    return;
   }
+  const key = card.frame === "xyz" ? "star:rank" : "star:level";
+  const star = assetUrl(key) ? await image(assetUrl(key)!) : null;
+  for (let i = 0; i < Math.min(card.level, 13); i++) {
+    const x = card.frame === "xyz"
+      ? (card.level < 13 ? 147 : 101) + i * ASSET_LAYOUT.level.step
+      : NATIVE_W - (card.level < 13 ? 147 : 101) - ASSET_LAYOUT.level.size - i * ASSET_LAYOUT.level.step;
+    if (star)
+      ctx.drawImage(star, x, ASSET_LAYOUT.level.y, ASSET_LAYOUT.level.size, ASSET_LAYOUT.level.size);
+  }
+}
 
-  if (isMonster(card) && card.frame !== "link") {
-    const starKey = "star:" + (card.frame === "xyz" ? "rank" : "level");
-    const star = assetUrl(starKey);
-    for (let i = 0; i < card.level; i++) {
-      const x = card.frame === "xyz" ? 88 + i * 47 : 718 - i * 47;
-      if (star) ctx.drawImage(await load(star), x, 167, 37, 37);
-      else {
-        ctx.fillStyle = "#af6033"; ctx.font = "32px " + FONT;
-        ctx.fillText("★", x, 188);
-      }
+async function drawSpellTrapSubtype(ctx: CanvasRenderingContext2D, card: Card) {
+  const subtype = TYPE_CODES[card.subtype];
+  const icon = subtype ? assetUrl("spell_trap_icon:" + subtype) : null;
+  const bracket = "]";
+  const title = "[" + FRAMES[card.frame] + " 카드";
+  ctx.save();
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.font = "600 84px " + FONT;
+  ctx.fillStyle = "#fafafa";
+  ctx.translate(0, 253);
+  ctx.scale(1, .75);
+  const bracketWidth = ctx.measureText(bracket).width;
+  const titleWidth = ctx.measureText(title).width;
+  const right = NATIVE_W - 142;
+  const iconWidth = icon ? 72 : 0;
+  const gap = icon ? 24 : 0;
+  let start = right - bracketWidth - iconWidth - gap - titleWidth;
+  // Do not overlap the level / left edge even for unexpectedly long localizations.
+  start = Math.max(550, start);
+  ctx.fillText(title, start, 0);
+  ctx.fillText(bracket, right - bracketWidth, 0);
+  ctx.restore();
+  if (icon) {
+    const img = await image(icon);
+    ctx.drawImage(img, right - bracketWidth - 12 - 72, 259, 72, 72);
+  }
+}
+
+function drawMonsterKind(ctx: CanvasRenderingContext2D, card: Card) {
+  const labels: string[] = [card.race];
+  if (card.frame === "normal") labels.push("일반");
+  else {
+    if (card.frame !== "effect") labels.push(FRAMES[card.frame]);
+    if (card.pendulum) labels.push("펜듈럼");
+    labels.push("효과");
+  }
+  ctx.font = "600 48px " + FONT;
+  ctx.fillStyle = "#141915";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  ctx.fillText("[" + labels.join(" / ") + "]", ASSET_LAYOUT.effect.x, ASSET_LAYOUT.effect.y);
+}
+
+function drawStats(ctx: CanvasRenderingContext2D, card: Card) {
+  ctx.fillStyle = "#171b17";
+  ctx.textBaseline = "top";
+  ctx.font = "600 52px " + FONT;
+  ctx.textAlign = "right";
+  ctx.fillText(card.atk, 1000, 1839);
+  ctx.fillText(card.frame === "link" ? String(card.level) : card.def, 1280, 1839);
+  ctx.font = "500 36px " + FONT;
+  ctx.fillText("ATK /", 824, 1846);
+  ctx.fillText(card.frame === "link" ? "LINK /" : "DEF /", 1124, 1846);
+}
+
+function drawPassword(ctx: CanvasRenderingContext2D, card: Card) {
+  ctx.font = "400 30px " + FONT;
+  ctx.fillStyle = card.frame === "xyz" ? "#eee" : "#1b201f";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(String(card.id), 66, 1932);
+}
+
+/** Native asset positions from kooriookami YugiohCard, scaled to the current canvas.
+ * The default renderer is retained when no local asset pack is selected.
+ */
+export async function renderWithAssetPack(
+  card: Card, ctx: CanvasRenderingContext2D,
+): Promise<{ fontSize: number }> {
+  ctx.save();
+  try {
+    ctx.scale(VIEW_W / NATIVE_W, VIEW_H / NATIVE_H);
+    if (!(await paint(ctx, frameKey(card), 0, 0, NATIVE_W, NATIVE_H)))
+      throw Error("선택한 카드 종류의 프레임이 리소스 ZIP에 없습니다.");
+    await drawArtwork(ctx, card);
+    drawName(ctx, card);
+    await drawAttribute(ctx, card);
+    if (isMonster(card)) await drawRanksAndArrows(ctx, card);
+    else await drawSpellTrapSubtype(ctx, card);
+
+    if (card.pendulum) {
+      ctx.fillStyle = "#1a201b";
+      ctx.textAlign = "center";
+      ctx.font = "600 90px " + FONT;
+      ctx.textBaseline = "top";
+      ctx.fillText(String(card.scaleLeft), 145, 1370);
+      ctx.fillText(String(card.scaleRight), 1249, 1370);
+      fitText(ctx, card.pendulumEffect, 221, 1282, 950, 230, 36, 29);
     }
-  } else if (card.frame === "link") {
-    for (const [bit, direction, x, y, w, h] of LINK_DIRECTIONS)
-      await draw(ctx, "link_arrow:" + direction + ":" + (card.arrows.includes(bit) ? "on" : "off"), x, y, w, h);
-  } else {
-    ctx.fillStyle = card.frame === "spell" ? "#1b473e" : "#733653";
-    ctx.textAlign = "right"; ctx.font = "600 24px " + FONT;
-    ctx.fillText("【" + FRAMES[card.frame] + " 카드】", 747, 184);
-    if (TYPE_CODE[card.subtype])
-      await draw(ctx, "spell_trap_icon:" + TYPE_CODE[card.subtype], 667, 160, 38, 38);
-    ctx.textAlign = "left";
+    let fontSize: number;
+    if (isMonster(card)) {
+      drawMonsterKind(ctx, card);
+      fontSize = fitText(ctx, card.effect, 109, 1590, 1175, 252, 40, 29);
+      drawStats(ctx, card);
+    } else {
+      // Spell/trap subtypes belong in the heading, not in the effect text box.
+      fontSize = fitText(ctx, card.effect, 109, 1534, 1175, 385, 42, 29);
+    }
+    drawPassword(ctx, card);
+    return { fontSize };
+  } finally {
+    ctx.restore();
   }
-
-  ctx.fillStyle = "#1b201c";
-  if (card.pendulum) {
-    ctx.textAlign = "center"; ctx.font = "600 36px " + FONT;
-    ctx.fillText(String(card.scaleLeft), 107, 816);
-    ctx.fillText(String(card.scaleRight), 735, 816);
-    ctx.textAlign = "left";
-    fitText(ctx, card.pendulumEffect, 160, 794, 526, 105, 21);
-  }
-  const effectY = card.pendulum ? 948 : 920;
-  ctx.font = "600 21px " + FONT;
-  const kind = isMonster(card)
-    ? card.race + (card.frame === "normal" ? " / 일반" : " / 효과")
-    : (card.subtype === "일반" ? "" : card.subtype + " ") + FRAMES[card.frame];
-  ctx.textBaseline = "top"; ctx.fillText("【" + kind + "】", 88, effectY);
-  const fontSize = fitText(ctx, card.effect, 87, effectY + 39, 668, isMonster(card) ? 141 : 198, 27);
-  if (isMonster(card)) {
-    ctx.textAlign = "right"; ctx.textBaseline = "middle";
-    ctx.font = "600 24px " + FONT;
-    ctx.fillText("ATK / " + card.atk + "   " + (card.frame === "link" ? "LINK / " + card.level : "DEF / " + card.def), 750, 1140);
-  }
-  ctx.textAlign = "left"; ctx.font = "500 15px " + FONT; ctx.fillStyle = "#222";
-  ctx.fillText(String(card.id), 60, 1182);
-  return { fontSize };
 }
