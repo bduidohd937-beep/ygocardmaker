@@ -33,6 +33,8 @@ import {
   ATTRIBUTES,
   FRAMES,
   RACES,
+  MONSTER_TRAITS,
+  type MonsterTrait,
   LINK_BITS,
   isMonster,
   mergeCards,
@@ -814,6 +816,9 @@ function App() {
                         ...(["spell", "trap", "link"].includes(frame)
                           ? { pendulum: false }
                           : {}),
+                        ...(["spell", "trap"].includes(frame)
+                          ? { traits: [] }
+                          : {}),
                         ...(frame === "link"
                           ? { level: 2, arrows: [1, 4] }
                           : {}),
@@ -865,6 +870,31 @@ function App() {
                         ))}
                       </select>
                     </label>
+                    <fieldset className="trait-fieldset">
+                      <legend>몬스터 특성</legend>
+                      <div className="trait-grid">
+                        {MONSTER_TRAITS.map((trait: MonsterTrait) => (
+                          <label key={trait} className="trait-option">
+                            <input
+                              type="checkbox"
+                              checked={(card.traits ?? []).includes(trait)}
+                              onChange={(e) => {
+                                const existing = card.traits ?? [];
+                                const next = e.target.checked
+                                  ? MONSTER_TRAITS.filter((t) => t === trait || existing.includes(t))
+                                  : existing.filter((t) => t !== trait);
+                                update({
+                                  traits: next,
+                                  unsupported: (card.unsupported ?? []).filter((flag) =>
+                                    flag !== trait && flag !== trait + " 표기"),
+                                });
+                              }}
+                            />
+                            <span>{trait}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
                     <div className="form-grid">
                       {field("공격력 · ATK", "atk")}
                       {card.frame !== "link" && field("수비력 · DEF", "def")}
