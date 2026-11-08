@@ -24,6 +24,7 @@ import {
   LayoutGrid,
   PanelLeft,
   RotateCcw,
+  Trash2,
   ExternalLink,
 } from "lucide-react";
 import "@fontsource-variable/noto-sans-kr";
@@ -32,9 +33,12 @@ import {
   ATTRIBUTES,
   FRAMES,
   RACES,
+  MONSTER_TRAITS,
+  type MonsterTrait,
   LINK_BITS,
   isMonster,
   mergeCards,
+  normalizeCardTraits,
   newCard,
   nextId,
   parseImport,
@@ -45,9 +49,11 @@ import {
   type Project,
 } from "./model";
 import { renderCard } from "./render";
+import { getActivePack, importAssetZip, loadAssetPack, saveAssetPack, setActivePack } from "./assetPack";
 import { demoProject } from "./samples";
 import { loadProject, saveProject } from "./storage";
 import { download, exportOne, exportZip } from "./export";
+import { deleteProjectCards, getDeletionTargets, toggleVisibleSelection, type DeleteScope } from "./cardDeletion";
 
 function App() {
   const [project, setProject] = useState<Project | null>(null),
@@ -59,25 +65,39 @@ function App() {
     [toast, setToast] = useState(""),
     [saveState, setSaveState] = useState("불러오는 중"),
     [renderError, setRenderError] = useState(""),
+    [previewState, setPreviewState] = useState<"loading" | "ready" | "error">("loading"),
+    [renderedFontSize, setRenderedFontSize] = useState<number | null>(null),
     [modal, setModal] = useState(false),
     [format, setFormat] = useState<"png" | "jpg">("png"),
     [size, setSize] = useState(1263),
     [busy, setBusy] = useState(""),
     [previewZoom, setPreviewZoom] = useState(100),
-    [mobileLibrary, setMobileLibrary] = useState(false);
+    [mobileLibrary, setMobileLibrary] = useState(false),
+    [assetName, setAssetName] = useState(""),
+    [assetCount, setAssetCount] = useState(0),
+    [assetEpoch, setAssetEpoch] = useState(0),
+    [deleteRequest, setDeleteRequest] = useState<{ scope: DeleteScope; ids: number[]; theme: string } | null>(null),
+    [undoDeletion, setUndoDeletion] = useState<{
+      project: Project; active: number; selected: number[]; theme: string;
+    } | null>(null);
   const canvas = useRef<HTMLCanvasElement>(null),
     importInput = useRef<HTMLInputElement>(null),
-    artInput = useRef<HTMLInputElement>(null);
+    artInput = useRef<HTMLInputElement>(null),
+    assetInput = useRef<HTMLInputElement>(null);
   const card = project?.cards.find((c) => c.id === active);
+  const packFiles = assetCount ? getActivePack()?.files : undefined;
+  const packMissingMask = !!packFiles && (card?.pendulum ? !packFiles["mask:pendulum"] : !packFiles["mask:default"]);
+  const packMissingNameFont = !!packFiles && !packFiles["font:name"];
   useEffect(() => {
     let live = true;
     loadProject()
       .then((p) => {
         if (!live) return;
         const value = p ?? demoProject();
-        setProject(value);
-        setActive(value.cards[0]?.id ?? 0);
-        setSelected(value.cards.map((c) => c.id));
+        const migrated = { ...value, cards: value.cards.map(normalizeCardTraits) };
+        setProject(migrated);
+        setActive(migrated.cards[0]?.id ?? 0);
+        setSelected(migrated.cards.map((c) => c.id));
       })
       .catch(() => {
         if (live) {
@@ -93,6 +113,17 @@ function App() {
     };
   }, []);
   useEffect(() => {
+    let live = true;
+    loadAssetPack().then((pack) => {
+      if (!live || !pack) return;
+      setActivePack(pack);
+      setAssetName(pack.name);
+      setAssetCount(Object.keys(pack.files).length);
+      setAssetEpoch((n) => n + 1);
+    }).catch(() => { if (live) setToast("자산팩 복원 실패 · ZIP을 다시 가져와 주세요."); });
+    return () => { live = false; };
+  }, []);
+  useEffect(() => {
     if (!project) return;
     setSaveState("저장 중");
     const timer = setTimeout(() => {
@@ -105,23 +136,34 @@ function App() {
   useEffect(() => {
     let live = true;
     if (!card) return;
+    // The previous card is not a valid preview of a newly selected card.
+    // Keep its canvas hidden until the new card finishes rendering.
+    setPreviewState("loading");
+    setRenderError("");
+    setRenderedFontSize(null);
     const target = document.createElement("canvas");
     renderCard(card, target)
-      .then(() => {
+      .then((result) => {
         if (live && canvas.current) {
           canvas.current.width = target.width;
           canvas.current.height = target.height;
           canvas.current.getContext("2d")!.drawImage(target, 0, 0);
           setRenderError("");
+          setRenderedFontSize(result.fontSize);
+          setPreviewState("ready");
         }
       })
       .catch((e) => {
-        if (live) setRenderError(String(e.message));
+        if (live) {
+          setRenderError(e instanceof Error ? e.message : String(e));
+          setPreviewState("error");
+          setRenderedFontSize(null);
+        }
       });
     return () => {
       live = false;
     };
-  }, [card]);
+  }, [card, assetEpoch]);
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(""), 6000);
@@ -129,6 +171,7 @@ function App() {
   }, [toast]);
   const update = (value: Partial<Card>) => {
     if (!card) return;
+    setUndoDeletion(null);
     setProject((p) =>
       p
         ? {
@@ -156,6 +199,7 @@ function App() {
   };
   const addCard = (duplicate = false) => {
     if (!project) return;
+    setUndoDeletion(null);
     const id = nextId(project.cards);
     const c =
       duplicate && card
@@ -177,6 +221,7 @@ function App() {
       else incoming = parseImport(JSON.parse(await file.text()));
       if (incoming.length > 2000)
         throw Error("한 번에 2000장까지 가져올 수 있습니다.");
+      setUndoDeletion(null);
       setProject((p) =>
         p ? { ...p, cards: mergeCards(p.cards, incoming) } : p,
       );
@@ -187,6 +232,30 @@ function App() {
     } catch (e) {
       setToast(e instanceof Error ? e.message : "가져오기 실패");
     }
+  };
+  const uploadAssets = async (file: File) => {
+    setBusy("카드 리소스 분류 중");
+    try {
+      const report = await importAssetZip(file);
+      await saveAssetPack(report.pack);
+      setActivePack(report.pack);
+      setAssetName(report.pack.name);
+      setAssetCount(Object.keys(report.pack.files).length);
+      setAssetEpoch((n) => n + 1);
+      setToast("리소스 " + Object.keys(report.pack.files).length + "종 적용 · 중복 " + report.duplicates + "건 정리");
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : "리소스 ZIP을 읽을 수 없습니다.");
+    } finally { setBusy(""); }
+  };
+  const clearAssets = async () => {
+    try {
+      await saveAssetPack(null);
+      setActivePack(null);
+      setAssetName("");
+      setAssetCount(0);
+      setAssetEpoch((n) => n + 1);
+      setToast("기본 프레임으로 돌아왔습니다.");
+    } catch { setToast("자산팩 초기화에 실패했습니다."); }
   };
   const uploadArt = async (file: File) => {
     try {
@@ -212,6 +281,64 @@ function App() {
       setToast(e instanceof Error ? e.message : "이미지를 읽을 수 없습니다.");
     }
   };
+  const visibleCards = project?.cards.filter(
+    (c) =>
+      (theme === "전체 테마" || c.theme === theme) &&
+      `${c.name} ${c.id}`.toLowerCase().includes(filter.toLowerCase()),
+  ) ?? [];
+  const visibleIds = visibleCards.map((c) => c.id);
+
+  const openDelete = (scope: DeleteScope) => {
+    if (!project) return;
+    const targets = getDeletionTargets(project.cards, scope, selected, visibleIds, theme);
+    if (!targets.length) {
+      setToast("삭제할 카드를 먼저 선택하거나 구체적인 테마를 선택해 주세요.");
+      return;
+    }
+    setDeleteRequest({ scope, ids: targets.map((c) => c.id), theme });
+  };
+  const confirmDelete = () => {
+    if (!project || !deleteRequest) return;
+    const requestedIds = new Set(deleteRequest.ids);
+    const targets = project.cards.filter((c) =>
+      requestedIds.has(c.id) &&
+      (deleteRequest.scope !== "theme" || c.theme === deleteRequest.theme),
+    );
+    if (!targets.length) {
+      setDeleteRequest(null);
+      return;
+    }
+    setUndoDeletion({ project, active, selected, theme });
+    const deletedIds = targets.map((c) => c.id);
+    const deletedSet = new Set(deletedIds);
+    const next = deleteProjectCards(project, deletedIds);
+    setProject(next);
+    setSelected((s) => s.filter((id) => !deletedSet.has(id)));
+    if (!next.cards.some((c) => c.id === active)) {
+      const sameTheme = next.cards.find((c) => c.theme === card?.theme);
+      setActive(sameTheme?.id ?? next.cards[0]?.id ?? 0);
+    }
+    if (theme !== "전체 테마" && !next.cards.some((c) => c.theme === theme))
+      setTheme("전체 테마");
+    setDeleteRequest(null);
+    setToast(`${targets.length}장 삭제 · '삭제 취소'로 복원할 수 있습니다.`);
+  };
+  const undoLastDeletion = () => {
+    if (!undoDeletion) return;
+    setProject(undoDeletion.project);
+    setActive(undoDeletion.active);
+    setSelected(undoDeletion.selected);
+    setTheme(undoDeletion.theme);
+    setUndoDeletion(null);
+    setToast("삭제한 카드를 복원했습니다.");
+  };
+  const saveBackupJson = () => {
+    if (!project) return;
+    download(
+      new Blob([JSON.stringify(project, null, 2)], { type: "application/json" }),
+      "duelmind-before-delete.json",
+    );
+  };
   const doExport = async (zip: boolean) => {
     if (!project || !card) return;
     setBusy("이미지 준비 중");
@@ -232,18 +359,55 @@ function App() {
       setBusy("");
     }
   };
-  if (!project || !card)
+  if (!project)
     return (
       <div className="loading">
         <Layers /> 카드 작업실을 준비하고 있습니다…
       </div>
     );
+  if (!card)
+    return (
+      <div className="empty-workspace">
+        <Layers size={42} />
+        <h1>작업실에 카드가 없습니다.</h1>
+        <p>새 카드를 만들거나 CDB / JSON 파일을 불러올 수 있어요.</p>
+        <div className="empty-workspace-actions">
+          <button className="primary" onClick={() => addCard()}>
+            <Plus size={16} /> 새 카드 만들기
+          </button>
+          <button onClick={() => importInput.current?.click()}>
+            <ArrowUpFromLine size={16} /> CDB / JSON 가져오기
+          </button>
+          {undoDeletion && (
+            <button onClick={undoLastDeletion}>
+              <RotateCcw size={16} /> 직전 삭제 취소
+            </button>
+          )}
+        </div>
+        <input
+          ref={importInput}
+          type="file"
+          accept=".json,.cdb"
+          aria-label="카드 데이터 파일"
+          hidden
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) void importFile(file);
+            e.target.value = "";
+          }}
+        />
+        <p>원본 CDB와 일러스트 파일은 삭제되지 않았습니다.</p>
+      </div>
+    );
   const themes = [...new Set(project.cards.map((c) => c.theme))];
-  const visible = project.cards.filter(
-    (c) =>
-      (theme === "전체 테마" || c.theme === theme) &&
-      `${c.name} ${c.id}`.toLowerCase().includes(filter.toLowerCase()),
-  );
+  const visible = visibleCards;
+  const visibleSelectedIds = visibleIds.filter((id) => selected.includes(id));
+  const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.includes(id));
+  const currentThemeCount = theme === "전체 테마" ? 0 :
+    project.cards.filter((c) => c.theme === theme).length;
+  const deletePreview = deleteRequest
+    ? project.cards.filter((c) => deleteRequest.ids.includes(c.id))
+    : [];
   const errors = validateCards(
     project.cards.filter((c) => selected.includes(c.id)),
   );
@@ -350,18 +514,33 @@ function App() {
             </span>
             <button
               className="text-button"
-              onClick={() =>
-                setSelected(
-                  selected.length === project.cards.length
-                    ? []
-                    : project.cards.map((c) => c.id),
-                )
-              }
+              disabled={!visible.length}
+              onClick={() => setSelected((current) => toggleVisibleSelection(current, visibleIds))}
             >
-              {selected.length === project.cards.length
-                ? "선택 해제"
-                : "전체 선택"}
+              {allVisibleSelected ? "현재 목록 선택 해제" : "현재 목록 전체 선택"}
             </button>
+          </div>
+          <div className="delete-actions">
+            <button
+              className="delete-action"
+              disabled={!visibleSelectedIds.length}
+              onClick={() => openDelete("selected")}
+            >
+              <Trash2 size={13} /> 선택 삭제 ({visibleSelectedIds.length})
+            </button>
+            <button
+              className="delete-action"
+              disabled={!currentThemeCount}
+              onClick={() => openDelete("theme")}
+              title={theme === "전체 테마" ? "먼저 삭제할 테마를 선택하세요." : `${theme} 카드만 삭제`}
+            >
+              <Trash2 size={13} /> 현재 테마 삭제
+            </button>
+            {undoDeletion && (
+              <button className="undo-action" onClick={undoLastDeletion}>
+                <RotateCcw size={13} /> 삭제 취소
+              </button>
+            )}
           </div>
           <div className="card-list">
             {visible.map((c) => (
@@ -434,9 +613,41 @@ function App() {
                 e.target.value = "";
               }}
             />
+            <button
+              className="import-button"
+              onClick={() => assetInput.current?.click()}
+              title="ZIP 안의 프레임과 아이콘을 자동으로 분류합니다"
+            >
+              <Layers size={15} /> 카드 프레임 ZIP 불러오기
+            </button>
+            <input
+              ref={assetInput}
+              type="file"
+              accept=".zip,application/zip"
+              aria-label="카드 프레임 리소스 ZIP"
+              hidden
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void uploadAssets(file);
+                e.target.value = "";
+              }}
+            />
+            {assetCount > 0 && (
+              <button className="text-button" onClick={() => void clearAssets()}>
+                기본 프레임 복귀
+              </button>
+            )}
             <div className="local-note">
-              <span className="dot" /> 파일은 브라우저 안에서만 처리됩니다.
+              <span className="dot" />
+              {assetCount > 0 ? assetName + " · " + assetCount + "종 자동 적용" : "카드 프레임은 현재 기본 디자인입니다."}
             </div>
+            {assetCount > 0 && (packMissingMask || packMissingNameFont) && (
+              <div className="local-note" role="status">
+                {packMissingMask ? "마스크 누락 · " : ""}
+                {packMissingNameFont ? "원본 한국어 카드명 폰트 누락" : ""}
+              </div>
+            )}
+            <div className="local-note">리소스 파일은 이 브라우저에 저장되며 공개 서버로 업로드되지 않습니다.</div>
           </div>
         </aside>
         <main className="stage">
@@ -454,7 +665,7 @@ function App() {
               <strong>카드 편집</strong>
             </div>
             <div className="stage-options">
-              <span className="live-dot" /> 실시간 미리보기{" "}
+              <span className="live-dot" /> {assetCount ? "자산팩 미리보기" : "실시간 미리보기"}{" "}
               <button
                 title="카드 복제"
                 aria-label="카드 복제"
@@ -479,7 +690,15 @@ function App() {
                 ref={canvas}
                 role="img"
                 aria-label={`${card.name} 카드 미리보기`}
+                style={{ visibility: previewState === "ready" ? "visible" : "hidden" }}
               />
+              {previewState !== "ready" && (
+                <div className="preview-status" role="status" aria-live="polite">
+                  <span>{card.name}</span>
+                  <strong>{previewState === "loading" ? "카드 렌더링 중…" : "미리보기 생성 실패"}</strong>
+                  <small>{previewState === "error" ? "효과문 및 카드 설정을 확인해 주세요." : "카드 내용과 글꼴을 적용하고 있습니다."}</small>
+                </div>
+              )}
             </div>
             <div className="preview-caption">
               <span className="small-diamond" /> {card.id}{" "}
@@ -488,6 +707,16 @@ function App() {
             {renderError && (
               <div role="alert" className="render-error">
                 {renderError}
+              </div>
+            )}
+            {previewState === "ready" && renderedFontSize !== null && renderedFontSize <= 23 && (
+              <div className="render-density-warning" role="status">
+                글씨가 매우 작습니다 ({renderedFontSize}px). 고화질로 확인하고 필요하면 효과문을 정리하세요.
+              </div>
+            )}
+            {packMissingMask && (
+              <div role="alert" className="render-error">
+                카드 마스크가 자산 ZIP에 없습니다. 펜듈럼/일반 마스크 2개를 포함한 새 ZIP을 불러오세요.
               </div>
             )}
             <div className="preview-zoom">
@@ -589,6 +818,9 @@ function App() {
                         ...(["spell", "trap", "link"].includes(frame)
                           ? { pendulum: false }
                           : {}),
+                        ...(["spell", "trap"].includes(frame)
+                          ? { traits: [] }
+                          : {}),
                         ...(frame === "link"
                           ? { level: 2, arrows: [1, 4] }
                           : {}),
@@ -640,6 +872,31 @@ function App() {
                         ))}
                       </select>
                     </label>
+                    <fieldset className="trait-fieldset">
+                      <legend>몬스터 특성</legend>
+                      <div className="trait-grid">
+                        {MONSTER_TRAITS.map((trait: MonsterTrait) => (
+                          <label key={trait} className="trait-option">
+                            <input
+                              type="checkbox"
+                              checked={(card.traits ?? []).includes(trait)}
+                              onChange={(e) => {
+                                const existing = card.traits ?? [];
+                                const next = e.target.checked
+                                  ? MONSTER_TRAITS.filter((t) => t === trait || existing.includes(t))
+                                  : existing.filter((t) => t !== trait);
+                                update({
+                                  traits: next,
+                                  unsupported: (card.unsupported ?? []).filter((flag) =>
+                                    flag !== trait && flag !== trait + " 표기"),
+                                });
+                              }}
+                            />
+                            <span>{trait}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
                     <div className="form-grid">
                       {field("공격력 · ATK", "atk")}
                       {card.frame !== "link" && field("수비력 · DEF", "def")}
@@ -729,7 +986,7 @@ function App() {
                     onChange={(e) => update({ effect: e.target.value })}
                   />
                   <span className="text-counter">
-                    한국어 자동 줄바꿈 <span>{card.effect.length}자</span>
+                    자동 줄바꿈 · 고정 글자 수 제한 없음 <span>{card.effect.length}자</span>
                   </span>
                 </label>
                 {card.unsupported?.length ? (
@@ -948,6 +1205,57 @@ function App() {
               이미지 제작 도구입니다. 카드 효과 구현과 실제 EDOPro 적용은 별도로
               확인해 주세요.
             </p>
+          </section>
+        </div>
+      )}
+      {deleteRequest && (
+        <div className="modal-backdrop">
+          <section
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="delete-title"
+            aria-describedby="delete-explanation"
+            className="export-modal deletion-modal"
+          >
+            <div className="modal-header">
+              <span className="modal-icon deletion-icon"><Trash2 size={22} /></span>
+              <button className="icon-button" aria-label="삭제 취소" onClick={() => setDeleteRequest(null)}>
+                <X size={19} />
+              </button>
+            </div>
+            <h2 id="delete-title">
+              {deleteRequest.scope === "theme"
+                ? `${deleteRequest.theme} 테마 카드 삭제`
+                : `선택한 ${deletePreview.length}장 삭제`}
+            </h2>
+            <p id="delete-explanation">
+              카드 스튜디오 작업실에서 {deletePreview.length}장을 삭제합니다.
+              컴퓨터의 원본 CDB와 이미지 파일은 변경되지 않습니다.
+            </p>
+            <div className="deletion-target-list">
+              {deletePreview.slice(0, 10).map((c) => (
+                <div key={c.id}>
+                  <strong>{c.name}</strong>
+                  <span>{c.theme} · {c.id}</span>
+                </div>
+              ))}
+              {deletePreview.length > 10 && (
+                <p>그 외 {deletePreview.length - 10}장</p>
+              )}
+            </div>
+            <p className="deletion-hint">
+              삭제 전 JSON을 저장하면 새로고침 후에도 복원할 수 있습니다.
+              삭제 취소 버튼은 현재 작업실을 열어둔 동안에만 지원합니다.
+            </p>
+            <button className="deletion-backup" onClick={saveBackupJson}>
+              <FileJson size={15} /> 삭제 전 JSON 백업 다운로드
+            </button>
+            <div className="deletion-footer">
+              <button onClick={() => setDeleteRequest(null)}>돌아가기</button>
+              <button className="deletion-confirm" onClick={confirmDelete}>
+                <Trash2 size={15} /> {deletePreview.length}장 삭제
+              </button>
+            </div>
           </section>
         </div>
       )}

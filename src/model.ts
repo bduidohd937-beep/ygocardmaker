@@ -40,6 +40,29 @@ export const RACES = [
   "환상마족",
 ];
 export const LINK_BITS = [1, 2, 4, 8, 32, 64, 128, 256];
+/** EDOPro/OCG card type flags. These are categories, not separate card frames. */
+export const MONSTER_TRAIT_FLAGS = {
+  "튜너": 0x1000,
+  "리버스": 0x200000,
+  "유니온": 0x400,
+  "스피릿": 0x200,
+  "듀얼": 0x800,
+  "툰": 0x400000,
+} as const;
+export type MonsterTrait = keyof typeof MONSTER_TRAIT_FLAGS;
+export const MONSTER_TRAITS = Object.keys(MONSTER_TRAIT_FLAGS) as MonsterTrait[];
+
+export function monsterKindLabels(card: Card): string[] {
+  if (!isMonster(card)) return [];
+  const labels = [card.race];
+  if (card.frame !== "effect" && card.frame !== "normal") labels.push(FRAMES[card.frame]);
+  if (card.pendulum) labels.push("펜듈럼");
+  for (const trait of MONSTER_TRAITS) {
+    if (card.traits?.includes(trait)) labels.push(trait);
+  }
+  labels.push(card.frame === "normal" ? "일반" : "효과");
+  return labels;
+}
 export interface Card {
   id: number;
   name: string;
@@ -47,6 +70,8 @@ export interface Card {
   frame: Frame;
   attribute: string;
   race: string;
+  /** Optional for backward compatibility with existing IndexedDB/JSON projects. */
+  traits?: MonsterTrait[];
   level: number;
   atk: string;
   def: string;
@@ -77,6 +102,7 @@ export function newCard(id = 210000401, theme = "새로운 테마"): Card {
     frame: "effect",
     attribute: "바람",
     race: "기계족",
+    traits: [],
     level: 4,
     atk: "1600",
     def: "1200",
@@ -117,6 +143,12 @@ export function validateCards(cards: Card[], requireArt = true): string[] {
       c.arrows.some((a) => !LINK_BITS.includes(a))
     )
       errors.push(`${tag}: 잘못된 링크 마커`);
+    if (c.traits !== undefined &&
+      (!Array.isArray(c.traits) ||
+       c.traits.some((trait) => !MONSTER_TRAITS.includes(trait)) ||
+       new Set(c.traits).size !== c.traits.length ||
+       (!isMonster(c) && c.traits.length > 0)))
+      errors.push(`${tag}: 몬스터 특성 설정이 올바르지 않습니다.`);
     if (requireArt && !c.artwork) errors.push(`${tag}: 일러스트가 없습니다.`);
     if (
       isMonster(c) &&
@@ -176,6 +208,11 @@ export function parseImport(raw: unknown): Card[] {
       } as Card;
       c.artwork = artData(item.artwork);
       c.id = id;
+      // Legacy project JSON has no traits; preserve all existing artwork and fields.
+      if (!("traits" in item)) c.traits = [];
+      else if (!Array.isArray(item.traits) ||
+        item.traits.some((value: unknown) => !MONSTER_TRAITS.includes(value as MonsterTrait)))
+        throw Error("몬스터 특성 정보가 올바르지 않습니다.");
       if (
         typeof c.name !== "string" ||
         typeof c.effect !== "string" ||
@@ -203,7 +240,7 @@ export function parseImport(raw: unknown): Card[] {
       )
         throw Error("일러스트 설정이 올바르지 않습니다.");
     } else c = fromEDO(item);
-    return c;
+    return normalizeCardTraits(c);
   });
   const errors = validateCards(
     cards.map((c) => ({ ...c, unsupported: [] })),
@@ -212,21 +249,48 @@ export function parseImport(raw: unknown): Card[] {
   if (errors.length) throw Error(errors.slice(0, 8).join("\n"));
   return cards;
 }
+/** Upgrade older locally saved projects that stored tuner/flip/toon as warnings.
+ * Keep all artwork, crop settings and unrelated review notes unchanged.
+ */
+export function normalizeCardTraits(card: Card): Card {
+  const legacy: Partial<Record<MonsterTrait, string>> = {
+    "튜너": "튜너 표기",
+    "리버스": "리버스 표기",
+    "툰": "툰",
+  };
+  const existing = Array.isArray(card.traits) ? card.traits : [];
+  const found = MONSTER_TRAITS.filter((trait) =>
+    existing.includes(trait) ||
+    (isMonster(card) && !!card.unsupported?.includes(legacy[trait] ?? "\u0000")),
+  );
+  const legacyLabels = Object.values(legacy);
+  const review = card.unsupported?.filter((flag) => !legacyLabels.includes(flag));
+  return {
+    ...card,
+    traits: isMonster(card) ? found : [],
+    ...(card.unsupported !== undefined ? { unsupported: review } : {}),
+  };
+}
 export function mergeCards(existing: Card[], incoming: Card[]): Card[] {
   const map = new Map(existing.map((c) => [c.id, c]));
   for (const c of incoming) {
     const prev = map.get(c.id);
     map.set(
       c.id,
-      prev?.artwork
-        ? {
-            ...c,
-            artwork: prev.artwork,
-            zoom: prev.zoom,
-            offsetX: prev.offsetX,
-            offsetY: prev.offsetY,
-          }
-        : c,
+      {
+        ...c,
+        // A CDB row does not carry theme metadata. Preserve the editor's
+        // manually assigned theme when refreshing that row from a CDB.
+        ...(prev && c.theme === "가져온 테마" ? { theme: prev.theme } : {}),
+        ...(prev?.artwork
+          ? {
+              artwork: prev.artwork,
+              zoom: prev.zoom,
+              offsetX: prev.offsetX,
+              offsetY: prev.offsetY,
+            }
+          : {}),
+      },
     );
   }
   return [...map.values()];
@@ -237,6 +301,9 @@ export function fromEDO(row: Record<string, unknown>): Card {
   const lvl = Number(row.level) || 0;
   c.name = String(row.name ?? "이름 없는 카드");
   c.effect = String(row.desc ?? row.effect ?? "");
+  c.traits = MONSTER_TRAITS.filter(
+    (trait) => (type & MONSTER_TRAIT_FLAGS[trait]) !== 0,
+  );
   c.frame =
     type & 2
       ? "spell"
@@ -302,10 +369,7 @@ export function fromEDO(row: Record<string, unknown>): Card {
   }
   const flags: string[] = [];
   if (type & 0x4000) flags.push("토큰 프레임");
-  if (type & 0x400000) flags.push("툰");
   if (type & 0x4000000 && type & 0x1000000) flags.push("링크 펜듈럼");
-  if (type & 0x1000) flags.push("튜너 표기");
-  if (type & 0x200000) flags.push("리버스 표기");
   if (flags.length) c.unsupported = [...(c.unsupported ?? []), ...flags];
   return c;
 }
