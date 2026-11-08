@@ -1,4 +1,4 @@
-import { isMonster, monsterKindLabels, type Card } from "./model";
+import { FRAMES, isMonster, monsterKindLabels, type Card } from "./model";
 import { assetFont, assetUrl, ensureAssetFonts } from "./assetPack";
 
 const FONT = '"Noto Sans KR Variable", sans-serif';
