@@ -104,35 +104,38 @@ describe("pendulum text layer protection", () => {
   });
 });
 
-describe("ATK/DEF original card placement", () => {
-  it("anchors both labels and numerical values to one baseline", () => {
-    expect(STAT_LAYOUT.atkLabelX).toBe(109 + 630);
-    expect(STAT_LAYOUT.defLabelX).toBe(109 + 920);
-    expect(STAT_LAYOUT.atkValueRight).toBe(999);
-    expect(STAT_LAYOUT.defValueRight).toBe(1282);
-    expect(STAT_LAYOUT.baseline).toBeGreaterThan(1844);
-    expect(STAT_LAYOUT.baseline).toBeLessThan(1932);
+describe("ATK/DEF balanced placement", () => {
+  it("moves the ATK and DEF groups slightly to the right but remains inside the frame", () => {
+    expect(STAT_LAYOUT.atkLabelX).toBe(751);
+    expect(STAT_LAYOUT.atkValueRight).toBe(1011);
+    expect(STAT_LAYOUT.defLabelX).toBe(1039);
+    expect(STAT_LAYOUT.defValueRight).toBe(1288);
+    expect(STAT_LAYOUT.defValueRight).toBeLessThan(1294);
+    expect(STAT_LAYOUT.baseline).toBe(1879);
   });
-  it("keeps number size proportional and off the bottom border", () => {
-    expect(STAT_LAYOUT.maxNumberSize).toBeLessThanOrEqual(STAT_LAYOUT.labelSize * 1.9);
-    expect(STAT_LAYOUT.baseline).toBeLessThanOrEqual(1880);
-    expect(STAT_LAYOUT.baseline).toBeGreaterThan(1860);
+  it("keeps the numeral size visually comparable to its label", () => {
+    expect(STAT_LAYOUT.maxNumberSize).toBeLessThanOrEqual(STAT_LAYOUT.labelSize * 1.5);
+    expect(STAT_LAYOUT.minNumberSize).toBeGreaterThan(0);
     expect(STAT_LAYOUT.gap).toBeGreaterThanOrEqual(12);
   });
-  it("grows 4-digit ATK/DEF and shrinks longer numbers within the same slot", () => {
+  it("shrinks both short and long numbers rather than expanding short numbers", () => {
     const approximate = (size: number, content: string) => size * 0.55 * content.length;
-    const short = chooseStatNumberSize("1600", 145, approximate);
+    const single = chooseStatNumberSize("0", 145, approximate);
+    const triple = chooseStatNumberSize("800", 145, approximate);
+    const standard = chooseStatNumberSize("1600", 145, approximate);
     const long = chooseStatNumberSize("111111", 145, approximate);
-    expect(short).toBe(STAT_LAYOUT.maxNumberSize);
-    expect(long).toBeLessThan(short);
+    expect(single).toBe(40);
+    expect(triple).toBe(45);
+    expect(standard).toBe(50);
+    expect(long).toBe(40);
     expect(approximate(long, "111111")).toBeLessThanOrEqual(145);
   });
-  it("never exceeds the configured size limits on extremely long custom stats", () => {
+  it("shrinks unusual custom stats without overflowing their slot", () => {
     const measure = (size: number, content: string) => size * content.length;
-    expect(chooseStatNumberSize("1", 1000, measure)).toBe(STAT_LAYOUT.maxNumberSize);
+    expect(chooseStatNumberSize("1", 1000, measure)).toBe(40);
     expect(chooseStatNumberSize("111111111111", 50, measure)).toBe(STAT_LAYOUT.minNumberSize);
   });
-  it("reserves spaces between labels and values within each stat group", () => {
+  it("preserves separation between the two stat groups", () => {
     expect(STAT_LAYOUT.atkLabelX + STAT_LAYOUT.gap).toBeLessThan(STAT_LAYOUT.atkValueRight);
     expect(STAT_LAYOUT.defLabelX + STAT_LAYOUT.gap).toBeLessThan(STAT_LAYOUT.defValueRight);
     expect(STAT_LAYOUT.atkValueRight + STAT_LAYOUT.gap).toBeLessThan(STAT_LAYOUT.defLabelX);
