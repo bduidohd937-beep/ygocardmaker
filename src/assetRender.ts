@@ -1,4 +1,4 @@
-import { FRAMES, isMonster, type Card } from "./model";
+import { isMonster, monsterKindLabels, type Card } from "./model";
 import { assetFont, assetUrl, ensureAssetFonts } from "./assetPack";
 
 const FONT = '"Noto Sans KR Variable", sans-serif';
@@ -253,18 +253,18 @@ async function drawSpellTrapSubtype(ctx: CanvasRenderingContext2D, card: Card) {
 }
 
 function drawMonsterKind(ctx: CanvasRenderingContext2D, card: Card) {
-  const labels: string[] = [card.race];
-  if (card.frame === "normal") labels.push("일반");
-  else {
-    if (card.frame !== "effect") labels.push(FRAMES[card.frame]);
-    if (card.pendulum) labels.push("펜듈럼");
-    labels.push("효과");
+  const line = "[" + monsterKindLabels(card).join(" / ") + "]";
+  const fontFamily = assetFont("type");
+  let size = assetUrl("font:type") ? 48 : 43;
+  while (size > 29) {
+    ctx.font = "600 " + size + "px " + fontFamily;
+    if (ctx.measureText(line).width <= ASSET_LAYOUT.effect.maxW) break;
+    size--;
   }
-  ctx.font = "600 " + (assetUrl("font:type") ? 48 : 43) + "px " + assetFont("type");
   ctx.fillStyle = "#141915";
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
-  ctx.fillText("[" + labels.join(" / ") + "]", ASSET_LAYOUT.effect.x, ASSET_LAYOUT.effect.y);
+  ctx.fillText(line, ASSET_LAYOUT.effect.x, ASSET_LAYOUT.effect.y, ASSET_LAYOUT.effect.maxW);
 }
 
 /**
