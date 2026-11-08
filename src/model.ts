@@ -240,7 +240,7 @@ export function parseImport(raw: unknown): Card[] {
       )
         throw Error("일러스트 설정이 올바르지 않습니다.");
     } else c = fromEDO(item);
-    return c;
+    return normalizeCardTraits(c);
   });
   const errors = validateCards(
     cards.map((c) => ({ ...c, unsupported: [] })),
@@ -248,6 +248,28 @@ export function parseImport(raw: unknown): Card[] {
   );
   if (errors.length) throw Error(errors.slice(0, 8).join("\n"));
   return cards;
+}
+/** Upgrade older locally saved projects that stored tuner/flip/toon as warnings.
+ * Keep all artwork, crop settings and unrelated review notes unchanged.
+ */
+export function normalizeCardTraits(card: Card): Card {
+  const legacy: Partial<Record<MonsterTrait, string>> = {
+    "튜너": "튜너 표기",
+    "리버스": "리버스 표기",
+    "툰": "툰",
+  };
+  const existing = Array.isArray(card.traits) ? card.traits : [];
+  const found = MONSTER_TRAITS.filter((trait) =>
+    existing.includes(trait) ||
+    (isMonster(card) && !!card.unsupported?.includes(legacy[trait] ?? "\u0000")),
+  );
+  const legacyLabels = Object.values(legacy);
+  const review = card.unsupported?.filter((flag) => !legacyLabels.includes(flag));
+  return {
+    ...card,
+    traits: isMonster(card) ? found : [],
+    ...(card.unsupported !== undefined ? { unsupported: review } : {}),
+  };
 }
 export function mergeCards(existing: Card[], incoming: Card[]): Card[] {
   const map = new Map(existing.map((c) => [c.id, c]));
