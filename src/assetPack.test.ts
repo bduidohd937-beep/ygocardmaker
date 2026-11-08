@@ -113,6 +113,12 @@ describe("ATK/DEF original card placement", () => {
     expect(STAT_LAYOUT.baseline).toBeGreaterThan(1844);
     expect(STAT_LAYOUT.baseline).toBeLessThan(1932);
   });
+  it("keeps number size proportional and off the bottom border", () => {
+    expect(STAT_LAYOUT.maxNumberSize).toBeLessThanOrEqual(STAT_LAYOUT.labelSize * 1.5);
+    expect(STAT_LAYOUT.baseline).toBeLessThanOrEqual(1880);
+    expect(STAT_LAYOUT.baseline).toBeGreaterThan(1860);
+    expect(STAT_LAYOUT.gap).toBeGreaterThanOrEqual(12);
+  });
   it("reserves spaces between labels and values within each stat group", () => {
     expect(STAT_LAYOUT.atkLabelX + STAT_LAYOUT.gap).toBeLessThan(STAT_LAYOUT.atkValueRight);
     expect(STAT_LAYOUT.defLabelX + STAT_LAYOUT.gap).toBeLessThan(STAT_LAYOUT.defValueRight);
