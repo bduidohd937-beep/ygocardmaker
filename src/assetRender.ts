@@ -268,14 +268,25 @@ export const STAT_LAYOUT = {
   atkValueRight: 999,
   defLabelX: 1029,
   defValueRight: 1282,
-  // Optical adjustment for the locally available Noto fallback: the original
-  // card numeral font has shorter glyphs, so 62px sat against the lower frame.
+  // Keep the corrected baseline, but scale numerals to the available width.
+  // Four-digit values should look like full-size OCG statistics; longer values shrink.
   baseline: 1879,
   labelSize: 35,
-  maxNumberSize: 50,
+  maxNumberSize: 64,
   minNumberSize: 27,
   gap: 14,
 } as const;
+
+export function chooseStatNumberSize(
+  content: string,
+  available: number,
+  measureAtSize: (size: number, content: string) => number,
+): number {
+  for (let size = STAT_LAYOUT.maxNumberSize; size > STAT_LAYOUT.minNumberSize; size--) {
+    if (measureAtSize(size, content) <= available) return size;
+  }
+  return STAT_LAYOUT.minNumberSize;
+}
 
 function drawStats(ctx: CanvasRenderingContext2D, card: Card) {
   ctx.save();
@@ -289,15 +300,15 @@ function drawStats(ctx: CanvasRenderingContext2D, card: Card) {
       ctx.textAlign = "left";
       ctx.fillText(label, labelX, STAT_LAYOUT.baseline);
       const available = valueRight - labelX - ctx.measureText(label).width - STAT_LAYOUT.gap;
-      let size: number = STAT_LAYOUT.maxNumberSize;
       const content = String(value);
-      while (size > STAT_LAYOUT.minNumberSize) {
-        ctx.font = "600 " + size + "px " + FONT;
-        if (ctx.measureText(content).width <= available) break;
-        size--;
-      }
+      const size = chooseStatNumberSize(content, available, (candidate, text) => {
+        ctx.font = "600 " + candidate + "px " + FONT;
+        return ctx.measureText(text).width;
+      });
+      ctx.font = "600 " + size + "px " + FONT;
       ctx.textAlign = "right";
-      ctx.fillText(content, valueRight, STAT_LAYOUT.baseline);
+      // maxWidth prevents overflow even for unusually long custom ATK/DEF values.
+      ctx.fillText(content, valueRight, STAT_LAYOUT.baseline, Math.max(1, available));
     };
     pair("ATK /", card.atk, STAT_LAYOUT.atkLabelX, STAT_LAYOUT.atkValueRight);
     pair(card.frame === "link" ? "LINK /" : "DEF /",
