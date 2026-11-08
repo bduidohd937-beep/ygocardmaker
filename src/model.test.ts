@@ -196,6 +196,6 @@ describe("monster trait support and backward compatibility", () => {
     expect(merged.artwork).toEqual(old.artwork);
     expect(merged.zoom).toEqual(2);
     expect(merged.offsetX).toEqual(10);
-    expect(merged.theme).toEqual("가져온 테마");
+    expect(merged.theme).toEqual("코스모코드");
   });
 });
