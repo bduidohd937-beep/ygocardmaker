@@ -90,24 +90,32 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxW: number): string
   return lines;
 }
 
-function fitText(
+/** Render the complete description. Never silently truncate card rules text.
+ * Compact card text can use a smaller font, but overly dense cards still fail
+ * with a useful diagnostic so that the editor cannot export incomplete effects.
+ */
+export function fitText(
   ctx: CanvasRenderingContext2D, text: string,
   x: number, y: number, width: number, height: number,
-  fontSize: number, minSize = 29,
+  fontSize: number, minSize = 20,
 ): number {
-  let size = fontSize, lines: string[] = [];
-  for (; size >= minSize; size--) {
+  let lines: string[] = [];
+  for (let size = fontSize; size >= minSize; size--) {
     ctx.font = "400 " + size + "px " + assetFont("body");
     lines = wrap(ctx, text, width);
-    if (lines.length * size * 1.19 <= height) break;
+    if (lines.length * size * 1.19 <= height) {
+      ctx.fillStyle = "#111915";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      lines.forEach((line, index) =>
+        ctx.fillText(line, x, y + index * size * 1.19));
+      return size;
+    }
   }
-  if (size < minSize)
-    throw Error("프레임 효과 영역에 들어가지 않는 긴 효과문입니다. 내용을 줄이거나 줄바꿈을 조정해 주세요.");
-  ctx.fillStyle = "#111915";
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  lines.forEach((line, index) => ctx.fillText(line, x, y + index * size * 1.19));
-  return size;
+  throw Error(
+    `효과문 ${text.length}자: 최소 글꼴 ${minSize}px로도 ${lines.length}줄이 필요합니다. ` +
+    "현재 카드 효과창에 전부 들어가지 않습니다. 문장을 간결하게 정리하거나 줄바꿈을 조정해 주세요.",
+  );
 }
 
 export function frameKey(card: Card): string {
@@ -363,16 +371,16 @@ export async function renderWithAssetPack(
       ctx.fillText(String(card.scaleLeft), 145, ASSET_LAYOUT.pendulumScaleY);
       ctx.fillText(String(card.scaleRight), 1249, ASSET_LAYOUT.pendulumScaleY);
       const panel = ASSET_LAYOUT.pendulumPanel;
-      fitText(ctx, card.pendulumEffect, panel.x, panel.y, panel.w, panel.h, 36, 29);
+      fitText(ctx, card.pendulumEffect, panel.x, panel.y, panel.w, panel.h, 36, 21);
     }
     let fontSize: number;
     if (isMonster(card)) {
       drawMonsterKind(ctx, card);
-      fontSize = fitText(ctx, card.effect, 109, 1590, 1175, 252, 40, 29);
+      fontSize = fitText(ctx, card.effect, 109, 1590, 1175, 252, 40, 20);
       drawStats(ctx, card);
     } else {
       // Spell/trap subtypes belong in the heading, not in the effect text box.
-      fontSize = fitText(ctx, card.effect, 109, 1534, 1175, 385, 42, 29);
+      fontSize = fitText(ctx, card.effect, 109, 1534, 1175, 385, 42, 20);
     }
     drawPassword(ctx, card);
     return { fontSize };
