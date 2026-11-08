@@ -1,5 +1,5 @@
 import { FRAMES, isMonster, type Card } from "./model";
-import { assetUrl } from "./assetPack";
+import { assetFont, assetUrl, ensureAssetFonts } from "./assetPack";
 
 const FONT = '"Noto Sans KR Variable", sans-serif';
 const NATIVE_W = 1394;
@@ -97,7 +97,7 @@ function fitText(
 ): number {
   let size = fontSize, lines: string[] = [];
   for (; size >= minSize; size--) {
-    ctx.font = "400 " + size + "px " + FONT;
+    ctx.font = "400 " + size + "px " + assetFont("body");
     lines = wrap(ctx, text, width);
     if (lines.length * size * 1.19 <= height) break;
   }
@@ -182,13 +182,17 @@ function drawName(ctx: CanvasRenderingContext2D, card: Card) {
   const maxW = ASSET_LAYOUT.name.maxW;
   // Noto Sans KR is wider/heavier than the source's ygo-kr-name face.
   // Slightly reduce the optical size while keeping the original coordinates.
-  let size = 90;
+  const hasOriginalNameFont = Boolean(assetUrl("font:name"));
+  const nameFont = assetFont("name");
+  // The Noto fallback sits higher than the source font at identical top coordinates.
+  const nameY = hasOriginalNameFont ? ASSET_LAYOUT.name.y : ASSET_LAYOUT.name.y + 22;
+  let size = hasOriginalNameFont ? 106 : 90;
   while (size > 41) {
-    ctx.font = "600 " + size + "px " + FONT;
+    ctx.font = "600 " + size + "px " + nameFont;
     if (ctx.measureText(card.name).width <= maxW) break;
     size--;
   }
-  ctx.fillText(card.name, ASSET_LAYOUT.name.x, ASSET_LAYOUT.name.y);
+  ctx.fillText(card.name, ASSET_LAYOUT.name.x, nameY);
 }
 
 async function drawRanksAndArrows(ctx: CanvasRenderingContext2D, card: Card) {
@@ -230,7 +234,7 @@ async function drawSpellTrapSubtype(ctx: CanvasRenderingContext2D, card: Card) {
   ctx.fillStyle = "#fafafa";
   // Korean source font is vertically compressed; here we use an equivalent
   // visual size instead of scaling the entire canvas (which displaced icons).
-  ctx.font = "600 68px " + FONT;
+  ctx.font = "600 " + (assetUrl("font:type") ? 88 : 68) + "px " + assetFont("type");
   const leftWidth = ctx.measureText(prefix).width;
   const rightWidth = ctx.measureText(suffix).width;
   const p = spellTrapHeadingPositions(leftWidth, rightWidth, !!icon);
@@ -247,7 +251,7 @@ function drawMonsterKind(ctx: CanvasRenderingContext2D, card: Card) {
     if (card.pendulum) labels.push("펜듈럼");
     labels.push("효과");
   }
-  ctx.font = "600 43px " + FONT;
+  ctx.font = "600 " + (assetUrl("font:type") ? 48 : 43) + "px " + assetFont("type");
   ctx.fillStyle = "#141915";
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
@@ -282,6 +286,7 @@ export async function renderWithAssetPack(
 ): Promise<{ fontSize: number }> {
   ctx.save();
   try {
+    await ensureAssetFonts();
     ctx.scale(VIEW_W / NATIVE_W, VIEW_H / NATIVE_H);
     if (!(await paint(ctx, frameKey(card), 0, 0, NATIVE_W, NATIVE_H)))
       throw Error("선택한 카드 종류의 프레임이 리소스 ZIP에 없습니다.");
