@@ -62,6 +62,8 @@ function App() {
     [toast, setToast] = useState(""),
     [saveState, setSaveState] = useState("불러오는 중"),
     [renderError, setRenderError] = useState(""),
+    [previewState, setPreviewState] = useState<"loading" | "ready" | "error">("loading"),
+    [renderedFontSize, setRenderedFontSize] = useState<number | null>(null),
     [modal, setModal] = useState(false),
     [format, setFormat] = useState<"png" | "jpg">("png"),
     [size, setSize] = useState(1263),
@@ -130,18 +132,29 @@ function App() {
   useEffect(() => {
     let live = true;
     if (!card) return;
+    // The previous card is not a valid preview of a newly selected card.
+    // Keep its canvas hidden until the new card finishes rendering.
+    setPreviewState("loading");
+    setRenderError("");
+    setRenderedFontSize(null);
     const target = document.createElement("canvas");
     renderCard(card, target)
-      .then(() => {
+      .then((result) => {
         if (live && canvas.current) {
           canvas.current.width = target.width;
           canvas.current.height = target.height;
           canvas.current.getContext("2d")!.drawImage(target, 0, 0);
           setRenderError("");
+          setRenderedFontSize(result.fontSize);
+          setPreviewState("ready");
         }
       })
       .catch((e) => {
-        if (live) setRenderError(String(e.message));
+        if (live) {
+          setRenderError(e instanceof Error ? e.message : String(e));
+          setPreviewState("error");
+          setRenderedFontSize(null);
+        }
       });
     return () => {
       live = false;
@@ -673,7 +686,15 @@ function App() {
                 ref={canvas}
                 role="img"
                 aria-label={`${card.name} 카드 미리보기`}
+                style={{ visibility: previewState === "ready" ? "visible" : "hidden" }}
               />
+              {previewState !== "ready" && (
+                <div className="preview-status" role="status" aria-live="polite">
+                  <span>{card.name}</span>
+                  <strong>{previewState === "loading" ? "카드 렌더링 중…" : "미리보기 생성 실패"}</strong>
+                  <small>{previewState === "error" ? "효과문 및 카드 설정을 확인해 주세요." : "카드 내용과 글꼴을 적용하고 있습니다."}</small>
+                </div>
+              )}
             </div>
             <div className="preview-caption">
               <span className="small-diamond" /> {card.id}{" "}
@@ -682,6 +703,11 @@ function App() {
             {renderError && (
               <div role="alert" className="render-error">
                 {renderError}
+              </div>
+            )}
+            {previewState === "ready" && renderedFontSize !== null && renderedFontSize <= 23 && (
+              <div className="render-density-warning" role="status">
+                글씨가 매우 작습니다 ({renderedFontSize}px). 고화질로 확인하고 필요하면 효과문을 정리하세요.
               </div>
             )}
             {packMissingMask && (
@@ -928,7 +954,7 @@ function App() {
                     onChange={(e) => update({ effect: e.target.value })}
                   />
                   <span className="text-counter">
-                    한국어 자동 줄바꿈 <span>{card.effect.length}자</span>
+                    자동 줄바꿈 · 고정 글자 수 제한 없음 <span>{card.effect.length}자</span>
                   </span>
                 </label>
                 {card.unsupported?.length ? (
