@@ -18,6 +18,8 @@ export const ASSET_LAYOUT = {
   name: { x: 116, y: 90, maxW: 1033 },
   effect: { x: 109, y: 1526, maxW: 1175 },
   stats: { y: 1844 },
+  pendulumPanel: { x: 221, y: 1282, w: 950, h: 230 },
+  pendulumScaleY: 1370,
 } as const;
 
 const ATTR_CODES: Record<string, string> = {
@@ -138,9 +140,28 @@ async function drawArtwork(ctx: CanvasRenderingContext2D, card: Card) {
   const pos = card.pendulum ? ASSET_LAYOUT.pendulumArtworkMask : ASSET_LAYOUT.artworkMask;
   const mask = card.pendulum ? "mask:pendulum" : "mask:default";
   if (!(await paint(ctx, mask, pos.x, pos.y))) {
-    ctx.strokeStyle = "#b5b6ac";
-    ctx.lineWidth = 5;
-    ctx.strokeRect(b.x, b.y, b.w, b.h);
+    if (card.pendulum) {
+      // The imported 49-image pack predates the original pendulum mask.
+      // Never draw the pendulum text directly over the artwork when it is absent.
+      const shade = ctx.createLinearGradient(0, 1260, 0, 1568);
+      shade.addColorStop(0, "rgba(205,232,222,0.97)");
+      shade.addColorStop(1, "rgba(228,243,233,0.98)");
+      ctx.fillStyle = shade;
+      ctx.fillRect(94, 1262, 1205, 307);
+      ctx.strokeStyle = "#61958d";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(94, 1262, 1205, 307);
+      const p = ASSET_LAYOUT.pendulumPanel;
+      ctx.fillStyle = "rgba(245,249,239,0.97)";
+      ctx.fillRect(p.x - 8, p.y - 7, p.w + 16, p.h + 14);
+      ctx.strokeStyle = "#759c8b";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(p.x - 8, p.y - 7, p.w + 16, p.h + 14);
+    } else {
+      ctx.strokeStyle = "#b5b6ac";
+      ctx.lineWidth = 5;
+      ctx.strokeRect(b.x, b.y, b.w, b.h);
+    }
   }
 }
 
@@ -155,7 +176,9 @@ function drawName(ctx: CanvasRenderingContext2D, card: Card) {
   ctx.textBaseline = "top";
   ctx.fillStyle = ["xyz", "link", "spell", "trap"].includes(card.frame) ? "#ffffff" : "#111915";
   const maxW = ASSET_LAYOUT.name.maxW;
-  let size = 106;
+  // Noto Sans KR is wider/heavier than the source's ygo-kr-name face.
+  // Slightly reduce the optical size while keeping the original coordinates.
+  let size = 90;
   while (size > 41) {
     ctx.font = "600 " + size + "px " + FONT;
     if (ctx.measureText(card.name).width <= maxW) break;
@@ -181,33 +204,35 @@ async function drawRanksAndArrows(ctx: CanvasRenderingContext2D, card: Card) {
   }
 }
 
+export function spellTrapHeadingPositions(
+  leftTextWidth: number, rightBracketWidth: number, hasIcon: boolean,
+) {
+  const right = NATIVE_W - 142;
+  const iconSize = hasIcon ? 72 : 0;
+  const gap = hasIcon ? 12 : 0;
+  const bracketX = right - rightBracketWidth;
+  const iconX = bracketX - gap - iconSize;
+  const textX = iconX - gap - leftTextWidth;
+  return { textX, iconX, bracketX };
+}
+
 async function drawSpellTrapSubtype(ctx: CanvasRenderingContext2D, card: Card) {
   const subtype = TYPE_CODES[card.subtype];
   const icon = subtype ? assetUrl("spell_trap_icon:" + subtype) : null;
-  const bracket = "]";
-  const title = "[" + FRAMES[card.frame] + " 카드";
-  ctx.save();
+  const prefix = "[" + FRAMES[card.frame] + " 카드";
+  const suffix = "]";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.font = "600 84px " + FONT;
   ctx.fillStyle = "#fafafa";
-  ctx.translate(0, 253);
-  ctx.scale(1, .75);
-  const bracketWidth = ctx.measureText(bracket).width;
-  const titleWidth = ctx.measureText(title).width;
-  const right = NATIVE_W - 142;
-  const iconWidth = icon ? 72 : 0;
-  const gap = icon ? 24 : 0;
-  let start = right - bracketWidth - iconWidth - gap - titleWidth;
-  // Do not overlap the level / left edge even for unexpectedly long localizations.
-  start = Math.max(550, start);
-  ctx.fillText(title, start, 0);
-  ctx.fillText(bracket, right - bracketWidth, 0);
-  ctx.restore();
-  if (icon) {
-    const img = await image(icon);
-    ctx.drawImage(img, right - bracketWidth - 12 - 72, 259, 72, 72);
-  }
+  // Korean source font is vertically compressed; here we use an equivalent
+  // visual size instead of scaling the entire canvas (which displaced icons).
+  ctx.font = "600 68px " + FONT;
+  const leftWidth = ctx.measureText(prefix).width;
+  const rightWidth = ctx.measureText(suffix).width;
+  const p = spellTrapHeadingPositions(leftWidth, rightWidth, !!icon);
+  ctx.fillText(prefix, p.textX, 253);
+  if (icon) ctx.drawImage(await image(icon), p.iconX, 259, 72, 72);
+  ctx.fillText(suffix, p.bracketX, 253);
 }
 
 function drawMonsterKind(ctx: CanvasRenderingContext2D, card: Card) {
@@ -218,7 +243,7 @@ function drawMonsterKind(ctx: CanvasRenderingContext2D, card: Card) {
     if (card.pendulum) labels.push("펜듈럼");
     labels.push("효과");
   }
-  ctx.font = "600 48px " + FONT;
+  ctx.font = "600 43px " + FONT;
   ctx.fillStyle = "#141915";
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
@@ -267,9 +292,10 @@ export async function renderWithAssetPack(
       ctx.textAlign = "center";
       ctx.font = "600 90px " + FONT;
       ctx.textBaseline = "top";
-      ctx.fillText(String(card.scaleLeft), 145, 1370);
-      ctx.fillText(String(card.scaleRight), 1249, 1370);
-      fitText(ctx, card.pendulumEffect, 221, 1282, 950, 230, 36, 29);
+      ctx.fillText(String(card.scaleLeft), 145, ASSET_LAYOUT.pendulumScaleY);
+      ctx.fillText(String(card.scaleRight), 1249, ASSET_LAYOUT.pendulumScaleY);
+      const panel = ASSET_LAYOUT.pendulumPanel;
+      fitText(ctx, card.pendulumEffect, panel.x, panel.y, panel.w, panel.h, 36, 29);
     }
     let fontSize: number;
     if (isMonster(card)) {
