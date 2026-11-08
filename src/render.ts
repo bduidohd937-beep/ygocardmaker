@@ -1,4 +1,4 @@
-import { isMonster, FRAMES, type Card } from "./model";
+import { isMonster, monsterKindLabels, FRAMES, type Card } from "./model";
 import { getActivePack } from "./assetPack";
 import { frameKey, renderWithAssetPack } from "./assetRender";
 export const WIDTH = 842,
@@ -273,7 +273,7 @@ export async function renderCard(
   ctx.textBaseline = "top";
   ctx.font = `600 24px ${FONT}`;
   const kind = isMonster(card)
-    ? `${card.race} / ${FRAMES[card.frame]}${card.pendulum ? " / 펜듈럼" : ""}`
+    ? monsterKindLabels(card).join(" / ")
     : `${card.subtype} ${FRAMES[card.frame]}`;
   ctx.fillText(`【${kind}】`, 76, ey + 14);
   const size = textBlock(
