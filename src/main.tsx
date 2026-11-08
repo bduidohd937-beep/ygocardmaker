@@ -45,6 +45,7 @@ import {
   type Project,
 } from "./model";
 import { renderCard } from "./render";
+import { importAssetZip, loadAssetPack, saveAssetPack, setActivePack } from "./assetPack";
 import { demoProject } from "./samples";
 import { loadProject, saveProject } from "./storage";
 import { download, exportOne, exportZip } from "./export";
@@ -64,10 +65,14 @@ function App() {
     [size, setSize] = useState(1263),
     [busy, setBusy] = useState(""),
     [previewZoom, setPreviewZoom] = useState(100),
-    [mobileLibrary, setMobileLibrary] = useState(false);
+    [mobileLibrary, setMobileLibrary] = useState(false),
+    [assetName, setAssetName] = useState(""),
+    [assetCount, setAssetCount] = useState(0),
+    [assetEpoch, setAssetEpoch] = useState(0);
   const canvas = useRef<HTMLCanvasElement>(null),
     importInput = useRef<HTMLInputElement>(null),
-    artInput = useRef<HTMLInputElement>(null);
+    artInput = useRef<HTMLInputElement>(null),
+    assetInput = useRef<HTMLInputElement>(null);
   const card = project?.cards.find((c) => c.id === active);
   useEffect(() => {
     let live = true;
@@ -91,6 +96,17 @@ function App() {
     return () => {
       live = false;
     };
+  }, []);
+  useEffect(() => {
+    let live = true;
+    loadAssetPack().then((pack) => {
+      if (!live || !pack) return;
+      setActivePack(pack);
+      setAssetName(pack.name);
+      setAssetCount(Object.keys(pack.files).length);
+      setAssetEpoch((n) => n + 1);
+    }).catch(() => { if (live) setToast("자산팩 복원 실패 · ZIP을 다시 가져와 주세요."); });
+    return () => { live = false; };
   }, []);
   useEffect(() => {
     if (!project) return;
@@ -121,7 +137,7 @@ function App() {
     return () => {
       live = false;
     };
-  }, [card]);
+  }, [card, assetEpoch]);
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(""), 6000);
@@ -187,6 +203,30 @@ function App() {
     } catch (e) {
       setToast(e instanceof Error ? e.message : "가져오기 실패");
     }
+  };
+  const uploadAssets = async (file: File) => {
+    setBusy("카드 리소스 분류 중");
+    try {
+      const report = await importAssetZip(file);
+      await saveAssetPack(report.pack);
+      setActivePack(report.pack);
+      setAssetName(report.pack.name);
+      setAssetCount(Object.keys(report.pack.files).length);
+      setAssetEpoch((n) => n + 1);
+      setToast("리소스 " + Object.keys(report.pack.files).length + "종 적용 · 중복 " + report.duplicates + "건 정리");
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : "리소스 ZIP을 읽을 수 없습니다.");
+    } finally { setBusy(""); }
+  };
+  const clearAssets = async () => {
+    try {
+      await saveAssetPack(null);
+      setActivePack(null);
+      setAssetName("");
+      setAssetCount(0);
+      setAssetEpoch((n) => n + 1);
+      setToast("기본 프레임으로 돌아왔습니다.");
+    } catch { setToast("자산팩 초기화에 실패했습니다."); }
   };
   const uploadArt = async (file: File) => {
     try {
@@ -434,9 +474,35 @@ function App() {
                 e.target.value = "";
               }}
             />
+            <button
+              className="import-button"
+              onClick={() => assetInput.current?.click()}
+              title="ZIP 안의 프레임과 아이콘을 자동으로 분류합니다"
+            >
+              <Layers size={15} /> 카드 프레임 ZIP 불러오기
+            </button>
+            <input
+              ref={assetInput}
+              type="file"
+              accept=".zip,application/zip"
+              aria-label="카드 프레임 리소스 ZIP"
+              hidden
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void uploadAssets(file);
+                e.target.value = "";
+              }}
+            />
+            {assetCount > 0 && (
+              <button className="text-button" onClick={() => void clearAssets()}>
+                기본 프레임 복귀
+              </button>
+            )}
             <div className="local-note">
-              <span className="dot" /> 파일은 브라우저 안에서만 처리됩니다.
+              <span className="dot" />
+              {assetCount > 0 ? assetName + " · " + assetCount + "종 자동 적용" : "카드 프레임은 현재 기본 디자인입니다."}
             </div>
+            <div className="local-note">리소스 파일은 이 브라우저에 저장되며 공개 서버로 업로드되지 않습니다.</div>
           </div>
         </aside>
         <main className="stage">
@@ -454,7 +520,7 @@ function App() {
               <strong>카드 편집</strong>
             </div>
             <div className="stage-options">
-              <span className="live-dot" /> 실시간 미리보기{" "}
+              <span className="live-dot" /> {assetCount ? "자산팩 미리보기" : "실시간 미리보기"}{" "}
               <button
                 title="카드 복제"
                 aria-label="카드 복제"
