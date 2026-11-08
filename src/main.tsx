@@ -38,6 +38,7 @@ import {
   LINK_BITS,
   isMonster,
   mergeCards,
+  normalizeCardTraits,
   newCard,
   nextId,
   parseImport,
@@ -93,9 +94,10 @@ function App() {
       .then((p) => {
         if (!live) return;
         const value = p ?? demoProject();
-        setProject(value);
-        setActive(value.cards[0]?.id ?? 0);
-        setSelected(value.cards.map((c) => c.id));
+        const migrated = { ...value, cards: value.cards.map(normalizeCardTraits) };
+        setProject(migrated);
+        setActive(migrated.cards[0]?.id ?? 0);
+        setSelected(migrated.cards.map((c) => c.id));
       })
       .catch(() => {
         if (live) {
