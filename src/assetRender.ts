@@ -268,11 +268,13 @@ export const STAT_LAYOUT = {
   atkValueRight: 999,
   defLabelX: 1029,
   defValueRight: 1282,
-  baseline: 1898,
-  labelSize: 36,
-  maxNumberSize: 62,
+  // Optical adjustment for the locally available Noto fallback: the original
+  // card numeral font has shorter glyphs, so 62px sat against the lower frame.
+  baseline: 1879,
+  labelSize: 35,
+  maxNumberSize: 50,
   minNumberSize: 27,
-  gap: 12,
+  gap: 14,
 } as const;
 
 function drawStats(ctx: CanvasRenderingContext2D, card: Card) {
