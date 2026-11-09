@@ -101,6 +101,29 @@ describe("EDOPro metadata conversion", () => {
       c.def,
     ]).toEqual(["몬스터", "효과", "기계족", "바람", 4, "1600", "1200"]);
   });
+  it("recognizes token CDB types, label, and JSON round-trip", () => {
+    const c = fromEDO({
+      id: 91008618,
+      name: "바르네크－안개악령 토큰",
+      type: 0x4011,
+      race: 16,
+      attribute: 32,
+      level: 1,
+      atk: 0,
+      def: 0,
+    });
+    expect(c.frame).toBe("token");
+    expect(c.unsupported ?? []).not.toContain("토큰 프레임");
+    expect(monsterKindLabels(c)).toEqual(["언데드족", "토큰"]);
+    expect(validateCards([c], false)).toEqual([]);
+    expect(parseImport({ cards: [c] })[0]).toEqual(c);
+  });
+  it("disallows pendulum and extra traits on tokens", () => {
+    const c = { ...newCard(), frame: "token" as const };
+    expect(validateCards([c], false)).toEqual([]);
+    expect(validateCards([{ ...c, pendulum: true }], false).join()).toContain("펜듈럼");
+    expect(validateCards([{ ...c, traits: ["튜너"] }], false).join()).toContain("토큰");
+  });
   it("imports Xyz and Link packed fields", () => {
     expect(fromEDO({ type: 0x800001, level: 4 }).frame).toBe("xyz");
     const c = fromEDO({ type: 0x4000001, level: 2, def: 5 });
