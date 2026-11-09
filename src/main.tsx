@@ -818,7 +818,7 @@ function App() {
                       const frame = e.target.value as Frame;
                       update({
                         frame,
-                        ...(["spell", "trap", "link"].includes(frame)
+                        ...(["spell", "trap", "link", "token"].includes(frame)
                           ? { pendulum: false }
                           : {}),
                         ...(["spell", "trap"].includes(frame)
@@ -827,16 +827,25 @@ function App() {
                         ...(frame === "link"
                           ? { level: 2, arrows: [1, 4] }
                           : {}),
+                        ...(frame === "token"
+                          ? { traits: [], arrows: [], pendulumEffect: "" }
+                          : {}),
                       });
                     }}
                   >
                     {Object.entries(FRAMES).map(([v, l]) => (
                       <option key={v} value={v}>
-                        {l} {v === "spell" || v === "trap" ? "카드" : "몬스터"}
+                        {v === "token" ? "토큰" : `${l} ${v === "spell" || v === "trap" ? "카드" : "몬스터"}`}
                       </option>
                     ))}
                   </select>
                 </label>
+                {card.frame === "token" && (
+                  <div className="notice">
+                    <Info size={15} />
+                    <span>토큰은 효과로 소환되는 카드입니다. 메인 덱에는 직접 넣지 않습니다.</span>
+                  </div>
+                )}
                 {isMonster(card) ? (
                   <>
                     <div className="form-grid">
@@ -875,7 +884,7 @@ function App() {
                         ))}
                       </select>
                     </label>
-                    <fieldset className="trait-fieldset">
+                    {card.frame !== "token" && <fieldset className="trait-fieldset">
                       <legend>몬스터 특성</legend>
                       <div className="trait-grid">
                         {MONSTER_TRAITS.map((trait: MonsterTrait) => (
@@ -899,7 +908,7 @@ function App() {
                           </label>
                         ))}
                       </div>
-                    </fieldset>
+                    </fieldset>}
                     <div className="form-grid">
                       {field("공격력 · ATK", "atk")}
                       {card.frame !== "link" && field("수비력 · DEF", "def")}
@@ -929,7 +938,7 @@ function App() {
                         </div>
                       </div>
                     )}
-                    {card.frame !== "link" && (
+                    {card.frame !== "link" && card.frame !== "token" && (
                       <label className="switch-row">
                         펜듈럼 카드
                         <input

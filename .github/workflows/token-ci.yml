@@ -1,0 +1,22 @@
+name: Token card support checks
+on:
+  push:
+    branches: [feat/token-card-support-v1]
+  pull_request:
+    branches: [feat/artwork-crop-editor-v1]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

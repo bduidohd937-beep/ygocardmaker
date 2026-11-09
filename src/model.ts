@@ -3,6 +3,7 @@ import { validArtworkCrop, type ArtworkCrop } from "./artworkCrop";
 export const FRAMES = {
   effect: "효과",
   normal: "일반",
+  token: "토큰",
   fusion: "융합",
   ritual: "의식",
   synchro: "싱크로",
@@ -56,6 +57,7 @@ export const MONSTER_TRAITS = Object.keys(MONSTER_TRAIT_FLAGS) as MonsterTrait[]
 
 export function monsterKindLabels(card: Card): string[] {
   if (!isMonster(card)) return [];
+  if (card.frame === "token") return [card.race, "토큰"];
   const labels = [card.race];
   if (card.frame !== "effect" && card.frame !== "normal") labels.push(FRAMES[card.frame]);
   if (card.pendulum) labels.push("펜듈럼");
@@ -164,8 +166,10 @@ export function validateCards(cards: Card[], requireArt = true): string[] {
       (c.level < 1 || c.level > 8 || c.arrows.length !== c.level)
     )
       errors.push(`${tag}: LINK 수치와 화살표 개수가 일치해야 합니다.`);
-    if (c.pendulum && (!isMonster(c) || c.frame === "link"))
+    if (c.pendulum && (!isMonster(c) || c.frame === "link" || c.frame === "token"))
       errors.push(`${tag}: 이 펜듈럼 조합은 지원하지 않습니다.`);
+    if (c.frame === "token" && (c.traits?.length ?? 0) > 0)
+      errors.push(`${tag}: 토큰에는 몬스터 특성을 지정할 수 없습니다.`);
     if (
       c.pendulum &&
       [c.scaleLeft, c.scaleRight].some(
@@ -319,7 +323,9 @@ export function fromEDO(row: Record<string, unknown>): Card {
       ? "spell"
       : type & 4
         ? "trap"
-        : type & 0x4000000
+        : type & 0x4000
+          ? "token"
+          : type & 0x4000000
           ? "link"
           : type & 0x800000
             ? "xyz"
@@ -378,7 +384,6 @@ export function fromEDO(row: Record<string, unknown>): Card {
     } else c.unsupported = ["펜듈럼 효과 분리 필요"];
   }
   const flags: string[] = [];
-  if (type & 0x4000) flags.push("토큰 프레임");
   if (type & 0x4000000 && type & 0x1000000) flags.push("링크 펜듈럼");
   if (flags.length) c.unsupported = [...(c.unsupported ?? []), ...flags];
   return c;
