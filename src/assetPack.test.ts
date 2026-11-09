@@ -6,6 +6,7 @@ import { ASSET_LAYOUT, LINK_POSITIONS, spellTrapHeadingPositions, STAT_LAYOUT, c
 describe("asset catalog filename classification", () => {
   it("recognizes blank frames including pendulum", () => {
     expect(classifyAsset("folder/card-effect.png")?.key).toBe("frame:effect");
+    expect(classifyAsset("folder/card-token.png")?.key).toBe("frame:token");
     expect(classifyAsset("folder/card-synchro-pendulum.png")?.key).toBe("frame:synchro-pendulum");
     expect(classifyAsset("folder/card-link-pendulum.png")).toBeNull();
   });
@@ -42,6 +43,10 @@ describe("automatic asset placement decisions", () => {
     card.frame = "normal";
     card.attribute = "바람";
     expect(requiredAssets(card)).toEqual(["frame:normal", "attribute:wind", "star:level"]);
+  });
+  it("maps token to its dedicated art frame and level stars", () => {
+    const card = { ...newCard(), frame: "token" as const };
+    expect(requiredAssets(card)).toEqual(["frame:token", "attribute:wind", "star:level"]);
   });
   it("maps xyz to rank star and pendulum frame", () => {
     const card = newCard();
