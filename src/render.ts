@@ -6,6 +6,7 @@ export const WIDTH = 842,
   HEIGHT = 1228;
 const COLORS = {
   normal: "#cba46a",
+  token: "#afb6b3",
   effect: "#bd8654",
   fusion: "#9570ad",
   ritual: "#6a9dad",
