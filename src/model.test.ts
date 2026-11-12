@@ -6,6 +6,10 @@ import {
   mergeCards,
   fromEDO,
   nextId,
+  MONSTER_TRAITS,
+  MONSTER_TRAIT_FLAGS,
+  normalizeCardTraits,
+  monsterKindLabels,
 } from "./model";
 describe("project data", () => {
   it("validates image, name and id", () => {
@@ -97,6 +101,29 @@ describe("EDOPro metadata conversion", () => {
       c.def,
     ]).toEqual(["몬스터", "효과", "기계족", "바람", 4, "1600", "1200"]);
   });
+  it("recognizes token CDB types, label, and JSON round-trip", () => {
+    const c = fromEDO({
+      id: 91008618,
+      name: "바르네크－안개악령 토큰",
+      type: 0x4011,
+      race: 16,
+      attribute: 32,
+      level: 1,
+      atk: 0,
+      def: 0,
+    });
+    expect(c.frame).toBe("token");
+    expect(c.unsupported ?? []).not.toContain("토큰 프레임");
+    expect(monsterKindLabels(c)).toEqual(["언데드족", "토큰"]);
+    expect(validateCards([c], false)).toEqual([]);
+    expect(parseImport({ cards: [c] })[0]).toEqual(c);
+  });
+  it("disallows pendulum and extra traits on tokens", () => {
+    const c = { ...newCard(), frame: "token" as const };
+    expect(validateCards([c], false)).toEqual([]);
+    expect(validateCards([{ ...c, pendulum: true }], false).join()).toContain("펜듈럼");
+    expect(validateCards([{ ...c, traits: ["튜너"] }], false).join()).toContain("토큰");
+  });
   it("imports Xyz and Link packed fields", () => {
     expect(fromEDO({ type: 0x800001, level: 4 }).frame).toBe("xyz");
     const c = fromEDO({ type: 0x4000001, level: 2, def: 5 });
@@ -117,11 +144,12 @@ describe("EDOPro metadata conversion", () => {
       c.effect,
     ]).toEqual([4, 3, 7, "효과 A", "효과 B"]);
   });
-  it("flags unparsed pendulum and tuner rather than inventing", () => {
+  it("warns only for unresolved pendulum text, not supported tuner type", () => {
     expect(fromEDO({ type: 0x1000021, desc: "긴 글" }).unsupported).toContain(
       "펜듈럼 효과 분리 필요",
     );
-    expect(fromEDO({ type: 0x1021 }).unsupported).toContain("튜너 표기");
+    expect(fromEDO({ type: 0x1021 }).traits).toContain("튜너");
+    expect(fromEDO({ type: 0x1021 }).unsupported ?? []).not.toContain("튜너 표기");
   });
   it("imports quickplay spell and counter trap", () => {
     expect(fromEDO({ type: 0x10002 }).subtype).toBe("속공");
@@ -130,4 +158,80 @@ describe("EDOPro metadata conversion", () => {
   it("maps unknown stats to question mark", () => {
     expect(fromEDO({ atk: -2, def: -1 }).atk).toBe("?");
   });
+});
+
+describe("monster trait support and backward compatibility", () => {
+  it("decodes all six independent EDOPro type flags", () => {
+    for (const trait of MONSTER_TRAITS) {
+      const value = 0x21 | MONSTER_TRAIT_FLAGS[trait];
+      expect(fromEDO({ type: value }).traits).toEqual([trait]);
+    }
+  });
+  it("supports stacked traits on an extra deck monster", () => {
+    const c = fromEDO({
+      type: 0x1 | 0x20 | 0x2000 | 0x1000 | 0x200000,
+      name: "싱크로 리버스 튜너",
+    });
+    expect(c.frame).toBe("synchro");
+    expect(c.traits).toEqual(["튜너", "리버스"]);
+    expect(monsterKindLabels({ ...c, race: "드래곤족" })).toEqual([
+      "드래곤족", "싱크로", "튜너", "리버스", "효과",
+    ]);
+  });
+  it("rejects traits on spells and invalid imported traits", () => {
+    expect(validateCards([{ ...newCard(), frame: "spell", traits: ["튜너"] }], false).join())
+      .toContain("몬스터 특성");
+    expect(() => parseImport([{ ...newCard(), traits: ["unknown"] }])).toThrow();
+    expect(() => parseImport([{ ...newCard(), traits: "튜너" }])).toThrow();
+    expect(validateCards([{ ...newCard(), traits: ["튜너", "튜너"] }], false).join())
+      .toContain("몬스터 특성");
+  });
+  it("preserves uploaded artwork and trait selection through JSON", () => {
+    const c = {
+      ...newCard(910200001, "코스모코드"),
+      traits: ["튜너", "스피릿"] as ("튜너" | "스피릿")[],
+      artwork: "data:image/png;base64,AA==",
+      zoom: 1.5, offsetX: -16, offsetY: 25,
+    };
+    expect(parseImport({ cards: [c] })).toEqual([c]);
+  });
+  it("upgrades old flagged cards without changing images or other review warnings", () => {
+    const old = {
+      ...newCard(),
+      artwork: "data:image/png;base64,AA==",
+      traits: undefined,
+      unsupported: ["튜너 표기", "리버스 표기", "다른 확인사항"],
+    };
+    const converted = normalizeCardTraits(old);
+    expect(converted.traits).toEqual(["튜너", "리버스"]);
+    expect(converted.unsupported).toEqual(["다른 확인사항"]);
+    expect(converted.artwork).toEqual(old.artwork);
+    expect(converted.zoom).toEqual(old.zoom);
+  });
+  it("merges CDB metadata while keeping imported local artwork and crop", () => {
+    const old = {
+      ...newCard(910200001, "코스모코드"),
+      artwork: "data:image/png;base64,AA==", zoom: 2, offsetX: 10,
+    };
+    const next = fromEDO({ id: old.id, type: 0x1021, name: "루나", desc: "효과", level: 3 });
+    const merged = mergeCards([old], [next])[0];
+    expect(merged.traits).toContain("튜너");
+    expect(merged.artwork).toEqual(old.artwork);
+    expect(merged.zoom).toEqual(2);
+    expect(merged.offsetX).toEqual(10);
+    expect(merged.theme).toEqual("코스모코드");
+  });
+  it("round-trips crop selection and rejects malformed coordinates", () => {
+    const c = { ...newCard(), artwork: "data:image/png;base64,AA==",
+      artCrop: {x: .125, y: .2, w: .6, h: .55} };
+    expect(parseImport({cards: [c]})).toEqual([c]);
+    expect(() => parseImport({cards: [{...c, artCrop: {x: .9, y: 0, w: .5, h: 1}}]})).toThrow("자르기");
+  });
+  it("keeps local crop when CDB metadata is refreshed", () => {
+    const original = { ...newCard(910200001), artwork: "local-art",
+      artCrop: {x: .1,y: .1,w: .8,h: .8} };
+    const updated = mergeCards([original], [fromEDO({id: original.id, type: 0x21, name: "갱신", desc: "효과", level: 3})])[0];
+    expect(updated.artCrop).toEqual(original.artCrop);
+  });
+
 });

@@ -1,8 +1,12 @@
-import { isMonster, FRAMES, type Card } from "./model";
+import { isMonster, monsterKindLabels, FRAMES, type Card } from "./model";
+import { getActivePack } from "./assetPack";
+import { frameKey, renderWithAssetPack } from "./assetRender";
+import { artworkPlacement } from "./artworkCrop";
 export const WIDTH = 842,
   HEIGHT = 1228;
 const COLORS = {
   normal: "#cba46a",
+  token: "#afb6b3",
   effect: "#bd8654",
   fusion: "#9570ad",
   ritual: "#6a9dad",
@@ -85,6 +89,7 @@ export async function renderCard(
   canvas.width = width;
   canvas.height = Math.round((width * HEIGHT) / WIDTH);
   ctx.scale(width / WIDTH, width / WIDTH);
+  if (getActivePack()?.files[frameKey(card)]) return renderWithAssetPack(card, ctx);
   const rect = (
     x: number,
     y: number,
@@ -204,16 +209,15 @@ export async function renderCard(
   rect(art.x, art.y, art.w, art.h, "#182e36");
   if (card.artwork) {
     const img = await loadImage(card.artwork);
-    const ratio = Math.max(art.w / img.width, art.h / img.height) * card.zoom;
-    const dw = img.width * ratio,
-      dh = img.height * ratio;
-    const dx = art.x - ((dw - art.w) * (card.offsetX + 100)) / 200,
-      dy = art.y - ((dh - art.h) * (card.offsetY + 100)) / 200;
+    const p = artworkPlacement(
+      img.width, img.height, art,
+      card.artCrop, card.zoom, card.offsetX, card.offsetY,
+    );
     ctx.save();
     ctx.beginPath();
     ctx.rect(art.x, art.y, art.w, art.h);
     ctx.clip();
-    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.drawImage(img, p.sx, p.sy, p.sw, p.sh, p.dx, p.dy, p.dw, p.dh);
     ctx.restore();
   } else {
     ctx.textAlign = "center";
@@ -270,7 +274,7 @@ export async function renderCard(
   ctx.textBaseline = "top";
   ctx.font = `600 24px ${FONT}`;
   const kind = isMonster(card)
-    ? `${card.race} / ${FRAMES[card.frame]}${card.pendulum ? " / 펜듈럼" : ""}`
+    ? monsterKindLabels(card).join(" / ")
     : `${card.subtype} ${FRAMES[card.frame]}`;
   ctx.fillText(`【${kind}】`, 76, ey + 14);
   const size = textBlock(
