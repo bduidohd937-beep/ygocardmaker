@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { createRoot } from "react-dom/client";
 import {
   ArrowDownToLine,
   ArrowUpFromLine,
@@ -28,8 +27,6 @@ import {
   Trash2,
   ExternalLink,
 } from "lucide-react";
-import "@fontsource-variable/noto-sans-kr";
-import "./style.css";
 import {
   ATTRIBUTES,
   FRAMES,
@@ -57,7 +54,7 @@ import { loadProject, saveProject } from "./storage";
 import { download, exportOne, exportZip } from "./export";
 import { deleteProjectCards, getDeletionTargets, toggleVisibleSelection, type DeleteScope } from "./cardDeletion";
 
-function App() {
+export function CardMakerApp() {
   const [project, setProject] = useState<Project | null>(null),
     [active, setActive] = useState(0),
     [selected, setSelected] = useState<number[]>([]),
@@ -87,6 +84,11 @@ function App() {
     importInput = useRef<HTMLInputElement>(null),
     artInput = useRef<HTMLInputElement>(null),
     assetInput = useRef<HTMLInputElement>(null);
+  // Native embed can unmount on in-app navigation before the normal 500ms autosave.
+  // Flush the latest card edit instead of silently dropping the last change.
+  const latestProjectRef=useRef<Project|null>(null);
+  latestProjectRef.current=project;
+  useEffect(()=>()=>{const snapshot=latestProjectRef.current;if(snapshot)void saveProject(snapshot).catch(()=>{});},[]);
   const card = project?.cards.find((c) => c.id === active);
   const packFiles = assetCount ? getActivePack()?.files : undefined;
   const packMissingMask = !!packFiles && (card?.pendulum ? !packFiles["mask:pendulum"] : !packFiles["mask:default"]);
@@ -1302,8 +1304,3 @@ function App() {
     </div>
   );
 }
-createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
