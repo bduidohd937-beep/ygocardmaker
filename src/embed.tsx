@@ -23,5 +23,5 @@ ${makerCss}
   shadow.append(style,mount);
   const reactRoot=createRoot(mount);
   reactRoot.render(<React.StrictMode><CardMakerApp/></React.StrictMode>);
-  return {root:shadow,unmount:()=>{reactRoot.unmount();shadow.replaceChildren();}};
+  return {root:shadow,unmount:()=>{reactRoot.unmount();if(mount.isConnected)shadow.replaceChildren();}};
 }
