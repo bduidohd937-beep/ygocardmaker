@@ -84,6 +84,11 @@ export function CardMakerApp() {
     importInput = useRef<HTMLInputElement>(null),
     artInput = useRef<HTMLInputElement>(null),
     assetInput = useRef<HTMLInputElement>(null);
+  // Native embed can unmount on in-app navigation before the normal 500ms autosave.
+  // Flush the latest card edit instead of silently dropping the last change.
+  const latestProjectRef=useRef<Project|null>(null);
+  latestProjectRef.current=project;
+  useEffect(()=>()=>{const snapshot=latestProjectRef.current;if(snapshot)void saveProject(snapshot).catch(()=>{});},[]);
   const card = project?.cards.find((c) => c.id === active);
   const packFiles = assetCount ? getActivePack()?.files : undefined;
   const packMissingMask = !!packFiles && (card?.pendulum ? !packFiles["mask:pendulum"] : !packFiles["mask:default"]);
