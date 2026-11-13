@@ -19,6 +19,7 @@ interface Props {
 }
 const layoutOptions: {value: BatchLayoutMode;label: string}[] = [
   {value:"keep",label:"각 카드별 기존 배치 유지 (기본)"},
+  {value:"recommend",label:"V3.7 카드 정보 기준 자동 추천 배치"},
   {value:"default",label:"기본 OCG형으로 일괄 변경"},
   {value:"center",label:"중앙 일러스트형으로 일괄 변경"},
   {value:"bottom",label:"하단 효과창형으로 일괄 변경"},
@@ -185,6 +186,7 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
               </select>
             </label>
             <small>개별 카드 수정 사항은 기본적으로 유지됩니다. 변경한 설정은 일괄 출력에만 적용되며, 별도 저장할 수 있습니다.</small>
+            {settings.layout==="recommend" && <small>일괄 추천은 카드 종류·효과문 길이를 기준으로 선택합니다. 원화 픽셀을 반영하는 상세 추천은 카드별 3:4 간편 모드에서 비교·적용할 수 있습니다.</small>}
           </div>
           <div className="simple-of-group">
             <strong>03 · 출력 규격</strong>
