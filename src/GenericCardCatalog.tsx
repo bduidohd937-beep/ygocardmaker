@@ -60,7 +60,7 @@ export function GenericCardCatalog({ project, onChange, onOpenCard }: Props) {
   const add = () => {
     const key = "draft-" + Date.now() + "-" + records.length;
     const card: GenericCard = {
-      key, id: null, name: "신규 범용 카드", role: "", adoption: "보류",
+      key, id: null, name: "신규 범용 카드", role: "", attribute: "", adoption: "보류",
       cdbStatus: "미확인", luaStatus: "미확인", duelStatus: "미검증",
       version: "V0.1", effect: "", luaText: "", issues: "", artwork: {}, history: [],
     };
@@ -155,7 +155,7 @@ export function GenericCardCatalog({ project, onChange, onOpenCard }: Props) {
     </div>
     <div className="generic-catalog-tools">
       <label><Search size={14}/><input aria-label="범용 카드 검색"
-        placeholder="이름 / 카드 ID / 역할 / 효과 / 오류"
+        placeholder="이름 / 카드 ID / 역할 / 속성 / 효과 / 오류"
         value={query} onChange={e => setQuery(e.target.value)}/></label>
       <select aria-label="채택 상태 필터" value={adoptionFilter}
         onChange={e => setAdoptionFilter(e.target.value as Adoption | "전체")}>
@@ -204,6 +204,9 @@ export function GenericCardCatalog({ project, onChange, onOpenCard }: Props) {
             onChange={e => mutate(current.key, { name: e.target.value })}/></label>
           <label>역할 <input aria-label="도감 카드 역할" value={current.role}
             onChange={e => mutate(current.key, { role: e.target.value })}/></label>
+          <label>속성 <input aria-label="도감 카드 속성" value={current.attribute || studioCard?.attribute || ""}
+            placeholder="속성 미확인"
+            onChange={e => mutate(current.key, { attribute: e.target.value })}/></label>
           <label>효과 버전 <input aria-label="도감 카드 버전" value={current.version}
             onChange={e => mutate(current.key, { version: e.target.value })}/></label>
           <label>채택 상태 <select aria-label="도감 채택 상태" value={current.adoption}
