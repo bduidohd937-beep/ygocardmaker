@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build && vite build --config vite.embed.config.ts",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "vitest run"
+    "test": "vitest run src"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans-kr": "^5.2.8",

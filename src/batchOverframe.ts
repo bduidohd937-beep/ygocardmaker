@@ -85,7 +85,10 @@ async function verifyImage(bytes: Uint8Array, mime: string): Promise<string> {
   return url;
 }
 /** ZIP imports are filtered using uncompressed headers BEFORE decompression. */
-export async function matchBatchImages(files: readonly File[], cards: readonly Card[]): Promise<ImageMatchResult> {
+export async function matchBatchImages(
+  files: readonly File[], cards: readonly Card[],
+  decodeImage: (bytes: Uint8Array, mime: string) => Promise<string> = verifyImage,
+): Promise<ImageMatchResult> {
   if (files.length === 0) throw Error("원화 파일이나 ZIP을 선택하세요.");
   if (files.length > BATCH_MAX_CARDS) throw Error("한 번에 최대 100개 파일을 선택할 수 있습니다.");
   const validIds = new Set(cards.map(c => c.id));
@@ -138,7 +141,7 @@ export async function matchBatchImages(files: readonly File[], cards: readonly C
     }
   }
   for (const item of candidates) {
-    try { images[item.id] = await verifyImage(item.bytes, item.mime); }
+    try { images[item.id] = await decodeImage(item.bytes, item.mime); }
     catch (error) { warnings.push(item.name + ": " + (error instanceof Error ? error.message : "이미지 오류")); ignored++; }
   }
   return { images, warnings, matched: Object.keys(images).length, ignored };

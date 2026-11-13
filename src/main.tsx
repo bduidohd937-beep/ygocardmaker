@@ -50,6 +50,7 @@ import { currentPreviewMode, renderCardVariant } from "./cardCompare";
 import { CardCompareEditor } from "./CardCompareEditor";
 import { StudioHub } from "./StudioHub";
 import { applyHubImageAssignments } from "./studioHub";
+import { applyStudioSafeRepairs } from "./studioRepair";
 import { DEFAULT_OVERFRAME } from "./overframe";
 import { ArtworkCropEditor } from "./CropEditor";
 import { OverframeEditor } from "./OverframeEditor";
@@ -522,8 +523,8 @@ export function CardMakerApp() {
           >
             <FileJson size={15} /> JSON 저장
           </button>
-          <button type="button" className="studio-hub-top-button" aria-label="V4.0 통합 작업실 열기"
-            onClick={()=>setStudioHubOpen(true)}><Layers size={15}/> 통합 작업실 V4.0</button>
+          <button type="button" className="studio-hub-top-button" aria-label="V4.2 통합 작업실 열기"
+            onClick={()=>setStudioHubOpen(true)}><Layers size={15}/> 통합 작업실 V4.2</button>
           <button className="primary" onClick={() => setModal(true)}>
             <ArrowDownToLine size={15} /> 내보내기
           </button>
@@ -1310,6 +1311,11 @@ export function CardMakerApp() {
             setUndoDeletion(null);
             setProject(p=>p?{...p,cards:applyHubImageAssignments(p.cards,plan)}:p);
             setToast(plan.patches.length+"장 이미지 연결을 저장했습니다.");
+          }}
+          onApplyRepairs={patches=>{
+            setUndoDeletion(null);
+            setProject(p=>p?{...p,cards:applyStudioSafeRepairs(p.cards,patches)}:p);
+            setToast(patches.length+"장 안전 오류 수정 완료 · 원화·카드 효과 유지");
           }}
           onOpenCard={id=>{setActive(id);setTab("정보");setStudioHubOpen(false);setMobileLibrary(false);}}
           onOpenFullArt={id=>{setActive(id);setTab("오버프레임");setStudioHubOpen(false);setSimpleOverframeOpen(true);}}

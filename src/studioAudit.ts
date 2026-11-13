@@ -28,11 +28,15 @@ export interface AuditSummary {
   outputsMissing: number;
 }
 export function auditCardProduction(card: Card, mode: AuditOutputMode): AuditCardResult {
-  const meta = validateCards([card], false);
   const availability = compareAvailability(card);
   const modes: AuditVariant[] = mode === "both" ? ["normal", "overframe"] : [mode];
   const variants = modes.map(variant => {
-    const issues = [...meta, ...availability[variant]];
+    // A broken 3:4 layout must not block an otherwise valid ordinary card,
+    // nor may an unused legacy foreground block a standalone 3:4 output.
+    const relevant = variant === "normal"
+      ? { ...card, simpleOverframe: undefined }
+      : { ...card, overframe: undefined };
+    const issues = [...validateCards([relevant], false), ...availability[variant]];
     const assetProblem = issues.some(issue =>
       issue.includes("자산팩 누락") || issue.includes("에셋 누락") || issue.includes("폰트 누락"));
     return {
