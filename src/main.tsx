@@ -5,6 +5,7 @@ import {
   Plus,
   Search,
   Layers,
+  BookOpen,
   Check,
   ChevronDown,
   ChevronRight,
@@ -83,6 +84,7 @@ export function CardMakerApp() {
     [batchOverframeOpen, setBatchOverframeOpen] = useState(false),
     [cardCompareOpen, setCardCompareOpen] = useState(false),
     [studioHubOpen, setStudioHubOpen] = useState(false),
+    [studioHubInitialStage, setStudioHubInitialStage] = useState<"data"|"catalog">("data"),
     [format, setFormat] = useState<"png" | "jpg">("png"),
     [size, setSize] = useState(1263),
     [busy, setBusy] = useState(""),
@@ -539,8 +541,14 @@ export function CardMakerApp() {
           >
             <FileJson size={15} /> JSON 저장
           </button>
+          <button type="button" className="generic-catalog-top-button" aria-label="범용 카드 도감 바로 열기"
+            onClick={()=>{setStudioHubInitialStage("catalog");setStudioHubOpen(true);}}>
+            <BookOpen size={16}/> 범용 카드 도감
+          </button>
           <button type="button" className="studio-hub-top-button" aria-label="V4.3 통합 작업실 열기"
-            onClick={()=>setStudioHubOpen(true)}><Layers size={15}/> 통합 작업실 V4.3</button>
+            onClick={()=>{setStudioHubInitialStage("data");setStudioHubOpen(true);}}>
+            <Layers size={15}/> 통합 작업실 V4.3
+          </button>
           <button className="primary" onClick={() => setModal(true)}>
             <ArrowDownToLine size={15} /> 내보내기
           </button>
@@ -1320,6 +1328,7 @@ export function CardMakerApp() {
       </div>
       {studioHubOpen && (
         <StudioHub project={project} activeId={card.id} selectedIds={selected}
+          initialStage={studioHubInitialStage}
           assetName={assetName} assetCount={assetCount}
           onCatalogChange={records=>setProject(p=>p?{...p,genericCatalog:records}:p)}
           onClose={()=>setStudioHubOpen(false)}
