@@ -1,5 +1,6 @@
 import { validArtworkCrop, type ArtworkCrop } from "./artworkCrop";
 import { validOverframe, type OverframeLayer } from "./overframe";
+import { validSimpleOverframe, type SimpleOverframe } from "./simpleOverframe";
 
 export const FRAMES = {
   effect: "효과",
@@ -92,6 +93,8 @@ export interface Card {
   artCrop?: ArtworkCrop;
   /** Optional transparent PNG foreground that crosses the illustration border. */
   overframe?: OverframeLayer;
+  /** Standalone 3:4 full-art overlay, independent from the original art/frame. */
+  simpleOverframe?: SimpleOverframe;
   zoom: number;
   offsetX: number;
   offsetY: number;
@@ -124,6 +127,7 @@ export function newCard(id = 210000401, theme = "새로운 테마"): Card {
     arrows: [1, 4],
     artwork: "",
     overframe: undefined,
+    simpleOverframe: undefined,
     zoom: 1,
     offsetX: 0,
     offsetY: 0,
@@ -162,6 +166,8 @@ export function validateCards(cards: Card[], requireArt = true): string[] {
     if (requireArt && !c.artwork) errors.push(`${tag}: 일러스트가 없습니다.`);
     if (c.overframe !== undefined && !validOverframe(c.overframe))
       errors.push(`${tag}: 오버프레임 설정 또는 투명 PNG가 올바르지 않습니다.`);
+    if (c.simpleOverframe !== undefined && !validSimpleOverframe(c.simpleOverframe))
+      errors.push(`${tag}: 3:4 간편 오버프레임 설정이 올바르지 않습니다.`);
     if (
       isMonster(c) &&
       (!Number.isInteger(c.level) || c.level < 0 || c.level > 13)
@@ -221,6 +227,10 @@ export function parseImport(raw: unknown): Card[] {
         ),
       } as Card;
       c.artwork = artData(item.artwork);
+      if (item.simpleOverframe !== undefined) {
+        if (!validSimpleOverframe(item.simpleOverframe)) throw Error("3:4 간편 오버프레임 설정이 올바르지 않습니다.");
+        c.simpleOverframe = item.simpleOverframe;
+      }
       if (item.overframe !== undefined) {
         if (!validOverframe(item.overframe)) throw Error("오버프레임 설정이 올바르지 않습니다.");
         c.overframe = item.overframe;
@@ -305,6 +315,7 @@ export function mergeCards(existing: Card[], incoming: Card[]): Card[] {
         // A CDB row does not carry theme metadata. Preserve the editor's
         // manually assigned theme when refreshing that row from a CDB.
         ...(prev && c.theme === "가져온 테마" ? { theme: prev.theme } : {}),
+        ...(prev?.simpleOverframe ? { simpleOverframe: prev.simpleOverframe } : {}),
         ...(prev?.artwork
           ? {
               artwork: prev.artwork,
