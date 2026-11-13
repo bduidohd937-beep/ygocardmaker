@@ -10,7 +10,7 @@ async function openCatalog(page) {
 }
 test("도감 9종 초기 등록, ID·역할 검색 및 검증 상태 독립 저장", async ({ page }) => {
   await openCatalog(page);
-  await expect(page.getByText("전체").first()).toBeVisible();
+  await expect(page.getByText("검색 결과 9건")).toBeVisible();
   await expect(page.getByRole("button", { name: /정수약탈자 루미크론/ })).toBeVisible();
   await expect(page.getByRole("button", { name: /차원의 유예/ })).toBeVisible();
   const query = page.getByLabel("범용 카드 검색");
