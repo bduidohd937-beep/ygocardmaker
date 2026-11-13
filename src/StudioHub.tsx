@@ -19,6 +19,7 @@ import {
 type Stage = "data"|"images"|"design"|"export"|"catalog";
 interface Props {
   project: Project;
+  initialStage?: "data" | "catalog";
   activeId: number;
   selectedIds: number[];
   assetName: string;
@@ -46,10 +47,11 @@ const productionLabel=(card:Card)=>{
   const state=hubCardStates(card);
   return state.dual?"일반 + 3:4":state.normal?"일반 카드":state.overframe?"3:4 원화":"원화 없음";
 };
-export function StudioHub({project,activeId,selectedIds,assetName,assetCount,onCatalogChange,
+export function StudioHub({project,initialStage="data",activeId,selectedIds,assetName,assetCount,onCatalogChange,
   onClose,onImportCards,onImportAssets,onApplyImages,onUndoImages,onApplyRepairs,onOpenCard,
   onOpenFullArt,onCompare,onOpenBatch}:Props){
-  const [stage,setStage]=useState<Stage>("data");
+  const [stage,setStage]=useState<Stage>(initialStage);
+  const catalogDirect = initialStage === "catalog" && stage === "catalog";
   const [query,setQuery]=useState("");
   const [chosen,setChosen]=useState<number[]>(()=>
     [...new Set(selectedIds.filter(id=>project.cards.some(c=>c.id===id)))].slice(0,100));
@@ -236,20 +238,23 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,onC
   return <div className="modal-backdrop studio-hub-backdrop">
     <section className="studio-hub-modal" role="dialog" aria-modal="true" aria-labelledby="studio-hub-title">
       <header className="simple-of-header">
-        <div><span className="eyebrow">YGO STUDIO · INTEGRATED WORKSPACE V4.3</span>
-          <h2 id="studio-hub-title">카드 제작 통합 작업실</h2>
-          <p>카드 데이터 → 이미지 ID 연결 → 디자인 편집 → EDOPro 출력 · 같은 프로젝트에서 관리</p>
+        <div><span className="eyebrow">{catalogDirect ? "YGO STUDIO · GENERIC CARD ENCYCLOPEDIA" : "YGO STUDIO · INTEGRATED WORKSPACE V4.3"}</span>
+          <h2 id="studio-hub-title">{catalogDirect ? "범용 카드 도감" : "카드 제작 통합 작업실"}</h2>
+          <p>{catalogDirect ? "범용 카드 검색 · 채택 · 이미지 · CDB/Lua 구현 · 실전 검증" :
+            "카드 데이터 → 이미지 ID 연결 → 디자인 편집 → EDOPro 출력 · 같은 프로젝트에서 관리"}</p>
         </div>
+        {catalogDirect && <button type="button" className="studio-hub-to-workspace"
+          onClick={()=>switchStage("data")}>통합 작업실 전체 보기</button>}
         <button type="button" aria-label="통합 작업실 닫기" disabled={busy} onClick={onClose}><X size={18}/></button>
       </header>
-      <div className="studio-hub-stats">
+      {!catalogDirect && <div className="studio-hub-stats">
         <span><strong>{counts.total}</strong> 전체 카드</span>
         <span><strong>{counts.ordinary}</strong> 일반 원화</span>
         <span><strong>{counts.full}</strong> 3:4 원화</span>
         <span><strong>{counts.dual}</strong> 두 형태 보유</span>
         <span><strong>{chosen.length}</strong> 작업 선택</span>
-      </div>
-      <nav className="studio-hub-steps" aria-label="통합 제작 단계">
+      </div>}
+      {!catalogDirect && <nav className="studio-hub-steps" aria-label="통합 제작 단계">
         {STAGES.map(item=><button key={item.key} type="button"
           aria-current={stage===item.key?"step":undefined}
           className={stage===item.key?"active":""}
@@ -257,7 +262,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,onC
           onClick={()=>switchStage(item.key)}>
           <strong>{item.name}</strong><small>{item.sub}</small>
         </button>)}
-      </nav>
+      </nav>}
       <div className={"studio-hub-body"+(stage==="catalog"?" generic-catalog-open":"")}>
         <aside className="studio-hub-list-pane">
           <div className="studio-hub-pane-title"><strong>카드 목록</strong><small>선택 {chosen.length} / 최대 100장</small></div>
