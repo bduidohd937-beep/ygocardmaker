@@ -42,7 +42,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   onOpenFullArt,onCompare,onOpenBatch}:Props){
   const [stage,setStage]=useState<Stage>("data");
   const [query,setQuery]=useState("");
-  const [chosen,setChosen]=useState<number[]>(()=>{
+  const [chosen,setChosen]=useState<number[]>(()=>
     [...new Set(selectedIds.filter(id=>project.cards.some(c=>c.id===id)))].slice(0,100));
   const [imageType,setImageType]=useState<HubImageType>("normal");
   const [imageMap,setImageMap]=useState<ImageMap>({});
