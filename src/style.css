@@ -1699,8 +1699,8 @@ a {
 .of-toolbar-divider { width: 1px; height: 20px; background: #656078; margin: 0 3px; }
 .of-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden;
   padding: 12px; border: 1px solid #444559; border-radius: 9px; background: #10131b; }
-.of-stage canvas { display: block; aspect-ratio: 842 / 1228; height: min(66vh, 730px); width: auto;
-  max-height: 100%; max-width: 100%; object-fit: contain; touch-action: none;
+.of-stage canvas { display: block; aspect-ratio: 842 / 1228; width: min(100%, 510px, calc(66vh * 842 / 1228)); height: auto;
+  max-height: 100%; object-fit: contain; touch-action: none;
   user-select: none; border: 1px solid #777289; box-shadow: 0 14px 28px #0008; }
 .of-controls { min-height: 0; overflow-y: auto; padding: 8px 7px 8px 0;
   display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; }
@@ -1726,6 +1726,6 @@ a {
   .of-modal { max-height: 98dvh; padding: 12px; }
   .of-layout { grid-template-columns: minmax(0,1fr); overflow: auto; }
   .of-stage { min-height: 300px; flex: none; max-height: 53vh; }
-  .of-stage canvas { height: min(50vh, 480px); }
+  .of-stage canvas { width: min(100%, 390px, calc(48vh * 842 / 1228)); }
   .of-controls { max-height: none; overflow: visible; }
 }
