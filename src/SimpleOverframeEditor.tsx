@@ -416,8 +416,6 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
                 <input type="range" value={config[key]} min={min} max={max} step={1}
                   onChange={e => update({
                     [key]: Number(e.target.value),
-                    ...(key === "effectTop" && config.effectHeight + Number(e.target.value) > 99
-                      ? { effectHeight: 99 - Number(e.target.value) } : {}),
                   })}/>
               </label>
             )}
