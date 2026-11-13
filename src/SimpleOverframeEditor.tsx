@@ -1,10 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import { Check, Download, ImagePlus, RotateCcw, X } from "lucide-react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { Check, Download, ImagePlus, RotateCcw, X, Move, Save, ScanLine } from "lucide-react";
 import type { Card } from "./model";
 import { ATTRIBUTES, FRAMES, type Frame } from "./model";
 import { DEFAULT_SIMPLE_OVERFRAME, renderSimpleOverframe, requiredSimpleOverframeAssets, type SimpleOverframe } from "./simpleOverframe";
 import { download } from "./export";
 import { toBlob } from "./render";
+import {
+  ART_W, ART_H, builtInLayout, clampOverlayRect, completeLayout, defaultOverlayRects,
+  overlayRects, snapOverlayRect, updateLayoutPart,
+  type OverlayPart, type OverlayRect,
+} from "./overframeLayout";
 
 interface Props {
   card: Card;
@@ -27,8 +32,104 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const interactiveCard = useRef<HTMLDivElement>(null);
+  const drag = useRef<{
+    id: number; part: OverlayPart; startX: number; startY: number;
+    original: OverlayRect; baseline: SimpleOverframe; resize: boolean;
+  } | null>(null);
+  const [selected, setSelected] = useState<OverlayPart>("effect");
+  const [snap, setSnap] = useState(true);
+  const [guides, setGuides] = useState<{ x?: number; y?: number }>({});
+  const [presetName, setPresetName] = useState("내 레이아웃");
   const fileInput = useRef<HTMLInputElement>(null);
   const update = (p: Partial<SimpleOverframe>) => setConfig(s => ({ ...s, ...p }));
+  const boxes = overlayRects(config, frame, level);
+  const visible = (id: OverlayPart) =>
+    id === "name" ? config.showName : id === "attribute" ? config.showAttribute :
+    id === "level" ? config.showLevel !== false && !["spell","trap","link"].includes(frame) && level > 0 :
+    config.showEffectBox;
+  const labelFor: Record<OverlayPart, string> = {
+    name: "카드명", attribute: "속성", level: frame === "xyz" ? "랭크" : "레벨", effect: "효과창",
+  };
+  const rectFor = (id: OverlayPart) => boxes[id];
+  const applyRect = (part: OverlayPart, rect: OverlayRect, baseline = config) => {
+    const corrected = clampOverlayRect(rect);
+    const layout = updateLayoutPart(baseline, frame, level, part, corrected);
+    setConfig(s => ({ ...s, layout }));
+  };
+  const pointerDown = (e: ReactPointerEvent<HTMLButtonElement>, part: OverlayPart) => {
+    if (e.button !== 0 || !config.image) return;
+    e.preventDefault();
+    const resize = (e.target as HTMLElement).closest("[data-resize]") !== null;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag.current = {
+      id: e.pointerId, part, startX: e.clientX, startY: e.clientY,
+      original: rectFor(part), baseline: config, resize,
+    };
+    setSelected(part);
+  };
+  const pointerMove = (e: ReactPointerEvent<HTMLButtonElement>) => {
+    const g = drag.current;
+    const bounds = interactiveCard.current?.getBoundingClientRect();
+    if (!g || !bounds || e.pointerId !== g.id) return;
+    const dx = (e.clientX - g.startX) * ART_W / bounds.width;
+    const dy = (e.clientY - g.startY) * ART_H / bounds.height;
+    if (g.resize) {
+      if (g.part === "effect") {
+        applyRect(g.part, { ...g.original,
+          w: Math.max(180, Math.min(ART_W - g.original.x, g.original.w + dx)),
+          h: Math.max(90, Math.min(ART_H - g.original.y, g.original.h + dy)),
+        }, g.baseline);
+      } else {
+        const base = defaultOverlayRects(frame, level, g.baseline.effectTop, g.baseline.effectHeight)[g.part];
+        const cap = Math.min(2, (ART_W - g.original.x) / base.w,
+          (ART_H - g.original.y) / base.h);
+        const scale = Math.max(.35, Math.min(cap, (g.original.w + dx) / base.w));
+        applyRect(g.part, { ...g.original, w: base.w * scale, h: base.h * scale }, g.baseline);
+      }
+      setGuides({});
+      return;
+    }
+    const proposed = { ...g.original, x: g.original.x + dx, y: g.original.y + dy };
+    const snapped = snapOverlayRect(proposed, snap);
+    applyRect(g.part, snapped.rect, g.baseline);
+    setGuides(snapped.guides);
+  };
+  const pointerUp = (e: ReactPointerEvent<HTMLButtonElement>) => {
+    if (!drag.current || e.pointerId !== drag.current.id) return;
+    drag.current = null;
+    setGuides({});
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+  const changeSelectedRect = (field: "x" | "y" | "w" | "h" | "scale", value: number) => {
+    const r = rectFor(selected);
+    const base = defaultOverlayRects(frame, level, config.effectTop, config.effectHeight)[selected];
+    const next = field === "scale" ? { ...r,
+      w: base.w * Math.max(.35, Math.min(2, value / 100)),
+      h: base.h * Math.max(.35, Math.min(2, value / 100)) }
+      : { ...r, [field]: value };
+    applyRect(selected, next);
+  };
+  const applyPreset = (key: string) => {
+    if (!key) return;
+    const layout = key.startsWith("built:")
+      ? builtInLayout(key.slice(6) as "기본" | "중앙형" | "상단 여백형",
+        frame, level, config.effectTop, config.effectHeight)
+      : config.savedPresets?.find(p => p.name === key.slice(5))?.layout;
+    if (layout) {
+      update({ layout: structuredClone(layout) });
+      setStatus("레이아웃 프리셋을 적용했습니다. 설정 저장을 눌러 카드에 보존하세요.");
+    }
+  };
+  const savePreset = () => {
+    const name = presetName.trim();
+    if (!name || name.length > 32) { setError("프리셋 이름은 1~32자로 입력하세요."); return; }
+    const others = (config.savedPresets ?? []).filter(p => p.name !== name);
+    if (others.length >= 5) { setError("카드당 프리셋은 최대 5개입니다."); return; }
+    update({ savedPresets: [...others, { name, layout: completeLayout(config, frame, level) }] });
+    setError("");
+    setStatus("현재 레이아웃을 프리셋으로 저장했습니다. 카드에 적용하면 JSON에도 보존됩니다.");
+  };
 
   useEffect(() => {
     const keyDown = (e: KeyboardEvent) => {
@@ -134,9 +235,32 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
       <div className="simple-of-layout">
         <div className="simple-of-workspace">
           <div className="simple-of-canvas-wrap">
-            <canvas ref={canvas} width={450} height={600} aria-label="3:4 오버프레임 미리보기"/>
+            <div className="simple-of-interactive" ref={interactiveCard}>
+              <canvas ref={canvas} width={450} height={600} aria-label="3:4 오버프레임 미리보기"/>
+              {config.image && (["effect", "level", "attribute", "name"] as const).map(part => {
+                if (!visible(part)) return null;
+                const rect = boxes[part];
+                return <button key={part} type="button"
+                  aria-label={labelFor[part] + " 이동"} title={labelFor[part] + " 드래그로 이동"}
+                  className={"simple-of-target" + (selected === part ? " active" : "")}
+                  style={{
+                    left: (rect.x / ART_W * 100) + "%", top: (rect.y / ART_H * 100) + "%",
+                    width: (rect.w / ART_W * 100) + "%", height: (rect.h / ART_H * 100) + "%",
+                  }}
+                  onPointerDown={e => pointerDown(e, part)}
+                  onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp}>
+                  {selected === part && <span className="simple-of-target-name">{labelFor[part]}</span>}
+                  {selected === part && <span data-resize="true" className="simple-of-resize" aria-hidden="true"/>}
+                </button>;
+              })}
+              {guides.x !== undefined && <span aria-hidden="true" className="simple-of-guide x" style={{ left: (guides.x / ART_W * 100) + "%" }}/>}
+              {guides.y !== undefined && <span aria-hidden="true" className="simple-of-guide y" style={{ top: (guides.y / ART_H * 100) + "%" }}/>}
+            </div>
           </div>
-          <p>최종 PNG 1500 × 2000 · 원화 하나만 표시 · 별도 투명 PNG/마스크 불필요</p>
+          <p>요소를 드래그해 이동 · 우하단 핸들로 크기 조절 · 선택 후 숫자로 정밀 조정</p>
+          <label className="simple-of-snap"><input type="checkbox" checked={snap}
+            onChange={e => setSnap(e.target.checked)}/> 가운데·안전 여백에 자동 정렬</label>
+          <p>최종 PNG 1500 × 2000 · 원화 하나만 사용 · 선택 테두리와 가이드는 출력되지 않음</p>
           {Math.abs(imageAspect - 0.75) > 0.02 && config.image && (
             <p className="simple-of-warning" role="status">현재 원화는 3:4가 아니므로 좌우 또는 상하가 일부 잘려요. 3:4 원화를 권장합니다.</p>
           )}
@@ -214,8 +338,68 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               disabled={!config.showEffectBox}
               onChange={e => update({ showEffectText: e.target.checked })}/> 효과창에 텍스트 표시</label>
           </div>
+          <div className="simple-of-group">
+            <strong>03 · 자유 배치 에디터</strong>
+            <label>편집할 요소
+              <select aria-label="배치 요소 선택" value={selected}
+                onChange={e => setSelected(e.target.value as OverlayPart)}>
+                {(["name","attribute","level","effect"] as const).filter(visible).map(k =>
+                  <option key={k} value={k}>{labelFor[k]}</option>)}
+              </select>
+            </label>
+            {visible(selected) && <>
+              <div className="simple-of-number-grid">
+                {(["x","y"] as const).map(field => <label key={field}>
+                  {field === "x" ? "가로 X" : "세로 Y"}
+                  <input aria-label={labelFor[selected] + " " + field.toUpperCase()} type="number"
+                    min="0" max={field === "x" ? ART_W : ART_H} step="1"
+                    value={Math.round(boxes[selected][field])}
+                    onChange={e => changeSelectedRect(field, Number(e.target.value))}/>
+                </label>)}
+              </div>
+              {selected === "effect" ? <div className="simple-of-number-grid">
+                {(["w","h"] as const).map(field => <label key={field}>
+                  {field === "w" ? "효과창 너비" : "효과창 높이"}
+                  <input aria-label={"효과창 " + field.toUpperCase()} type="number"
+                    min={field === "w" ? 180 : 90} max={field === "w" ? ART_W : ART_H}
+                    value={Math.round(boxes.effect[field])}
+                    onChange={e => changeSelectedRect(field, Number(e.target.value))}/>
+                </label>)}
+              </div> : <label className="simple-of-range">
+                <span>크기 <b>{Math.round(boxes[selected].w /
+                  defaultOverlayRects(frame, level, config.effectTop, config.effectHeight)[selected].w * 100)}%</b></span>
+                <input aria-label={labelFor[selected] + " 크기"} type="range" min="35" max="200"
+                  value={Math.round(boxes[selected].w /
+                    defaultOverlayRects(frame, level, config.effectTop, config.effectHeight)[selected].w * 100)}
+                  onChange={e => changeSelectedRect("scale", Number(e.target.value))}/>
+              </label>}
+            </>}
+            <button type="button" className="simple-of-subtle" onClick={() => update({ layout: undefined })}>
+              <RotateCcw size={15}/> 전체 위치 초기화
+            </button>
+          </div>
+          <div className="simple-of-group">
+            <strong>04 · 레이아웃 프리셋</strong>
+            <label>불러오기
+              <select aria-label="오버프레임 프리셋 불러오기" value=""
+                onChange={e => applyPreset(e.target.value)}>
+                <option value="">프리셋 선택…</option>
+                <option value="built:기본">기본 OCG형</option>
+                <option value="built:중앙형">중앙 일러스트형</option>
+                <option value="built:상단 여백형">하단 효과창형</option>
+                {(config.savedPresets ?? []).map(p =>
+                  <option key={p.name} value={"save:" + p.name}>{p.name}</option>)}
+              </select>
+            </label>
+            <label>내 프리셋 이름
+              <input aria-label="프리셋 이름" value={presetName} maxLength={32}
+                onChange={e => setPresetName(e.target.value)}/>
+            </label>
+            <button type="button" onClick={savePreset}><Save size={15}/> 현재 배치 프리셋 저장</button>
+            <small>이 카드의 프리셋은 최대 5개까지 카드 JSON에 함께 저장됩니다.</small>
+          </div>
           {config.showEffectBox && <div className="simple-of-group">
-            <strong>03 · 효과창 디자인</strong>
+            <strong>05 · 효과창 디자인</strong>
             <label>스타일
               <select aria-label="간편 모드 효과창 스타일" value={config.effectStyle}
                 onChange={e => update({ effectStyle: e.target.value as SimpleOverframe["effectStyle"] })}>
@@ -226,16 +410,12 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
             </label>
             {([
               ["불투명도", "effectOpacity", 0, 100, "%"],
-              ["효과창 위치", "effectTop", 55, 87, "%"],
-              ["효과창 높이", "effectHeight", 10, Math.min(32, 99 - config.effectTop), "%"],
             ] as const).map(([title, key, min, max, unit]) =>
               <label key={key} className="simple-of-range">
                 <span>{title} <b>{config[key]}{unit}</b></span>
                 <input type="range" value={config[key]} min={min} max={max} step={1}
                   onChange={e => update({
                     [key]: Number(e.target.value),
-                    ...(key === "effectTop" && config.effectHeight + Number(e.target.value) > 99
-                      ? { effectHeight: 99 - Number(e.target.value) } : {}),
                   })}/>
               </label>
             )}
