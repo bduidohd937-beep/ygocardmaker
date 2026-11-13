@@ -801,7 +801,7 @@ export function CardMakerApp() {
             <span className="editing-badge">EDITING</span>
           </div>
           <div className="tabs" role="tablist">
-            {["정보", "일러스트"].map((t) => (
+            {["정보", "일러스트", "오버프레임"].map((t) => (
               <button
                 key={t}
                 role="tab"
@@ -811,8 +811,10 @@ export function CardMakerApp() {
               >
                 {t === "정보" ? (
                   <LayoutGrid size={14} />
-                ) : (
+                ) : t === "일러스트" ? (
                   <ImageIcon size={14} />
+                ) : (
+                  <Layers size={14} />
                 )}{" "}
                 {t}
               </button>
@@ -1057,16 +1059,8 @@ export function CardMakerApp() {
                   </span>
                 </div>
               </>
-            ) : (
+            ) : tab === "일러스트" ? (
               <>
-                <div className="simple-of-entry">
-                  <strong>3:4 오버프레임 간편 제작</strong>
-                  <p>완성된 3:4 원화 하나 위에 카드명·속성·효과창만 추가. 복제 이미지와 마스크가 필요 없습니다.</p>
-                  <button type="button" className="full-width" onClick={() => setSimpleOverframeOpen(true)}>
-                    <ImagePlus size={16}/> 3:4 간편 모드 열기
-                  </button>
-                  {card.simpleOverframe?.image && <small>설정 저장됨 · 다시 열어 수정하거나 1500×2000 PNG 출력 가능</small>}
-                </div>
                 <div className="section-label">
                   아트워크 <span>01</span>
                 </div>
@@ -1138,6 +1132,31 @@ export function CardMakerApp() {
                 >
                   <RotateCcw size={14} /> 위치 초기화
                 </button>
+                <div className="notice">
+                  <Info size={15} />
+                  <span>
+                    CDB나 JSON 정보를 다시 가져와도
+                    <br />
+                    기존 일러스트와 위치는 유지됩니다.
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="notice">
+                  <Info size={15} />
+                  <span>오버프레임 제작은 일반 일러스트와 독립적으로 관리됩니다.
+                    3:4 간편 모드는 완성 원화 한 장을 사용하고, 정밀 모드는 별도 투명 PNG 돌출 레이어를 사용합니다.</span>
+                </div>
+                <div className="simple-of-entry">
+                  <strong>3:4 오버프레임 간편 제작</strong>
+                  <p>완성된 3:4 원화 하나 위에 카드명·속성·효과창만 추가. 복제 이미지와 마스크가 필요 없습니다.</p>
+                  <button type="button" className="full-width" onClick={() => setSimpleOverframeOpen(true)}>
+                    <ImagePlus size={16}/> 3:4 간편 모드 열기
+                  </button>
+                  {card.simpleOverframe?.image && <small>설정 저장됨 · 다시 열어 수정하거나 1500×2000 PNG 출력 가능</small>}
+                </div>
+
                 <div className="section-label effect-heading">
                   오버프레임 <span>03</span>
                 </div>
@@ -1201,14 +1220,7 @@ export function CardMakerApp() {
                     </>
                   )}
                 </div>
-                <div className="notice">
-                  <Info size={15} />
-                  <span>
-                    CDB나 JSON 정보를 다시 가져와도
-                    <br />
-                    기존 일러스트와 위치는 유지됩니다.
-                  </span>
-                </div>
+
               </>
             )}
             <input
