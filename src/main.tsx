@@ -51,6 +51,7 @@ import { DEFAULT_OVERFRAME } from "./overframe";
 import { ArtworkCropEditor } from "./CropEditor";
 import { OverframeEditor } from "./OverframeEditor";
 import { SimpleOverframeEditor } from "./SimpleOverframeEditor";
+import { BatchOverframeEditor } from "./BatchOverframeEditor";
 import { getActivePack, importAssetZip, loadAssetPack, saveAssetPack, setActivePack } from "./assetPack";
 import { demoProject } from "./samples";
 import { loadProject, saveProject } from "./storage";
@@ -73,6 +74,7 @@ export function CardMakerApp() {
     [cropEditorOpen, setCropEditorOpen] = useState(false),
     [overframeEditorOpen, setOverframeEditorOpen] = useState(false),
     [simpleOverframeOpen, setSimpleOverframeOpen] = useState(false),
+    [batchOverframeOpen, setBatchOverframeOpen] = useState(false),
     [format, setFormat] = useState<"png" | "jpg">("png"),
     [size, setSize] = useState(1263),
     [busy, setBusy] = useState(""),
@@ -1158,6 +1160,10 @@ export function CardMakerApp() {
                     <ImagePlus size={16}/> 3:4 간편 모드 열기
                   </button>
                   {card.simpleOverframe?.image && <small>설정 저장됨 · 다시 열어 수정하거나 1500×2000 PNG 출력 가능</small>}
+                  <button type="button" className="full-width" onClick={() => setBatchOverframeOpen(true)}>
+                    <Package size={16}/> V3.6 여러 장 일괄 제작·ZIP 출력
+                  </button>
+                  <small>카드 ID와 원화 파일을 자동 연결하고 3:4 및 EDOPro용 PNG를 일괄 생성합니다.</small>
                 </div>
 
                 <div className="section-label effect-heading">
@@ -1259,6 +1265,27 @@ export function CardMakerApp() {
           </div>
         </aside>
       </div>
+      {batchOverframeOpen && (
+        <BatchOverframeEditor cards={project.cards} initialSelected={selected}
+          onClose={() => setBatchOverframeOpen(false)}
+          onEditCard={id => {
+            setActive(id);
+            setBatchOverframeOpen(false);
+            setSimpleOverframeOpen(true);
+          }}
+          onApply={updates => {
+            const map = new Map(updates.map(item => [item.id, item.config]));
+            setProject(p => p ? { ...p,
+              cards: p.cards.map(c => {
+                const config = map.get(c.id);
+                return config ? { ...c, simpleOverframe: config } : c;
+              }),
+            } : p);
+            setUndoDeletion(null);
+            setToast(updates.length + "장의 오버프레임 원화·설정을 저장했습니다.");
+          }}
+        />
+      )}
       {simpleOverframeOpen && (
         <SimpleOverframeEditor key={card.id} card={card}
           onCancel={() => setSimpleOverframeOpen(false)}
