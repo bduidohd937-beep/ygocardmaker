@@ -1,8 +1,20 @@
 /** Standalone 3:4 overframe artwork. This never reuses the legacy card frame. */
+import type { Frame } from "./model";
+import { assetUrl, assetFont, ensureAssetFonts } from "./assetPack";
+import { ASSET_LAYOUT } from "./assetRender";
+
+const NATIVE_CARD_WIDTH = 1394;
+const ATTRIBUTE_CODES: Record<string, string> = {
+  "어둠": "dark", "빛": "light", "땅": "earth", "물": "water",
+  "불": "fire", "바람": "wind", "신": "divine",
+};
+
 export interface SimpleOverframe {
   image: string;
   showName: boolean;
   showAttribute: boolean;
+  /** Optional for V3 projects written before the authentic rank/level overlay was added. */
+  showLevel?: boolean;
   showEffectBox: boolean;
   showEffectText: boolean;
   effectStyle: "glass" | "classic" | "outline";
@@ -13,7 +25,7 @@ export interface SimpleOverframe {
 
 export const DEFAULT_SIMPLE_OVERFRAME: SimpleOverframe = {
   image: "",
-  showName: true, showAttribute: true, showEffectBox: true, showEffectText: false,
+  showName: true, showAttribute: true, showLevel: true, showEffectBox: true, showEffectText: false,
   effectStyle: "glass", effectOpacity: 78, effectTop: 76, effectHeight: 21,
 };
 export const PORTRAIT_WIDTH = 900;
@@ -24,6 +36,7 @@ export function validSimpleOverframe(value: unknown): value is SimpleOverframe {
   return typeof r.image === "string" &&
     (r.image === "" || (/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+=*$/.test(r.image) && r.image.length < 16_000_000)) &&
     ["showName", "showAttribute", "showEffectBox", "showEffectText"].every(k => typeof r[k] === "boolean") &&
+    (r.showLevel === undefined || typeof r.showLevel === "boolean") &&
     (r.effectStyle === "glass" || r.effectStyle === "classic" || r.effectStyle === "outline") &&
     typeof r.effectOpacity === "number" && Number.isFinite(r.effectOpacity) && r.effectOpacity >= 0 && r.effectOpacity <= 100 &&
     typeof r.effectTop === "number" && Number.isFinite(r.effectTop) && r.effectTop >= 55 && r.effectTop <= 87 &&
@@ -54,13 +67,32 @@ function paintRounded(ctx: CanvasRenderingContext2D, x: number, y: number,
   ctx.beginPath();
   ctx.roundRect(x, y, w, h, radius);
 }
+/** Reuse the very same font face as the existing asset-card renderer. */
 function fitTitle(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
-  let n = 54;
+  let n = 106 * PORTRAIT_WIDTH / NATIVE_CARD_WIDTH;
   for (; n > 26; n--) {
-    ctx.font = `700 ${n}px "Noto Sans KR Variable", sans-serif`;
+    ctx.font = `600 ${n}px ${assetFont("name")}`;
     if (ctx.measureText(text).width <= maxWidth) break;
   }
   return n;
+}
+/** No homemade circles, Unicode attribute glyphs or star icons. */
+export function requiredSimpleOverframeAssets(
+  config: SimpleOverframe, attribute: string, frame: Frame, level: number,
+): string[] {
+  const keys: string[] = [];
+  if (config.showName) keys.push("font:name");
+  if (config.showAttribute)
+    keys.push("attribute:" + (frame === "spell" || frame === "trap"
+      ? frame : ATTRIBUTE_CODES[attribute] ?? "dark"));
+  if (config.showLevel !== false && !["spell", "trap", "link"].includes(frame) && level > 0)
+    keys.push(frame === "xyz" ? "star:rank" : "star:level");
+  if (config.showEffectBox && config.showEffectText) keys.push("font:body");
+  return keys.filter(key => !assetUrl(key));
+}
+export function sourceAssetKeyForLevel(frame: Frame): string | null {
+  return frame === "spell" || frame === "trap" || frame === "link"
+    ? null : frame === "xyz" ? "star:rank" : "star:level";
 }
 function wrapText(ctx: CanvasRenderingContext2D, text: string, width: number): string[] {
   const lines: string[] = [];
@@ -76,10 +108,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, width: number): s
   }
   return lines;
 }
-const ATTRIBUTE_SYMBOL: Record<string, string> = {
-  "어둠": "闇", "빛": "光", "땅": "地", "물": "水", "불": "炎",
-  "바람": "風", "신": "神",
-};
+
 /** WYSIWYG canvas renderer. No card chrome, repeated art layer or effect stat bar. */
 export async function renderSimpleOverframe(
   canvas: HTMLCanvasElement,
@@ -88,11 +117,16 @@ export async function renderSimpleOverframe(
   attribute: string,
   effect: string,
   width = PORTRAIT_WIDTH,
+  frame: Frame = "effect",
+  level = 4,
 ): Promise<void> {
   if (!validSimpleOverframe(config)) throw Error("오버프레임 간편 모드 설정이 올바르지 않습니다.");
   if (!config.image) throw Error("3:4 원화를 먼저 업로드하세요.");
   if (width < 180 || width > 3000) throw Error("지원하지 않는 출력 해상도입니다.");
-  await document.fonts.load('700 54px "Noto Sans KR Variable"', title);
+  const missing = requiredSimpleOverframeAssets(config, attribute, frame, level);
+  if (missing.length) throw Error("기존 카드 에셋이 없습니다: " + missing.join(", ") +
+    ". YGO STUDIO 왼쪽의 '카드 프레임 ZIP 불러오기'에서 원본 리소스를 적용하세요.");
+  await ensureAssetFonts();
   await document.fonts.ready;
   const image = await loadArtwork(config.image);
   const ctx = canvas.getContext("2d");
@@ -110,29 +144,38 @@ export async function renderSimpleOverframe(
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, PORTRAIT_WIDTH, 160);
   }
+  const nativeScale = PORTRAIT_WIDTH / NATIVE_CARD_WIDTH;
   if (config.showName) {
     ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
+    ctx.textBaseline = "top";
     ctx.shadowColor = "rgba(0,0,0,.8)";
-    ctx.shadowBlur = 7;
-    fitTitle(ctx, title, config.showAttribute ? 700 : 790);
+    ctx.shadowBlur = 6;
+    const maxWidth = ASSET_LAYOUT.name.maxW * nativeScale;
+    fitTitle(ctx, title, maxWidth);
     ctx.fillStyle = "#f7f3fc";
-    ctx.fillText(title, 48, 73, config.showAttribute ? 700 : 790);
+    ctx.fillText(title, ASSET_LAYOUT.name.x * nativeScale,
+      (ASSET_LAYOUT.name.y + ASSET_LAYOUT.name.opticalYOffset) * nativeScale, maxWidth);
     ctx.shadowBlur = 0;
   }
   if (config.showAttribute) {
-    ctx.beginPath();
-    ctx.arc(832, 72, 38, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(20,13,31,.88)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(220,200,255,.85)";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.font = '700 41px "Noto Sans KR Variable", sans-serif';
-    ctx.fillStyle = "#eee2fe";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(ATTRIBUTE_SYMBOL[attribute] ?? attribute.slice(0, 1), 832, 72);
+    const key = frame === "spell" || frame === "trap" ? frame : ATTRIBUTE_CODES[attribute] ?? "dark";
+    const img = await loadArtwork(assetUrl("attribute:" + key)!);
+    const area = ASSET_LAYOUT.attribute;
+    ctx.drawImage(img, area.x * nativeScale, area.y * nativeScale,
+      area.w * nativeScale, area.h * nativeScale);
+  }
+  const starKey = config.showLevel !== false ? sourceAssetKeyForLevel(frame) : null;
+  if (starKey && level > 0) {
+    const star = await loadArtwork(assetUrl(starKey)!);
+    const step = ASSET_LAYOUT.level.step * nativeScale;
+    const size = ASSET_LAYOUT.level.size * nativeScale;
+    for (let i = 0; i < Math.min(level, 13); i++) {
+      const base = level < 13 ? 147 : 101;
+      const x = frame === "xyz"
+        ? (base * nativeScale + i * step)
+        : (PORTRAIT_WIDTH - base * nativeScale - size - i * step);
+      ctx.drawImage(star, x, ASSET_LAYOUT.level.y * nativeScale, size, size);
+    }
   }
   if (config.showEffectBox) {
     const x = 36, w = 828;
@@ -161,7 +204,7 @@ export async function renderSimpleOverframe(
       ctx.textAlign = "left";
       let size = 28, lines: string[] = [];
       for (; size >= 14; size--) {
-        ctx.font = `500 ${size}px "Noto Sans KR Variable", sans-serif`;
+        ctx.font = `400 ${size}px ${assetFont("body")}`;
         lines = wrapText(ctx, effect, w - 48);
         if (lines.length * size * 1.45 <= h - 36) break;
       }

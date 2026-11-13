@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Download, ImagePlus, RotateCcw, X } from "lucide-react";
 import type { Card } from "./model";
-import { ATTRIBUTES } from "./model";
-import { DEFAULT_SIMPLE_OVERFRAME, renderSimpleOverframe, type SimpleOverframe } from "./simpleOverframe";
+import { ATTRIBUTES, FRAMES, type Frame } from "./model";
+import { DEFAULT_SIMPLE_OVERFRAME, renderSimpleOverframe, requiredSimpleOverframeAssets, type SimpleOverframe } from "./simpleOverframe";
 import { download } from "./export";
 import { toBlob } from "./render";
 
@@ -19,6 +19,8 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
   });
   const [name, setName] = useState(card.name);
   const [attribute, setAttribute] = useState(card.attribute);
+  const [frame, setFrame] = useState<Frame>(card.frame);
+  const [level, setLevel] = useState(card.level);
   const [effect, setEffect] = useState(card.effect);
   const [imageAspect, setImageAspect] = useState(0.75);
   const [status, setStatus] = useState("");
@@ -63,7 +65,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
     }
     const handle = window.setTimeout(() => {
       const result = document.createElement("canvas");
-      void renderSimpleOverframe(result, config, name, attribute, effect, 900)
+      void renderSimpleOverframe(result, config, name, attribute, effect, 900, frame, level)
         .then(() => {
           if (!alive || !canvas.current) return;
           const target = canvas.current;
@@ -75,7 +77,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
         .catch(e => { if (alive) setError(e instanceof Error ? e.message : String(e)); });
     }, 90);
     return () => { alive = false; window.clearTimeout(handle); };
-  }, [config, name, attribute, effect]);
+  }, [config, name, attribute, effect, frame, level]);
 
   const upload = async (file: File) => {
     try {
@@ -100,7 +102,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
   };
   const save = () => {
     if (!config.image) { setError("3:4 원화를 먼저 선택하세요."); return; }
-    onSave({ name: name.trim() || "이름 없는 카드", attribute, effect, simpleOverframe: config });
+    onSave({ name: name.trim() || "이름 없는 카드", attribute, frame, level, effect, simpleOverframe: config });
   };
   const exportPng = async () => {
     if (!config.image || busy) { setError("3:4 원화를 먼저 선택하세요."); return; }
@@ -108,7 +110,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
     setStatus("");
     try {
       const out = document.createElement("canvas");
-      await renderSimpleOverframe(out, config, name, attribute, effect, 1500);
+      await renderSimpleOverframe(out, config, name, attribute, effect, 1500, frame, level);
       const blob = await toBlob(out, "png");
       download(blob, `${card.id}.png`);
       setStatus("3:4 · 1500 × 2000 PNG 다운로드를 시작했습니다.");
@@ -116,6 +118,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
     finally { setBusy(false); }
   };
+  const missingAssets = requiredSimpleOverframeAssets(config, attribute, frame, level);
   return <div className="modal-backdrop simple-of-backdrop" onMouseDown={e => {
     if (e.target === e.currentTarget) onCancel();
   }}>
@@ -156,6 +159,11 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               </button>
             )}
             <small>3:4 비율 권장 · PNG/JPG/WebP · 최대 10MB</small>
+            {missingAssets.length > 0 && <small className="simple-of-warning" role="status">
+              원본 에셋 필요: {missingAssets.join(", ")}. 왼쪽 '카드 프레임 ZIP 불러오기'에서 기존 리소스를 불러와 주세요.
+            </small>}
+            {!missingAssets.length && <small>적용 중: 기존 카드명 폰트 · 속성 이미지 · 레벨/랭크 별 에셋</small>}
+            <small>원화에는 카드명·속성·별을 그리지 않아야 중복 표시되지 않습니다.</small>
           </div>
           <div className="simple-of-group">
             <strong>02 · 카드 정보</strong>
@@ -163,11 +171,22 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               <input aria-label="간편 모드 카드명" value={name} maxLength={120}
                 onChange={e => setName(e.target.value)}/>
             </label>
-            <label>속성
+            <label>카드 종류
+              <select aria-label="간편 모드 카드 종류" value={frame} onChange={e => setFrame(e.target.value as Frame)}>
+                {Object.entries(FRAMES).map(([key, value]) => (
+                  <option key={key} value={key}>{value}{["spell", "trap"].includes(key) ? " 카드" : " 몬스터"}</option>
+                ))}
+              </select>
+            </label>
+            {!["spell", "trap"].includes(frame) && <label>속성
               <select aria-label="간편 모드 속성" value={attribute} onChange={e => setAttribute(e.target.value)}>
                 {ATTRIBUTES.map(a => <option value={a} key={a}>{a}</option>)}
               </select>
-            </label>
+            </label>}
+            {!["spell", "trap"].includes(frame) && <label>{frame === "xyz" ? "랭크" : frame === "link" ? "링크" : "레벨"}
+              <input type="number" aria-label="간편 모드 레벨/랭크" min={0} max={13}
+                value={level} onChange={e => setLevel(Math.min(13, Math.max(0, Number(e.target.value) || 0)))}/>
+            </label>}
             <label>효과 텍스트 (선택)
               <textarea aria-label="간편 모드 효과 텍스트" rows={3} value={effect}
                 onChange={e => setEffect(e.target.value)}/>
@@ -176,6 +195,11 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               onChange={e => update({ showName: e.target.checked })}/> 카드명 표시</label>
             <label className="simple-of-check"><input type="checkbox" checked={config.showAttribute}
               onChange={e => update({ showAttribute: e.target.checked })}/> 속성 표시</label>
+            {!["spell", "trap", "link"].includes(frame) && <label className="simple-of-check">
+              <input type="checkbox" checked={config.showLevel !== false}
+                onChange={e => update({ showLevel: e.target.checked })}/>
+              {frame === "xyz" ? "랭크" : "레벨"} 아이콘 표시 (원본 별 PNG)
+            </label>}
             <label className="simple-of-check"><input type="checkbox" checked={config.showEffectBox}
               onChange={e => update({ showEffectBox: e.target.checked })}/> 효과창 표시</label>
             <label className="simple-of-check"><input type="checkbox" checked={config.showEffectText}
