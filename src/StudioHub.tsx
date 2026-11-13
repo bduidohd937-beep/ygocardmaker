@@ -192,7 +192,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
     try{
       const result=await exportStudioHubZip(project.cards,chosen,output,setProgress,controller.signal);
       if(controller.signal.aborted)throw Error("출력을 취소했습니다.");
-      download(result.blob,"카드_통합출력_V4.2.zip");
+      download(result.blob,"카드_통합출력_V4.3.zip");
       setReport(result.report);
       setStatus("이미지 "+result.report.produced.length+"장 ZIP 다운로드 · 누락 "+
         result.report.omitted.length+"건. 제작 검수보고서 포함.");
@@ -202,12 +202,12 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   const setOutputField=<K extends keyof HubOutputOptions>(key:K,value:HubOutputOptions[K])=>
     setOutput(prev=>({...prev,[key]:value}));
   const downloadAudit=()=>{
-    const payload={version:"4.2",source:"YGO STUDIO 통합 작업실",
+    const payload={version:"4.3",source:"YGO STUDIO 통합 작업실",
       mode:output.mode,selected:chosen.length,
       outputsReady:audit.outputsReady,outputsMissing:audit.outputsMissing,
       cards:audit.cards};
     download(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),
-      "카드_출력전_검수표_V4.2.json");
+      "카드_출력전_검수표_V4.3.json");
   };
   const routeAuditIssue=(card:AuditCardResult,item:AuditVariantResult)=>{
     if(item.issues.some(issue=>issue.includes("설정이 올바르지")||
