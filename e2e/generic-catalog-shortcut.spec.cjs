@@ -12,8 +12,9 @@ test("메인에서 한 번 클릭으로 범용 카드 도감에 진입한다", a
   await dialog.getByLabel("범용 카드 검색").fill("990470201");
   await expect(dialog.getByText("검색 결과 1건")).toBeVisible();
   await dialog.getByRole("button", { name: "통합 작업실 전체 보기" }).click();
-  await expect(dialog.getByRole("navigation", { name: "통합 제작 단계" })).toBeVisible();
-  await dialog.getByRole("button", { name: "통합 작업실 닫기" }).click();
+  const workspace = page.getByRole("dialog", { name: "카드 제작 통합 작업실" });
+  await expect(workspace.getByRole("navigation", { name: "통합 제작 단계" })).toBeVisible();
+  await workspace.getByRole("button", { name: "통합 작업실 닫기" }).click();
   await page.getByRole("button", { name: "V4.3 통합 작업실 열기" }).click();
   await expect(page.getByRole("dialog", { name: "카드 제작 통합 작업실" })).toBeVisible();
   await page.getByRole("button", { name: /05 범용 카드 도감/ }).click();
