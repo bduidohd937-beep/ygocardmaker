@@ -15,6 +15,7 @@ export interface GenericCard {
   id: number | null;
   name: string;
   role: string;
+  attribute: string;
   adoption: Adoption;
   cdbStatus: BuildStatus;
   luaStatus: BuildStatus;
@@ -30,7 +31,7 @@ export interface GenericCard {
 function entry(key: string, id: number | null, name: string, role: string,
   adoption: Adoption, version = "미확인"): GenericCard {
   return {
-    key, id, name, role, adoption, version,
+    key, id, name, role, adoption, version, attribute: "",
     cdbStatus: adoption === "채택" ? "제작 기록" : "미확인",
     luaStatus: adoption === "채택" ? "제작 기록" : "미확인",
     duelStatus: "미검증", effect: "", luaText: "", issues: "",
@@ -75,7 +76,8 @@ export function filterGenericCards(records: readonly GenericCard[], cards: reado
   const q = query.trim().toLowerCase();
   return records.filter(record =>
     (adoption === "전체" || record.adoption === adoption) &&
-    (!q || [record.name, String(record.id ?? ""), record.role, record.effect,
+    (!q || [record.name, String(record.id ?? ""), record.role, record.attribute,
+      linkedCard(record, cards)?.attribute || "", record.effect,
       record.version, record.issues, linkedCard(record, cards)?.effect || ""]
       .join(" ").toLowerCase().includes(q)));
 }
@@ -99,7 +101,7 @@ export function validateGenericCards(value: unknown): GenericCard[] {
       !["미확인", "제작 기록", "파일 확인"].includes(item.luaStatus) ||
       !["미검증", "검증 중", "통과", "오류"].includes(item.duelStatus))
       throw Error("채택·구현·검증 상태값이 잘못되었습니다.");
-    for (const field of ["role", "version", "effect", "luaText", "issues"] as const)
+    for (const field of ["role", "attribute", "version", "effect", "luaText", "issues"] as const)
       if (typeof item[field] !== "string") throw Error(field + " 필드가 잘못되었습니다.");
     if (!item.artwork || typeof item.artwork !== "object" || !Array.isArray(item.history))
       throw Error("이미지/이력 자료가 손상되었습니다.");
@@ -116,10 +118,11 @@ export function validateGenericCards(value: unknown): GenericCard[] {
   });
 }
 export function catalogCsv(records: readonly GenericCard[], cards: readonly Card[]): string {
-  const rows = [["카드 ID", "카드명", "역할", "채택 상태", "CDB", "Lua", "실전 검증", "버전",
+  const rows = [["카드 ID", "카드명", "역할", "속성", "채택 상태", "CDB", "Lua", "실전 검증", "버전",
     "효과 원문", "이미지 원화", "오버프레임", "최종본", "오류·메모"]];
   for (const card of records) rows.push([
-    card.id === null ? "" : String(card.id), card.name, card.role, card.adoption,
+    card.id === null ? "" : String(card.id), card.name, card.role,
+    card.attribute || linkedCard(card, cards)?.attribute || "", card.adoption,
     card.cdbStatus, card.luaStatus, card.duelStatus, card.version,
     effectiveText(card, cards), artworkFor(card, cards, "original") ? "보유" : "미확인",
     artworkFor(card, cards, "overframe") ? "보유" : "미확인",
