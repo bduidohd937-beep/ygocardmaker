@@ -1,5 +1,6 @@
 /** Standalone 3:4 overframe artwork. This never reuses the legacy card frame. */
 import type { Frame } from "./model";
+import { DEFAULT_FINISH, paintFinish, validFinishSettings, type FinishSettings } from "./overframeFinish";
 import { assetUrl, assetFont, ensureAssetFonts } from "./assetPack";
 import { paintEffectPanel, panelFontRequirements, validEffectPanelSettings,
   type EffectPanelStyle, type PanelBorder, type PanelTint } from "./effectPanel";
@@ -13,7 +14,7 @@ const ATTRIBUTE_CODES: Record<string, string> = {
   "불": "fire", "바람": "wind", "신": "divine",
 };
 
-export interface SimpleOverframe {
+export interface SimpleOverframe extends FinishSettings {
   image: string;
   showName: boolean;
   /** None by default; legacy V3 projects missing this option also render without a top overlay. */
@@ -47,6 +48,7 @@ export const DEFAULT_SIMPLE_OVERFRAME: SimpleOverframe = {
   effectStyle: "ocg", effectOpacity: 84, effectTop: 76, effectHeight: 21,
   panelTint: "auto", panelBorder: "double", borderThickness: 2, panelTexture: 22,
   showTypeLine: false, showStats: false, statsFontSize: 20,
+  ...DEFAULT_FINISH,
 };
 export const PORTRAIT_WIDTH = 900;
 export const PORTRAIT_HEIGHT = 1200;
@@ -59,7 +61,7 @@ export function validSimpleOverframe(value: unknown): value is SimpleOverframe {
     (r.showLevel === undefined || typeof r.showLevel === "boolean") &&
     (r.titleBackdrop === undefined || r.titleBackdrop === "none" ||
       r.titleBackdrop === "shadow" || r.titleBackdrop === "gradient") &&
-    validEffectPanelSettings(r) &&
+    validEffectPanelSettings(r) && validFinishSettings(r) &&
     typeof r.effectTop === "number" && Number.isFinite(r.effectTop) && r.effectTop >= 55 && r.effectTop <= 87 &&
     typeof r.effectHeight === "number" && Number.isFinite(r.effectHeight) && r.effectHeight >= 10 && r.effectHeight <= 32 &&
     r.effectTop + r.effectHeight <= 99 &&
@@ -139,6 +141,8 @@ export async function renderSimpleOverframe(
   ctx.setTransform(width / PORTRAIT_WIDTH, 0, 0, canvas.height / PORTRAIT_HEIGHT, 0, 0);
   const c = cropToPortrait(image.naturalWidth, image.naturalHeight);
   ctx.drawImage(image, c.sx, c.sy, c.sw, c.sh, 0, 0, PORTRAIT_WIDTH, PORTRAIT_HEIGHT);
+  // Finish affects illustration only and is applied before native OCG text/icons.
+  paintFinish(ctx, config);
   if ((config.showName || config.showAttribute) && config.titleBackdrop === "gradient") {
     const gradient = ctx.createLinearGradient(0, 0, 0, 160);
     gradient.addColorStop(0, "rgba(5,6,18,.91)");
