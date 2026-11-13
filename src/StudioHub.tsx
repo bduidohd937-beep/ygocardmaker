@@ -2,6 +2,8 @@ import { useMemo, useRef, useState } from "react";
 import { ArrowDownToLine, ArrowUpFromLine, Check, Download,
   FileArchive, FileJson, ImagePlus, Layers, Search, Settings2, X } from "lucide-react";
 import type { Card, Project } from "./model";
+import type { GenericCard } from "./genericCatalog";
+import { GenericCardCatalog } from "./GenericCardCatalog";
 import { auditStudioProduction, type AuditCardResult, type AuditVariantResult } from "./studioAudit";
 import { planStudioSafeRepairs, type SafeRepairPatch } from "./studioRepair";
 import { captureHubImageUndo, restoreHubImages, selectImageCards,
@@ -14,13 +16,14 @@ import {
   type HubExportReport,
 } from "./studioHub";
 
-type Stage = "data"|"images"|"design"|"export";
+type Stage = "data"|"images"|"design"|"export"|"catalog";
 interface Props {
   project: Project;
   activeId: number;
   selectedIds: number[];
   assetName: string;
   assetCount: number;
+  onCatalogChange: (cards: GenericCard[]) => void;
   onClose: () => void;
   onImportCards: (file:File)=>Promise<{ok:true;ids:number[]} | {ok:false;error:string}>;
   onImportAssets: (file:File)=>Promise<{ok:true;count:number} | {ok:false;error:string}>;
@@ -37,12 +40,13 @@ const STAGES:{key:Stage;name:string;sub:string}[]=[
   {key:"images",name:"02 이미지",sub:"ID 원화 자동 매칭"},
   {key:"design",name:"03 디자인",sub:"일반·3:4 비교/편집"},
   {key:"export",name:"04 출력",sub:"EDOPro·ZIP 자동 제작"},
+  {key:"catalog",name:"05 범용 카드 도감",sub:"채택·구현·검증 이력"},
 ];
 const productionLabel=(card:Card)=>{
   const state=hubCardStates(card);
   return state.dual?"일반 + 3:4":state.normal?"일반 카드":state.overframe?"3:4 원화":"원화 없음";
 };
-export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
+export function StudioHub({project,activeId,selectedIds,assetName,assetCount,onCatalogChange,
   onClose,onImportCards,onImportAssets,onApplyImages,onUndoImages,onApplyRepairs,onOpenCard,
   onOpenFullArt,onCompare,onOpenBatch}:Props){
   const [stage,setStage]=useState<Stage>("data");
@@ -254,7 +258,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
           <strong>{item.name}</strong><small>{item.sub}</small>
         </button>)}
       </nav>
-      <div className="studio-hub-body">
+      <div className={"studio-hub-body"+(stage==="catalog"?" generic-catalog-open":"")}>
         <aside className="studio-hub-list-pane">
           <div className="studio-hub-pane-title"><strong>카드 목록</strong><small>선택 {chosen.length} / 최대 100장</small></div>
           <label className="batch-of-search"><Search size={15}/>
@@ -283,6 +287,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
           <small className="studio-hub-hint">목록의 카드명을 누르면 일반 카드 편집으로 이동합니다. 좌측 체크박스는 일괄 작업 대상입니다.</small>
         </aside>
         <main className="studio-hub-content">
+          {stage==="catalog"&&<GenericCardCatalog project={project} onChange={onCatalogChange} onOpenCard={onOpenCard}/>}
           {stage==="data"&&<>
             <div className="studio-hub-section-title"><FileArchive size={19}/>
               <div><h3>01 카드·CDB 데이터</h3><p>현재 프로젝트에 CDB/JSON 카드를 합치고 목록에서 편집 대상을 선택합니다.</p></div>
