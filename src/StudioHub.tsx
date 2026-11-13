@@ -3,6 +3,7 @@ import { ArrowDownToLine, ArrowUpFromLine, Check, Download,
   FileArchive, FileJson, ImagePlus, Layers, Search, Settings2, X } from "lucide-react";
 import type { Card, Project } from "./model";
 import { auditStudioProduction, type AuditCardResult, type AuditVariantResult } from "./studioAudit";
+import { planStudioSafeRepairs, type SafeRepairPatch } from "./studioRepair";
 import { download } from "./export";
 import { matchBatchImages, type ImageMap } from "./batchOverframe";
 import {
@@ -22,6 +23,7 @@ interface Props {
   onImportCards: (file:File)=>Promise<{ok:true;ids:number[]} | {ok:false;error:string}>;
   onImportAssets: (file:File)=>Promise<{ok:true;count:number} | {ok:false;error:string}>;
   onApplyImages: (plan:ReturnType<typeof planHubImageAssignments>)=>void;
+  onApplyRepairs: (patches:SafeRepairPatch[])=>void;
   onOpenCard: (id:number)=>void;
   onOpenFullArt: (id:number)=>void;
   onCompare: (id:number)=>void;
@@ -38,7 +40,7 @@ const productionLabel=(card:Card)=>{
   return state.dual?"일반 + 3:4":state.normal?"일반 카드":state.overframe?"3:4 원화":"원화 없음";
 };
 export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
-  onClose,onImportCards,onImportAssets,onApplyImages,onOpenCard,
+  onClose,onImportCards,onImportAssets,onApplyImages,onApplyRepairs,onOpenCard,
   onOpenFullArt,onCompare,onOpenBatch}:Props){
   const [stage,setStage]=useState<Stage>("data");
   const [query,setQuery]=useState("");
@@ -83,6 +85,8 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
     ()=>auditStudioProduction(project.cards,chosen,output.mode),
     [project.cards,chosen,output.mode,assetCount],
   );
+  const safeRepairs=useMemo(()=>planStudioSafeRepairs(project.cards,chosen),
+    [project.cards,chosen]);
   const outputCheck={ready:audit.outputsReady,missing:audit.outputsMissing};
   const switchStage=(key:Stage)=>{setStage(key);setError("");setStatus("");};
   const choose=(id:number)=>{
@@ -140,6 +144,14 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
       " 원화를 프로젝트에 저장했습니다.");
     setImageMap({});setImageWarnings([]);setError("");
   };
+  const applySafeRepairs=()=>{
+    if(busy||!safeRepairs.length)return;
+    onApplyRepairs(safeRepairs);
+    setReport(null);
+    setError("");
+    setStatus(safeRepairs.length+
+      "장의 중복 특성·마커 또는 기본 미리보기 설정을 안전하게 수정했습니다. 원화·효과·수치는 유지했습니다.");
+  };
   const startExport=async()=>{
     if(busy)return;
     setBusy(true);setReport(null);setError("");setProgress("출력 준비 중");
@@ -148,7 +160,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
     try{
       const result=await exportStudioHubZip(project.cards,chosen,output,setProgress,controller.signal);
       if(controller.signal.aborted)throw Error("출력을 취소했습니다.");
-      download(result.blob,"YGO_STUDIO_통합출력.zip");
+      download(result.blob,"카드_통합출력_V4.2.zip");
       setReport(result.report);
       setStatus("이미지 "+result.report.produced.length+"장 ZIP 다운로드 · 누락 "+
         result.report.omitted.length+"건. 제작 검수보고서 포함.");
@@ -158,12 +170,12 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   const setOutputField=<K extends keyof HubOutputOptions>(key:K,value:HubOutputOptions[K])=>
     setOutput(prev=>({...prev,[key]:value}));
   const downloadAudit=()=>{
-    const payload={version:"4.1",source:"YGO STUDIO 통합 작업실",
+    const payload={version:"4.2",source:"YGO STUDIO 통합 작업실",
       mode:output.mode,selected:chosen.length,
       outputsReady:audit.outputsReady,outputsMissing:audit.outputsMissing,
       cards:audit.cards};
     download(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),
-      "YGO_STUDIO_출력전_검수표.json");
+      "카드_출력전_검수표_V4.2.json");
   };
   const routeAuditIssue=(card:AuditCardResult,item:AuditVariantResult)=>{
     if(item.issues.some(issue=>issue.includes("설정이 올바르지")||
@@ -396,13 +408,13 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
               <span>출력 가능 {outputCheck.ready}건</span>
               <span>누락 예상 {outputCheck.missing}건</span>
             </div>
-            <section className="studio-hub-tile studio-hub-audit" aria-label="V4.1 출력 전 자동 검수">
+            <section className="studio-hub-tile studio-hub-audit" aria-label="V4.2 출력 전 자동 검수">
               <div className="studio-hub-pane-title">
-                <strong>V4.1 출력 전 자동 검수</strong>
+                <strong>V4.2 출력 전 자동 검수·안전 수정</strong>
                 <small>카드 {audit.cards.length}장 · 완전 준비 {audit.cards.length-audit.incompleteCards.length}장
                   · 보완 필요 {audit.incompleteCards.length}장</small>
               </div>
-              <p>선택한 출력 형태의 원화·설정·필수 카드 에셋을 검사합니다. 실제 PNG 렌더링 오류는 최종 ZIP에서 별도로 보고됩니다.</p>
+              <p>출력 형태별 원화·설정·메타데이터·필수 에셋을 독립적으로 검사합니다. 안전 오류 수정은 누른 뒤에만 적용되며 원화·효과는 그대로 둡니다. 실제 PNG 렌더링 오류는 ZIP 보고서에서 별도 확인합니다.</p>
               <div className="studio-hub-audit-actions">
                 <button type="button" disabled={busy||!audit.incompleteCards.length}
                   onClick={()=>setChosen([...audit.incompleteCards])}>
@@ -412,11 +424,22 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
                   onClick={()=>setChosen([...audit.readyCards])}>
                   출력 가능 카드만 선택 ({audit.readyCards.length})
                 </button>
+                <button type="button" disabled={busy||!safeRepairs.length}
+                  onClick={applySafeRepairs}
+                  title="중복 특성·마커 및 기본 미리보기 설정만 수정합니다. 원화와 효과는 유지됩니다.">
+                  <Check size={14}/> 안전 오류 수정 적용 ({safeRepairs.length})
+                </button>
                 <button type="button" disabled={!chosen.length}
                   onClick={downloadAudit}>
                   <FileJson size={14}/> 검수표 JSON 다운로드
                 </button>
               </div>
+              {!!safeRepairs.length&&<details className="batch-of-warnings">
+                <summary>안전 수정 가능 카드 {safeRepairs.length}장 · 수정 내용 확인</summary>
+                {safeRepairs.map(item=><p key={item.id}>
+                  {item.id}: {item.reasons.join(" / ")}
+                </p>)}
+              </details>}
               <div className="studio-hub-audit-list">
                 {audit.cards.length===0&&<p>왼쪽 카드 목록에서 검수할 카드를 먼저 선택하세요.</p>}
                 {audit.cards.map(row=><div key={row.id}
