@@ -4,6 +4,8 @@ import { ArrowDownToLine, ArrowUpFromLine, Check, Download,
 import type { Card, Project } from "./model";
 import { auditStudioProduction, type AuditCardResult, type AuditVariantResult } from "./studioAudit";
 import { planStudioSafeRepairs, type SafeRepairPatch } from "./studioRepair";
+import { captureHubImageUndo, restoreHubImages, selectImageCards,
+  type HubImageUndo } from "./studioImageRecovery";
 import { download } from "./export";
 import { matchBatchImages, type ImageMap } from "./batchOverframe";
 import {
@@ -23,6 +25,7 @@ interface Props {
   onImportCards: (file:File)=>Promise<{ok:true;ids:number[]} | {ok:false;error:string}>;
   onImportAssets: (file:File)=>Promise<{ok:true;count:number} | {ok:false;error:string}>;
   onApplyImages: (plan:ReturnType<typeof planHubImageAssignments>)=>void;
+  onUndoImages: (history:HubImageUndo[])=>void;
   onApplyRepairs: (patches:SafeRepairPatch[])=>void;
   onOpenCard: (id:number)=>void;
   onOpenFullArt: (id:number)=>void;
@@ -40,7 +43,7 @@ const productionLabel=(card:Card)=>{
   return state.dual?"일반 + 3:4":state.normal?"일반 카드":state.overframe?"3:4 원화":"원화 없음";
 };
 export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
-  onClose,onImportCards,onImportAssets,onApplyImages,onApplyRepairs,onOpenCard,
+  onClose,onImportCards,onImportAssets,onApplyImages,onUndoImages,onApplyRepairs,onOpenCard,
   onOpenFullArt,onCompare,onOpenBatch}:Props){
   const [stage,setStage]=useState<Stage>("data");
   const [query,setQuery]=useState("");
@@ -49,6 +52,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   const [imageType,setImageType]=useState<HubImageType>("normal");
   const [imageMap,setImageMap]=useState<ImageMap>({});
   const [imageWarnings,setImageWarnings]=useState<string[]>([]);
+  const [lastAppliedImages,setLastAppliedImages]=useState<HubImageUndo[]>([]);
   const [overwrite,setOverwrite]=useState(false);
   const [output,setOutput]=useState<HubOutputOptions>(DEFAULT_HUB_OUTPUT);
   const [status,setStatus]=useState("");
@@ -81,6 +85,13 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   const assignment=useMemo(()=>planHubImageAssignments(
     project.cards,imageMap,chosen,imageType,overwrite),
   [project.cards,imageMap,chosen,imageType,overwrite]);
+  const missingImages=useMemo(()=>selectImageCards(project.cards,imageType,"missing"),
+    [project.cards,imageType]);
+  const matchedImages=useMemo(()=>selectImageCards(project.cards,imageType,"matched",imageMap),
+    [project.cards,imageType,imageMap]);
+  const undoPreview=useMemo(()=>lastAppliedImages.length
+    ?restoreHubImages(project.cards,lastAppliedImages):null,
+    [project.cards,lastAppliedImages]);
   const audit=useMemo(
     ()=>auditStudioProduction(project.cards,chosen,output.mode),
     [project.cards,chosen,output.mode,assetCount],
@@ -125,9 +136,17 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
     }catch(e){setError(e instanceof Error?e.message:"리소스 에셋 가져오기 실패");}
     finally{setBusy(false);}
   };
+  const selectImageTargets=(scope:"missing"|"matched")=>{
+    const candidates=scope==="missing"?missingImages:matchedImages;
+    setChosen(candidates.ids);
+    setReport(null);setError("");
+    setStatus((scope==="missing"?"해당 형태 원화 누락":"업로드 원화 ID 매칭")+
+      " 카드 "+candidates.total+"장 중 "+candidates.ids.length+
+      "장을 선택했습니다. 기존 원화는 자동으로 덮어쓰지 않습니다.");
+  };
   const handleImages=async(files:FileList|null)=>{
     if(!files?.length)return;
-    setBusy(true);setError("");setImageMap({});setReport(null);
+    setBusy(true);setError("");setImageMap({});setImageWarnings([]);setReport(null);
     try{
       const matched=await matchBatchImages(Array.from(files),project.cards);
       setImageMap(matched.images);
@@ -139,10 +158,23 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   };
   const applyImages=()=>{
     if(!assignment.patches.length){setError("적용 가능한 원화가 없습니다. 선택 상태와 기존 이미지 덮어쓰기 설정을 확인하세요.");return;}
+    const snapshot=captureHubImageUndo(project.cards,assignment);
     onApplyImages(assignment);
+    setLastAppliedImages(snapshot);
     setStatus(assignment.patches.length+"장의 "+(imageType==="normal"?"일반 카드":"3:4 오버프레임")+
-      " 원화를 프로젝트에 저장했습니다.");
+      " 원화를 프로젝트에 저장했습니다. 현재 작업실에서 직전 적용을 되돌릴 수 있습니다.");
     setImageMap({});setImageWarnings([]);setError("");
+  };
+  const undoAppliedImages=()=>{
+    if(busy||!lastAppliedImages.length)return;
+    const preview=restoreHubImages(project.cards,lastAppliedImages);
+    if(preview.restored.length)onUndoImages(lastAppliedImages);
+    setLastAppliedImages([]);
+    setImageMap({});setImageWarnings([]);
+    setReport(null);setError("");
+    setStatus("직전 원화 적용 복원 "+preview.restored.length+
+      "장 · 이후 수정되어 보호된 카드 "+preview.skipped.length+
+      "장. CDB·Lua 및 무관한 카드 정보는 그대로입니다.");
   };
   const applySafeRepairs=()=>{
     if(busy||!safeRepairs.length)return;
@@ -160,7 +192,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
     try{
       const result=await exportStudioHubZip(project.cards,chosen,output,setProgress,controller.signal);
       if(controller.signal.aborted)throw Error("출력을 취소했습니다.");
-      download(result.blob,"카드_통합출력_V4.2.zip");
+      download(result.blob,"카드_통합출력_V4.3.zip");
       setReport(result.report);
       setStatus("이미지 "+result.report.produced.length+"장 ZIP 다운로드 · 누락 "+
         result.report.omitted.length+"건. 제작 검수보고서 포함.");
@@ -170,12 +202,12 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   const setOutputField=<K extends keyof HubOutputOptions>(key:K,value:HubOutputOptions[K])=>
     setOutput(prev=>({...prev,[key]:value}));
   const downloadAudit=()=>{
-    const payload={version:"4.2",source:"YGO STUDIO 통합 작업실",
+    const payload={version:"4.3",source:"YGO STUDIO 통합 작업실",
       mode:output.mode,selected:chosen.length,
       outputsReady:audit.outputsReady,outputsMissing:audit.outputsMissing,
       cards:audit.cards};
     download(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),
-      "카드_출력전_검수표_V4.2.json");
+      "카드_출력전_검수표_V4.3.json");
   };
   const routeAuditIssue=(card:AuditCardResult,item:AuditVariantResult)=>{
     if(item.issues.some(issue=>issue.includes("설정이 올바르지")||
@@ -200,7 +232,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   return <div className="modal-backdrop studio-hub-backdrop">
     <section className="studio-hub-modal" role="dialog" aria-modal="true" aria-labelledby="studio-hub-title">
       <header className="simple-of-header">
-        <div><span className="eyebrow">YGO STUDIO · INTEGRATED WORKSPACE V4.2</span>
+        <div><span className="eyebrow">YGO STUDIO · INTEGRATED WORKSPACE V4.3</span>
           <h2 id="studio-hub-title">카드 제작 통합 작업실</h2>
           <p>카드 데이터 → 이미지 ID 연결 → 디자인 편집 → EDOPro 출력 · 같은 프로젝트에서 관리</p>
         </div>
@@ -308,6 +340,17 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
                   onChange={()=>{setImageType("overframe");setImageMap({});}}/> 3:4 오버프레임 원화</label>
               </div>
               <p>파일명 예시: 918760001.png, 918760002_원화.png. PNG·JPG·WebP 또는 ZIP 묶음을 최대 100장 가져올 수 있어.</p>
+              <div className="studio-hub-audit-actions">
+                <button type="button" disabled={busy||!missingImages.total}
+                  onClick={()=>selectImageTargets("missing")}>
+                  해당 형태 원화 없는 카드 선택 ({missingImages.total})
+                </button>
+                <button type="button" disabled={busy||!matchedImages.total}
+                  onClick={()=>selectImageTargets("matched")}>
+                  업로드 ID 매칭 카드만 선택 ({matchedImages.total})
+                </button>
+              </div>
+              <small>선택은 최대 100장까지 적용됩니다. 카드 선택만 바꾸며, 원본 이미지는 '이미지 적용'을 눌러야 저장됩니다.</small>
               <button type="button" disabled={busy} onClick={()=>imagesFile.current?.click()}>
                 <ImagePlus size={15}/> ID별 원화 파일·ZIP 선택
               </button>
@@ -338,6 +381,13 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
                 disabled={busy||!assignment.patches.length} onClick={applyImages}>
                 <Check size={15}/> 선택한 카드 {assignment.patches.length}장에 이미지 적용
               </button>
+              <button type="button" disabled={busy||!undoPreview?.restored.length}
+                onClick={undoAppliedImages}>
+                직전 원화 적용 되돌리기 ({undoPreview?.restored.length??0})
+              </button>
+              {!!undoPreview?.skipped.length&&<small>
+                적용 뒤 변경되어 되돌리지 않는 카드 {undoPreview.skipped.length}장
+              </small>}
               <button type="button" onClick={()=>switchStage("design")}>디자인 검수 단계로</button>
             </div>
           </>}

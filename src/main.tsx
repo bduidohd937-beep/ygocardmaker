@@ -51,6 +51,7 @@ import { CardCompareEditor } from "./CardCompareEditor";
 import { StudioHub } from "./StudioHub";
 import { applyHubImageAssignments } from "./studioHub";
 import { applyStudioSafeRepairs } from "./studioRepair";
+import { restoreHubImages } from "./studioImageRecovery";
 import { DEFAULT_OVERFRAME } from "./overframe";
 import { ArtworkCropEditor } from "./CropEditor";
 import { OverframeEditor } from "./OverframeEditor";
@@ -523,8 +524,8 @@ export function CardMakerApp() {
           >
             <FileJson size={15} /> JSON 저장
           </button>
-          <button type="button" className="studio-hub-top-button" aria-label="V4.2 통합 작업실 열기"
-            onClick={()=>setStudioHubOpen(true)}><Layers size={15}/> 통합 작업실 V4.2</button>
+          <button type="button" className="studio-hub-top-button" aria-label="V4.3 통합 작업실 열기"
+            onClick={()=>setStudioHubOpen(true)}><Layers size={15}/> 통합 작업실 V4.3</button>
           <button className="primary" onClick={() => setModal(true)}>
             <ArrowDownToLine size={15} /> 내보내기
           </button>
@@ -1311,6 +1312,14 @@ export function CardMakerApp() {
             setUndoDeletion(null);
             setProject(p=>p?{...p,cards:applyHubImageAssignments(p.cards,plan)}:p);
             setToast(plan.patches.length+"장 이미지 연결을 저장했습니다.");
+          }}
+          onUndoImages={history=>{
+            setProject(p=>{
+              if(!p)return p;
+              const result=restoreHubImages(p.cards,history);
+              return result.restored.length?{...p,cards:result.cards}:p;
+            });
+            setToast("직전 이미지 적용 되돌리기를 처리했습니다.");
           }}
           onApplyRepairs={patches=>{
             setUndoDeletion(null);

@@ -19,7 +19,7 @@ async function makeCdb() {
 }
 async function openStudio(page) {
   await page.goto("/");
-  await page.getByRole("button",{name:"V4.2 통합 작업실 열기"}).click();
+  await page.getByRole("button",{name:"V4.3 통합 작업실 열기"}).click();
   await expect(page.getByRole("dialog",{name:"카드 제작 통합 작업실"})).toBeVisible();
 }
 test("실제 CDB → PNG ZIP → 카드 ID 원화 저장 → EDOPro ZIP 다운로드", async ({page},testInfo)=>{
@@ -52,7 +52,7 @@ test("실제 CDB → PNG ZIP → 카드 ID 원화 저장 → EDOPro ZIP 다운�
   const waitDownload=page.waitForEvent("download");
   await page.getByRole("button",{name:"선택 카드 통합 ZIP 다운로드"}).click();
   const downloaded=await waitDownload;
-  expect(downloaded.suggestedFilename()).toBe("카드_통합출력_V4.2.zip");
+  expect(downloaded.suggestedFilename()).toBe("카드_통합출력_V4.3.zip");
   const target=testInfo.outputPath("카드_실전출력.zip");
   await downloaded.saveAs(target);
   const files=unzipSync(new Uint8Array(readFileSync(target)));
@@ -86,4 +86,40 @@ test("손상된 ZIP 원화는 적용 버튼을 활성화하지 않는다",async(
   });
   await expect(page.getByRole("alert")).toBeVisible();
   await expect(page.getByRole("button",{name:/선택한 카드 .*장에 이미지 적용/})).toBeDisabled();
+});
+
+test("V4.3 누락 원화 선택 → 매칭 ID 선택 → 적용 → 안전 되돌리기",async({page})=>{
+  await openStudio(page);
+  await page.getByLabel("통합 카드 데이터 파일").setInputFiles({
+    name:"원화_복구_시험.cdb",mimeType:"application/octet-stream",buffer:await makeCdb(),
+  });
+  await expect(page.getByText("02 이미지 관리 · 카드 ID 자동 연결")).toBeVisible();
+  await expect(page.getByRole("button",{name:/해당 형태 원화 없는 카드 선택 \(\d+\)/})).toBeEnabled();
+  await page.getByRole("button",{name:/해당 형태 원화 없는 카드 선택 \(\d+\)/}).click();
+
+  const dataUrl=await page.evaluate(()=>{
+    const canvas=document.createElement("canvas");
+    canvas.width=64;canvas.height=64;
+    const ctx=canvas.getContext("2d");
+    ctx.fillStyle="#146baa";
+    ctx.fillRect(0,0,64,64);
+    return canvas.toDataURL("image/png");
+  });
+  const png=Buffer.from(dataUrl.split(",")[1],"base64");
+  const zip=zipSync({["원화/"+cardId+".png"]:png});
+  await page.getByLabel("통합 이미지 묶음 파일").setInputFiles({
+    name:"아이디별_이미지.zip",mimeType:"application/zip",buffer:Buffer.from(zip),
+  });
+  await expect(page.getByText("매칭 1장")).toBeVisible();
+  await page.getByRole("button",{name:"업로드 ID 매칭 카드만 선택 (1)"}).click();
+  await expect(page.getByRole("button",{name:"선택한 카드 1장에 이미지 적용"})).toBeEnabled();
+  await page.getByRole("button",{name:"선택한 카드 1장에 이미지 적용"}).click();
+  await expect(page.getByRole("button",{name:"직전 원화 적용 되돌리기 (1)"})).toBeEnabled();
+  await page.getByRole("button",{name:"직전 원화 적용 되돌리기 (1)"}).click();
+  await expect(page.getByRole("status").filter({hasText:"직전 원화 적용 복원 1장"})).toBeVisible();
+  await expect(page.getByRole("button",{name:"직전 원화 적용 되돌리기 (0)"})).toBeDisabled();
+  await page.getByRole("button",{name:/04 출력/}).click();
+  await page.getByLabel("통합 출력 형태").selectOption("normal");
+  await expect(page.getByText("출력 가능 0건")).toBeVisible();
+  await expect(page.getByRole("button",{name:"선택 카드 통합 ZIP 다운로드"})).toBeDisabled();
 });
