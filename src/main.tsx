@@ -49,6 +49,7 @@ import {
 import { renderCard } from "./render";
 import { DEFAULT_OVERFRAME } from "./overframe";
 import { ArtworkCropEditor } from "./CropEditor";
+import { OverframeEditor } from "./OverframeEditor";
 import { getActivePack, importAssetZip, loadAssetPack, saveAssetPack, setActivePack } from "./assetPack";
 import { demoProject } from "./samples";
 import { loadProject, saveProject } from "./storage";
@@ -69,6 +70,7 @@ export function CardMakerApp() {
     [renderedFontSize, setRenderedFontSize] = useState<number | null>(null),
     [modal, setModal] = useState(false),
     [cropEditorOpen, setCropEditorOpen] = useState(false),
+    [overframeEditorOpen, setOverframeEditorOpen] = useState(false),
     [format, setFormat] = useState<"png" | "jpg">("png"),
     [size, setSize] = useState(1263),
     [busy, setBusy] = useState(""),
@@ -1142,6 +1144,10 @@ export function CardMakerApp() {
                   </label>
                   <p className="helper">인물이 분리된 투명 PNG를 프레임 위에 합성합니다. 카드명·랭크·효과창은 보호하고 일러스트 테두리만 넘어옵니다.</p>
                   <div className="overframe-actions">
+                    <button type="button" disabled={!card.overframe?.image}
+                      className="overframe-open-button" onClick={() => setOverframeEditorOpen(true)}>
+                      <Crop size={15} /> 정밀 편집 · 마스크 / 드래그
+                    </button>
                     <button type="button" onClick={() => overframeInput.current?.click()}>
                       <ImagePlus size={15} /> 돌출 PNG 업로드
                     </button>
@@ -1228,6 +1234,15 @@ export function CardMakerApp() {
           </div>
         </aside>
       </div>
+      {overframeEditorOpen && card?.overframe?.image && (
+        <OverframeEditor key={card.id} card={card}
+          onCancel={() => setOverframeEditorOpen(false)}
+          onSave={overframe => {
+            update({ overframe });
+            setOverframeEditorOpen(false);
+            setToast("오버프레임 위치와 마스크를 카드에 적용했습니다.");
+          }}/>
+      )}
       {cropEditorOpen && card?.artwork && (
         <ArtworkCropEditor key={card.id} card={card}
           onCancel={() => setCropEditorOpen(false)}

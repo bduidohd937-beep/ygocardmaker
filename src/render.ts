@@ -76,7 +76,24 @@ export async function paintOverframe(card: Card, ctx: CanvasRenderingContext2D) 
   if (!layer?.enabled || !layer.image) return;
   const img = await loadImage(layer.image);
   const p = overframePlacement(img.naturalWidth, img.naturalHeight, layer);
-  const safe = overframeClip(card.pendulum);
+  const assetPack = !!getActivePack()?.files[frameKey(card)];
+  const safe = overframeClip(card.pendulum, layer.depth ?? "front", assetPack);
+  let source: CanvasImageSource = img;
+  if (layer.mask) {
+    const mask = await loadImage(layer.mask);
+    // Keep the compositing buffer bounded even when the uploaded source is huge.
+    const ratio = Math.min(1, 2400 / Math.max(img.naturalWidth, img.naturalHeight));
+    const buffer = document.createElement("canvas");
+    buffer.width = Math.max(1, Math.round(img.naturalWidth * ratio));
+    buffer.height = Math.max(1, Math.round(img.naturalHeight * ratio));
+    const bctx = buffer.getContext("2d");
+    if (!bctx) throw Error("돌출 마스크 합성 캔버스를 열 수 없습니다.");
+    bctx.drawImage(img, 0, 0, buffer.width, buffer.height);
+    bctx.globalCompositeOperation = "destination-in";
+    bctx.drawImage(mask, 0, 0, buffer.width, buffer.height);
+    bctx.globalCompositeOperation = "source-over";
+    source = buffer;
+  }
   ctx.save();
   try {
     ctx.beginPath();
@@ -84,7 +101,7 @@ export async function paintOverframe(card: Card, ctx: CanvasRenderingContext2D) 
     ctx.clip();
     ctx.translate(p.centerX, p.centerY);
     ctx.rotate(p.angle);
-    ctx.drawImage(img, -p.w / 2, -p.h / 2, p.w, p.h);
+    ctx.drawImage(source, -p.w / 2, -p.h / 2, p.w, p.h);
   } finally {
     ctx.restore();
   }
