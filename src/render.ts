@@ -2,6 +2,7 @@ import { isMonster, monsterKindLabels, FRAMES, type Card } from "./model";
 import { getActivePack } from "./assetPack";
 import { frameKey, renderWithAssetPack } from "./assetRender";
 import { artworkPlacement } from "./artworkCrop";
+import { overframeClip, overframePlacement } from "./overframe";
 export const WIDTH = 842,
   HEIGHT = 1228;
 const COLORS = {
@@ -67,6 +68,28 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
     img.src = src;
   });
 }
+/** Composite the transparent foreground after the card is painted.
+ * Keep the art frame visible behind the cutout while protecting name, rank and rules.
+ */
+export async function paintOverframe(card: Card, ctx: CanvasRenderingContext2D) {
+  const layer = card.overframe;
+  if (!layer?.enabled || !layer.image) return;
+  const img = await loadImage(layer.image);
+  const p = overframePlacement(img.naturalWidth, img.naturalHeight, layer);
+  const safe = overframeClip(card.pendulum);
+  ctx.save();
+  try {
+    ctx.beginPath();
+    ctx.rect(safe.x, safe.y, safe.w, safe.h);
+    ctx.clip();
+    ctx.translate(p.centerX, p.centerY);
+    ctx.rotate(p.angle);
+    ctx.drawImage(img, -p.w / 2, -p.h / 2, p.w, p.h);
+  } finally {
+    ctx.restore();
+  }
+}
+
 export async function renderCard(
   card: Card,
   canvas: HTMLCanvasElement,
@@ -89,7 +112,11 @@ export async function renderCard(
   canvas.width = width;
   canvas.height = Math.round((width * HEIGHT) / WIDTH);
   ctx.scale(width / WIDTH, width / WIDTH);
-  if (getActivePack()?.files[frameKey(card)]) return renderWithAssetPack(card, ctx);
+  if (getActivePack()?.files[frameKey(card)]) {
+    const result = await renderWithAssetPack(card, ctx);
+    await paintOverframe(card, ctx);
+    return result;
+  }
   const rect = (
     x: number,
     y: number,
@@ -310,6 +337,7 @@ export async function renderCard(
   ctx.font = `12px ${FONT}`;
   ctx.fillText("DUELMIND  /  CUSTOM CARD", 778, 1180);
   ctx.textAlign = "left";
+  await paintOverframe(card, ctx);
   return { fontSize: size };
 }
 export function toBlob(
