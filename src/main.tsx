@@ -237,6 +237,8 @@ export function CardMakerApp() {
       if (file.name.toLowerCase().endsWith(".cdb"))
         incoming = await readCDB(new Uint8Array(await file.arrayBuffer()));
       else incoming = parseImport(JSON.parse(await file.text()));
+      if (!incoming.length)
+        throw Error("가져온 카드가 없습니다. CDB 또는 JSON 내용을 확인하세요.");
       if (incoming.length > 2000)
         throw Error("한 번에 2000장까지 가져올 수 있습니다.");
       setUndoDeletion(null);
@@ -247,8 +249,11 @@ export function CardMakerApp() {
       setSelected(incoming.map((c) => c.id));
       setTheme("전체 테마");
       setToast(`${incoming.length}장 가져옴 · 기존 일러스트 유지`);
+      return { ok: true as const, ids: incoming.map(c=>c.id) };
     } catch (e) {
-      setToast(e instanceof Error ? e.message : "가져오기 실패");
+      const error = e instanceof Error ? e.message : "가져오기 실패";
+      setToast(error);
+      return { ok: false as const, error };
     }
   };
   const uploadAssets = async (file: File) => {
@@ -261,8 +266,11 @@ export function CardMakerApp() {
       setAssetCount(Object.keys(report.pack.files).length);
       setAssetEpoch((n) => n + 1);
       setToast("리소스 " + Object.keys(report.pack.files).length + "종 적용 · 중복 " + report.duplicates + "건 정리");
+      return {ok:true as const,count:Object.keys(report.pack.files).length};
     } catch (e) {
-      setToast(e instanceof Error ? e.message : "리소스 ZIP을 읽을 수 없습니다.");
+      const error = e instanceof Error ? e.message : "리소스 ZIP을 읽을 수 없습니다.";
+      setToast(error);
+      return {ok:false as const,error};
     } finally { setBusy(""); }
   };
   const clearAssets = async () => {
