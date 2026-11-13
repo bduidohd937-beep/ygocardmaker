@@ -3,6 +3,8 @@ import { Check, Download, ImagePlus, RotateCcw, X, Move, Save, ScanLine } from "
 import type { Card } from "./model";
 import { ATTRIBUTES, FRAMES, RACES, type Frame } from "./model";
 import { supportsStats, type PanelTint, type PanelBorder } from "./effectPanel";
+import { applyFinishPreset, BUILT_IN_FINISH, DEFAULT_FINISH, FINISH_STYLES,
+  recommendedFinish, type FinishStyle } from "./overframeFinish";
 import { DEFAULT_SIMPLE_OVERFRAME, renderSimpleOverframe, requiredSimpleOverframeAssets, type SimpleOverframe } from "./simpleOverframe";
 import { download } from "./export";
 import { toBlob } from "./render";
@@ -50,6 +52,8 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
   const [snap, setSnap] = useState(true);
   const [guides, setGuides] = useState<{ x?: number; y?: number }>({});
   const [presetName, setPresetName] = useState("내 레이아웃");
+  const [finishPresetName, setFinishPresetName] = useState("내 광택");
+  const [chosenFinish, setChosenFinish] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const update = (p: Partial<SimpleOverframe>) => setConfig(s => ({ ...s, ...p }));
   const boxes = overlayRects(config, frame, level);
@@ -140,6 +144,33 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
     setStatus("현재 레이아웃을 프리셋으로 저장했습니다. 카드에 적용하면 JSON에도 보존됩니다.");
   };
 
+  const useFinishPreset = (key: string) => {
+    setChosenFinish(key);
+    const chosen = key.startsWith("built:")
+      ? BUILT_IN_FINISH.find(p => p.name === key.slice(6))
+      : config.finishPresets?.find(p => p.name === key.slice(5));
+    if (!chosen) return;
+    update(applyFinishPreset(chosen));
+    setStatus("오버프레임 연출 프리셋을 적용했습니다.");
+  };
+  const saveFinishPreset = () => {
+    const name = finishPresetName.trim();
+    if (!name || name.length > 32) { setError("연출 프리셋 이름은 1~32자로 입력하세요."); return; }
+    const style = config.finishStyle ?? "none";
+    if (style === "none") { setError("먼저 연출 종류를 선택하세요."); return; }
+    const others = (config.finishPresets ?? []).filter(p => p.name !== name);
+    if (others.length >= 5) { setError("연출 프리셋은 카드당 최대 5개입니다."); return; }
+    update({ finishPresets: [...others, { name, style, strength: config.finishStrength ?? 28 }] });
+    setChosenFinish("user:" + name);
+    setStatus("현재 연출이 카드의 사용자 프리셋에 저장됐습니다.");
+    setError("");
+  };
+  const deleteFinishPreset = () => {
+    if (!chosenFinish.startsWith("user:")) return;
+    update({ finishPresets: (config.finishPresets ?? []).filter(p => p.name !== chosenFinish.slice(5)) });
+    setChosenFinish("");
+    setStatus("선택한 연출 프리셋을 삭제했습니다.");
+  };
   useEffect(() => {
     const keyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCancel();
@@ -507,6 +538,52 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               statsFontSize: DEFAULT_SIMPLE_OVERFRAME.statsFontSize,
             }))}><RotateCcw size={15}/> 효과창 디자인 초기화</button>
           </div>}
+          <div className="simple-of-group">
+            <strong>06 · 오버프레임 광택·홀로그램</strong>
+            <label className="simple-of-check">
+              <input type="checkbox" aria-label="오버프레임 연출 사용" checked={config.finishEnabled ?? false}
+                onChange={e => update({ finishEnabled: e.target.checked })}/>
+              광택·홀로그램 효과 사용
+            </label>
+            <label>연출 종류
+              <select aria-label="오버프레임 연출 종류" value={config.finishStyle ?? "none"}
+                onChange={e => {
+                  const style = e.target.value as FinishStyle;
+                  update({ finishStyle: style, finishEnabled: style !== "none" });
+                }}>
+                {FINISH_STYLES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
+              </select>
+            </label>
+            <label className="simple-of-range">
+              <span>연출 강도 <b>{config.finishStrength ?? 28}%</b></span>
+              <input type="range" aria-label="오버프레임 연출 강도" min={0} max={100} step={1}
+                value={config.finishStrength ?? 28} onChange={e => update({ finishStrength: Number(e.target.value) })}/>
+            </label>
+            <button type="button" className="simple-of-subtle" onClick={() => update({
+              finishEnabled: true, finishStyle: recommendedFinish(frame), finishStrength: 28,
+            })}>현재 카드 종류에 맞게 추천</button>
+            <label>연출 프리셋 불러오기
+              <select aria-label="오버프레임 연출 프리셋" value={chosenFinish}
+                onChange={e => useFinishPreset(e.target.value)}>
+                <option value="">프리셋 선택…</option>
+                {BUILT_IN_FINISH.map(p => <option key={p.name} value={"built:" + p.name}>{p.name}</option>)}
+                {(config.finishPresets ?? []).map(p =>
+                  <option key={p.name} value={"user:" + p.name}>내 프리셋 · {p.name}</option>)}
+              </select>
+            </label>
+            <label>내 연출 프리셋 이름
+              <input aria-label="연출 프리셋 이름" value={finishPresetName} maxLength={32}
+                onChange={e => setFinishPresetName(e.target.value)}/>
+            </label>
+            <button type="button" onClick={saveFinishPreset}><Save size={15}/> 현재 연출 프리셋 저장</button>
+            {chosenFinish.startsWith("user:") && <button type="button" className="simple-of-subtle"
+              onClick={deleteFinishPreset}>선택한 연출 프리셋 삭제</button>}
+            <button type="button" className="simple-of-subtle" onClick={() => {
+              update({ ...DEFAULT_FINISH });
+              setChosenFinish("");
+            }}><RotateCcw size={15}/> 연출 초기화 · 원화 그대로</button>
+            <small>단일 원화 위에 절제된 정적 반사광만 합성합니다. 애니메이션이나 강한 발광을 만들지 않으며 카드명·속성·별·효과창에는 적용하지 않습니다.</small>
+          </div>
         </aside>
       </div>
       {!!error && <p className="simple-of-error" role="alert">{error}</p>}
