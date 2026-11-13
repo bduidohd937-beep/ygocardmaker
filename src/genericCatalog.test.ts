@@ -25,6 +25,7 @@ describe("범용 카드 도감 V1.0", () => {
     expect(effectiveText(seed[1], [card])).toContain("서치 견제");
     expect(filterGenericCards(seed, [card], "919300101", "전체")).toHaveLength(1);
     expect(filterGenericCards(seed, [card], "서치 견제", "채택")[0].id).toBe(919300101);
+    expect(filterGenericCards(seed, [card], "바람", "채택")[0].id).toBe(919300101);
     expect(filterGenericCards(seed, [card], "반격", "보류")[0].name).toBe("반격의 첫 수");
     expect(filterGenericCards(seed, [card], "반격", "채택")).toHaveLength(0);
   });
