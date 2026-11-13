@@ -12,7 +12,7 @@ describe("V3.8 일반 카드 ↔ 3:4 오버프레임 비교·전환",()=>{
     const legacy={...newCard(91008601),artwork:png};
     delete (legacy as {previewMode?: string}).previewMode;
     expect(currentPreviewMode(legacy)).toBe("normal");
-    expect(parseImport([legacy])[0].previewMode).toBeUndefined();
+    expect(parseImport([legacy])[0].previewMode).toBe("normal");
     expect(validateCards([legacy])).toEqual([]);
   });
   it("일반 카드 원화와 3:4 오버프레임 원화를 서로 덮어쓰지 않는다",()=>{
