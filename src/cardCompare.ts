@@ -49,7 +49,7 @@ export function currentPreviewMode(card: Card): CardPreviewMode {
 }
 export async function renderCardVariant(
   card: Card, canvas: HTMLCanvasElement, variant: CardPreviewMode, width?: number,
-) {
+): Promise<{fontSize:number|null}> {
   if (variant==="normal") {
     return await renderCard(card,canvas,width??842);
   }
@@ -57,6 +57,7 @@ export async function renderCardVariant(
   await renderSimpleOverframe(canvas,card.simpleOverframe,card.name,card.attribute,
     card.effect,width??900,card.frame,card.level,
     {race:card.race,atk:card.atk,def:card.def});
+  return {fontSize:null};
 }
 export function compareFilename(card: Card, variant: CardPreviewMode, size: CompareExportSize) {
   const folder=variant==="normal"?"일반카드":"오버프레임_3대4";
