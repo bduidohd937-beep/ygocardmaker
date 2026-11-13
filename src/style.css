@@ -633,13 +633,15 @@ a {
 }
 .tabs {
   display: flex;
-  gap: 26px;
-  padding: 0 20px;
+  gap: clamp(8px, 1.2vw, 18px);
+  padding: 0 12px;
   border-bottom: 1px solid var(--line);
   height: 51px;
   min-height: 51px;
 }
 .tabs button {
+  white-space: nowrap;
+  min-width: 0;
   padding: 0;
   border: 0;
   border-bottom: 2px solid transparent;
