@@ -193,6 +193,14 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
             </label>
             <label className="simple-of-check"><input type="checkbox" checked={config.showName}
               onChange={e => update({ showName: e.target.checked })}/> 카드명 표시</label>
+            <label>카드명 배경
+              <select aria-label="간편 모드 카드명 배경" value={config.titleBackdrop ?? "none"}
+                onChange={e => update({ titleBackdrop: e.target.value as "none" | "shadow" | "gradient" })}>
+                <option value="none">없음 (원화 그대로, 기본값)</option>
+                <option value="shadow">글자 그림자만 강조</option>
+                <option value="gradient">상단 검정 그라데이션</option>
+              </select>
+            </label>
             <label className="simple-of-check"><input type="checkbox" checked={config.showAttribute}
               onChange={e => update({ showAttribute: e.target.checked })}/> 속성 표시</label>
             {!["spell", "trap", "link"].includes(frame) && <label className="simple-of-check">
