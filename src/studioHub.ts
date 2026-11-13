@@ -2,10 +2,11 @@
  * Reuses the existing validated CDB, card, 3:4, asset-pack and EDOPro engines.
  * Every bulk mutation is an explicit preview/apply action.
  */
-import { strToU8, zipSync } from "fflate";
+import { strToU8, zip } from "fflate";
 import type { Card } from "./model";
 import { DEFAULT_SIMPLE_OVERFRAME } from "./simpleOverframe";
-import { compareAvailability, renderCompareExport } from "./cardCompare";
+import { renderCompareExport } from "./cardCompare";
+import { auditCardProduction } from "./studioAudit";
 import type { EDOProFitMode } from "./batchOverframe";
 
 export type HubImageType = "normal" | "overframe";
@@ -97,12 +98,24 @@ export function hubOutputPath(
     return (mode==="normal"?"EDOPro_일반/pics/":"EDOPro_오버프레임/pics/")+id+".png";
   return "pics/"+id+".png";
 }
+/** Let the browser compress asynchronously so large batches don't freeze the interface. */
+function zipHubAsync(files: Record<string,Uint8Array>, signal?:AbortSignal):Promise<Uint8Array> {
+  if(signal?.aborted)return Promise.reject(Error("ZIP 출력을 취소했습니다."));
+  return new Promise((resolve,reject)=>{
+    zip(files,{level:0},(error,archive)=>{
+      if(signal?.aborted){reject(Error("ZIP 출력을 취소했습니다."));return;}
+      if(error){reject(error);return;}
+      resolve(archive);
+    });
+  });
+}
 export async function exportStudioHubZip(
   cards:readonly Card[],
   ids:readonly number[],
   options:HubOutputOptions,
   progress:(message:string)=>void,
   signal?:AbortSignal,
+  renderOutput:typeof renderCompareExport=renderCompareExport,
 ):Promise<{blob:Blob;report:HubExportReport}>{
   const selected=hubSelected(ids,cards);
   if(!selected.length)throw Error("먼저 출력할 카드를 선택하세요.");
@@ -119,27 +132,30 @@ export async function exportStudioHubZip(
   for(let i=0;i<selected.length;i++){
     if(signal?.aborted)throw Error("ZIP 출력을 취소했습니다.");
     const card=byId.get(selected[i])!;
+    const cardAudit=auditCardProduction(card,options.mode);
     for(const mode of modes){
       if(signal?.aborted)throw Error("ZIP 출력을 취소했습니다.");
       progress((i+1)+" / "+selected.length+" · "+card.id+" · "+(mode==="normal"?"일반":"오버프레임"));
-      const warnings=compareAvailability(card)[mode];
+      const warnings=cardAudit.variants.find(variant=>variant.mode===mode)?.issues??[];
       if(warnings.length){
         report.omitted.push({id:card.id,name:card.name,mode,reason:warnings.join(" / ")});
         continue;
       }
       try {
-        const blob=await renderCompareExport(card,mode,options.resolution,options.fit);
-        total+=blob.size;
-        if(total>HUB_MAX_ARCHIVE_BYTES)
+        const blob=await renderOutput(card,mode,options.resolution,options.fit);
+        if(signal?.aborted)throw Error("ZIP 출력을 취소했습니다.");
+        if(total+blob.size>HUB_MAX_ARCHIVE_BYTES)
           throw Error("출력 ZIP이 240MB를 넘습니다. 카드 수를 줄여 나누어 다운로드하세요.");
+        total+=blob.size;
         const path=hubOutputPath(card.id,mode,options.resolution,options.mode);
         files[path]=new Uint8Array(await blob.arrayBuffer());
+        if(signal?.aborted)throw Error("ZIP 출력을 취소했습니다.");
         const size:[number,number]=options.resolution==="edopro"?[421,614]:
           mode==="normal"?[1263,1842]:[1500,2000];
         report.produced.push({id:card.id,name:card.name,mode,path,size});
       }catch(e){
         const reason=e instanceof Error?e.message:"렌더링 오류";
-        if(reason.includes("240MB"))throw e;
+        if(signal?.aborted||reason.includes("240MB"))throw e;
         report.omitted.push({id:card.id,name:card.name,mode,reason});
       }
     }
@@ -150,15 +166,18 @@ export async function exportStudioHubZip(
   if(!report.produced.length)
     throw Error("출력 가능한 카드가 없습니다. 원화와 자산팩을 확인하세요.");
   report.files=report.produced.length;
+  progress("출력 파일 압축 중 · 중단할 수 있습니다.");
   files["제작_검수보고서.json"]=strToU8(JSON.stringify({
-    schema_version:4,application:"YGO STUDIO",type:"integrated_batch",
+    schema_version:4,preflight_version:"4.2",application:"YGO STUDIO",type:"integrated_batch",
     requested:selected.length,output:options,success:report.produced.length,
     items:report.produced,skipped:report.omitted,
   },null,2));
   files["누락_및_오류.txt"]=strToU8(report.omitted.length
     ?report.omitted.map(x=>x.id+" · "+x.name+" · "+x.mode+": "+x.reason).join("\n")
     :"누락·오류 없음");
-  const archive=zipSync(files,{level:0});
+  const archive=await zipHubAsync(files,signal);
+  if(archive.byteLength>HUB_MAX_ARCHIVE_BYTES)
+    throw Error("출력 ZIP이 240MB를 넘습니다. 카드 수를 줄여 나누어 다운로드하세요.");
   return {
     blob:new Blob([archive as Uint8Array<ArrayBuffer>],{type:"application/zip"}),
     report,
