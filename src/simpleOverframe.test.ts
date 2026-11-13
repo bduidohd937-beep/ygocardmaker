@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_SIMPLE_OVERFRAME, cropToPortrait, validSimpleOverframe } from "./simpleOverframe";
+import { DEFAULT_SIMPLE_OVERFRAME, cropToPortrait, validSimpleOverframe, requiredSimpleOverframeAssets, sourceAssetKeyForLevel } from "./simpleOverframe";
 import { mergeCards, newCard, parseImport, validateCards } from "./model";
+import { setActivePack } from "./assetPack";
 
 const image = "data:image/png;base64,AA==";
 const settings = { ...DEFAULT_SIMPLE_OVERFRAME, image };
@@ -39,5 +40,55 @@ describe("3:4 오버프레임 간편 모드", () => {
       expect(validSimpleOverframe(invalid)).toBe(false);
       expect(() => parseImport([{ ...newCard(), simpleOverframe: invalid }])).toThrow();
     }
+  });
+});
+
+describe("간편 오버프레임 원본 에셋 재사용", () => {
+  it("엑시즈의 랭크 PNG와 일반 몬스터의 레벨 PNG를 구별한다", () => {
+    expect(sourceAssetKeyForLevel("xyz")).toBe("star:rank");
+    expect(sourceAssetKeyForLevel("effect")).toBe("star:level");
+    expect(sourceAssetKeyForLevel("spell")).toBe(null);
+    expect(sourceAssetKeyForLevel("trap")).toBe(null);
+    expect(sourceAssetKeyForLevel("link")).toBe(null);
+  });
+  it("가짜 문자 원형 아이콘 대신 실제 원본 에셋만 요구한다", () => {
+    setActivePack(null);
+    expect(requiredSimpleOverframeAssets(settings, "어둠", "xyz", 5)).toEqual([
+      "font:name", "attribute:dark", "star:rank",
+    ]);
+    expect(requiredSimpleOverframeAssets(settings, "빛", "effect", 4)).toEqual([
+      "font:name", "attribute:light", "star:level",
+    ]);
+    expect(requiredSimpleOverframeAssets(settings, "어둠", "spell", 0)).toEqual([
+      "font:name", "attribute:spell",
+    ]);
+    expect(requiredSimpleOverframeAssets(settings, "어둠", "trap", 0)).toEqual([
+      "font:name", "attribute:trap",
+    ]);
+  });
+  it("선택적으로 표기를 숨기면 해당 에셋을 요구하지 않는다", () => {
+    setActivePack(null);
+    expect(requiredSimpleOverframeAssets({
+      ...settings, showName: false, showAttribute: false, showLevel: false,
+    }, "어둠", "xyz", 12)).toEqual([]);
+  });
+  it("사용자가 선택한 ZIP에 실제 에셋이 있으면 추가 요구하지 않는다", () => {
+    setActivePack({ version: 1, name: "검증.zip", importedAt: "2026-11-13",
+      files: { "font:name": "data:font/woff2;base64,AA==", "attribute:dark": "data:image/png;base64,AA==",
+        "star:rank": "data:image/png;base64,AA==" } });
+    try {
+      expect(requiredSimpleOverframeAssets(settings, "어둠", "xyz", 5)).toEqual([]);
+      expect(requiredSimpleOverframeAssets(settings, "어둠", "effect", 5)).toEqual([
+        "star:level",
+      ]);
+    } finally { setActivePack(null); }
+  });
+  it("레벨 아이콘 표시 설정을 포함해 저장하고 구버전도 유지한다", () => {
+    expect(validSimpleOverframe({ ...settings, showLevel: false })).toBe(true);
+    expect(validSimpleOverframe({ ...settings, showLevel: "no" })).toBe(false);
+    const old = { ...settings }; delete (old as {showLevel?:boolean}).showLevel;
+    expect(validSimpleOverframe(old)).toBe(true);
+    expect(parseImport([{ ...newCard(), simpleOverframe: { ...settings, showLevel: false } }])[0]
+      .simpleOverframe?.showLevel).toBe(false);
   });
 });
