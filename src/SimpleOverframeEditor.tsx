@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Check, Download, ImagePlus, RotateCcw, X, Move, Save, ScanLine } from "lucide-react";
 import type { Card } from "./model";
-import { ATTRIBUTES, FRAMES, type Frame } from "./model";
+import { ATTRIBUTES, FRAMES, RACES, type Frame } from "./model";
+import { supportsStats, type PanelTint, type PanelBorder } from "./effectPanel";
 import { DEFAULT_SIMPLE_OVERFRAME, renderSimpleOverframe, requiredSimpleOverframeAssets, type SimpleOverframe } from "./simpleOverframe";
 import { download } from "./export";
 import { toBlob } from "./render";
@@ -27,6 +28,9 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
   const [frame, setFrame] = useState<Frame>(card.frame);
   const [level, setLevel] = useState(card.level);
   const [effect, setEffect] = useState(card.effect);
+  const [race, setRace] = useState(card.race);
+  const [atk, setAtk] = useState(card.atk);
+  const [def, setDef] = useState(card.def);
   const [imageAspect, setImageAspect] = useState(0.75);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
@@ -166,7 +170,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
     }
     const handle = window.setTimeout(() => {
       const result = document.createElement("canvas");
-      void renderSimpleOverframe(result, config, name, attribute, effect, 900, frame, level)
+      void renderSimpleOverframe(result, config, name, attribute, effect, 900, frame, level, {race,atk,def})
         .then(() => {
           if (!alive || !canvas.current) return;
           const target = canvas.current;
@@ -178,7 +182,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
         .catch(e => { if (alive) setError(e instanceof Error ? e.message : String(e)); });
     }, 90);
     return () => { alive = false; window.clearTimeout(handle); };
-  }, [config, name, attribute, effect, frame, level]);
+  }, [config, name, attribute, effect, frame, level, race, atk, def]);
 
   const upload = async (file: File) => {
     try {
@@ -203,7 +207,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
   };
   const save = () => {
     if (!config.image) { setError("3:4 원화를 먼저 선택하세요."); return; }
-    onSave({ name: name.trim() || "이름 없는 카드", attribute, frame, level, effect, simpleOverframe: config });
+    onSave({ name: name.trim() || "이름 없는 카드", attribute, frame, level, effect, race, atk, def, simpleOverframe: config });
   };
   const exportPng = async () => {
     if (!config.image || busy) { setError("3:4 원화를 먼저 선택하세요."); return; }
@@ -211,7 +215,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
     setStatus("");
     try {
       const out = document.createElement("canvas");
-      await renderSimpleOverframe(out, config, name, attribute, effect, 1500, frame, level);
+      await renderSimpleOverframe(out, config, name, attribute, effect, 1500, frame, level, {race,atk,def});
       const blob = await toBlob(out, "png");
       download(blob, `${card.id}.png`);
       setStatus("3:4 · 1500 × 2000 PNG 다운로드를 시작했습니다.");
@@ -403,11 +407,77 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
             <label>스타일
               <select aria-label="간편 모드 효과창 스타일" value={config.effectStyle}
                 onChange={e => update({ effectStyle: e.target.value as SimpleOverframe["effectStyle"] })}>
-                <option value="glass">반투명 흑색</option>
-                <option value="classic">OCG풍 베이지</option>
-                <option value="outline">테두리만</option>
+                <option value="ocg">OCG풍 정교한 효과창 (신규)</option>
+                <option value="glass">반투명 흑색 (기존)</option>
+                <option value="classic">베이지 단색 (기존)</option>
+                <option value="outline">테두리만 (기존)</option>
               </select>
             </label>
+            <label>테두리 색감
+              <select aria-label="효과창 테두리 색감" value={config.panelTint ?? "auto"}
+                onChange={e => update({ panelTint: e.target.value as PanelTint })}>
+                <option value="auto">카드 종류에 따라 자동</option>
+                <option value="charcoal">차콜 · 엑시즈풍</option>
+                <option value="violet">자수정 · 융합풍</option>
+                <option value="silver">은회색 · 싱크로풍</option>
+                <option value="azure">청회색 · 링크풍</option>
+                <option value="sepia">고동색 · 일반 효과풍</option>
+              </select>
+            </label>
+            <label>테두리 구성
+              <select aria-label="효과창 테두리 구성" value={config.panelBorder ?? "double"}
+                onChange={e => update({ panelBorder: e.target.value as PanelBorder })}>
+                <option value="double">이중 정교 테두리</option>
+                <option value="single">단일 테두리</option>
+                <option value="none">테두리 없음</option>
+              </select>
+            </label>
+            <div className="simple-of-number-grid">
+              <label>테두리 굵기
+                <input type="number" min="1" max="6" step="0.5" aria-label="효과창 테두리 굵기"
+                  value={config.borderThickness ?? 2}
+                  onChange={e => update({ borderThickness: Math.max(1,Math.min(6,Number(e.target.value)||1)) })}/>
+              </label>
+              <label>질감 강도
+                <input type="number" min="0" max="100" step="5" aria-label="효과창 질감 강도"
+                  value={config.panelTexture ?? 22}
+                  onChange={e => update({ panelTexture: Math.max(0,Math.min(100,Number(e.target.value)||0)) })}/>
+              </label>
+            </div>
+            <label className="simple-of-check">
+              <input type="checkbox" checked={config.showTypeLine ?? false}
+                onChange={e => update({ showTypeLine: e.target.checked })}/>
+              종족·소환 방식 표기
+            </label>
+            {config.showTypeLine && supportsStats(frame) && <label>종족
+              <select aria-label="간편 모드 종족" value={race} onChange={e => setRace(e.target.value)}>
+                {RACES.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </label>}
+            {supportsStats(frame) && <label className="simple-of-check">
+              <input type="checkbox" checked={config.showStats ?? false}
+                onChange={e => update({ showStats: e.target.checked })}/>
+              공격력·수비력 표시 {frame === "link" ? "(ATK·LINK)" : "(ATK·DEF)"}
+            </label>}
+            {!!config.showStats && supportsStats(frame) && <>
+              <div className="simple-of-number-grid">
+                <label>공격력
+                  <input aria-label="간편 모드 공격력" value={atk} maxLength={6}
+                    onChange={e => setAtk(e.target.value.replace(/[^0-9?]/g,"").slice(0,6))}/>
+                </label>
+                {frame !== "link" && <label>수비력
+                  <input aria-label="간편 모드 수비력" value={def} maxLength={6}
+                    onChange={e => setDef(e.target.value.replace(/[^0-9?]/g,"").slice(0,6))}/>
+                </label>}
+              </div>
+              <label className="simple-of-range">
+                <span>공수 표기 크기 <b>{config.statsFontSize ?? 20}px</b></span>
+                <input type="range" min="14" max="32" step="1"
+                  aria-label="공수 표기 크기" value={config.statsFontSize ?? 20}
+                  onChange={e => update({ statsFontSize: Number(e.target.value) })}/>
+              </label>
+            </>}
+            <small>원본 효과문·종족 폰트를 사용합니다. 공간이 부족하면 효과문을 잘라내지 않고 알려줍니다.</small>
             {([
               ["불투명도", "effectOpacity", 0, 100, "%"],
             ] as const).map(([title, key, min, max, unit]) =>
