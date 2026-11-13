@@ -133,14 +133,17 @@ export function clampOverlayRect(rect: OverlayRect): OverlayRect {
 /** Snap center to art center and edges to the 36px safety margins. */
 export function snapOverlayRect(rect: OverlayRect, enabled: boolean) {
   const r = clampOverlayRect(rect);
-  if (!enabled) return { rect: r, guides: [] as ("x" | "y")[] };
+  if (!enabled) return { rect: r, guides: {} as { x?: number; y?: number } };
   const threshold = 10;
   const targetsX = [36, ART_W / 2 - r.w / 2, ART_W - 36 - r.w];
   const targetsY = [36, ART_H / 2 - r.h / 2, ART_H - 36 - r.h];
   const near = (n: number, values: number[]) => values.find(v => Math.abs(n - v) <= threshold);
   const x = near(r.x, targetsX), y = near(r.y, targetsY);
   return { rect: clampOverlayRect({ ...r, x: x ?? r.x, y: y ?? r.y }),
-    guides: [...(x !== undefined ? ["x" as const] : []), ...(y !== undefined ? ["y" as const] : [])] };
+    guides: {
+      ...(x === undefined ? {} : { x: x + r.w / 2 }),
+      ...(y === undefined ? {} : { y: y + r.h / 2 }),
+    } };
 }
 export function builtInLayout(name: "기본" | "중앙형" | "상단 여백형",
   frame: Frame, level: number, effectTop: number, effectHeight: number): OverframeLayout {
