@@ -162,7 +162,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
             {missingAssets.length > 0 && <small className="simple-of-warning" role="status">
               원본 에셋 필요: {missingAssets.join(", ")}. 왼쪽 '카드 프레임 ZIP 불러오기'에서 기존 리소스를 불러와 주세요.
             </small>}
-            {!missingAssets.length && <small>적용 중: 기존 카드명 폰트 · 속성 이미지 · 레벨/랭크 별 에셋</small>}
+            {!missingAssets.length && <small>현재 선택한 카드 표시는 기존 리소스 에셋을 사용합니다. ({[config.showName && "카드명 폰트", config.showAttribute && "속성 PNG", config.showLevel !== false && !["spell","trap","link"].includes(frame) && "레벨/랭크 PNG"].filter(Boolean).join(" · ") || "모든 표시 숨김"})</small>}
             <small>원화에는 카드명·속성·별을 그리지 않아야 중복 표시되지 않습니다.</small>
           </div>
           <div className="simple-of-group">
