@@ -115,7 +115,10 @@ export function GenericCardCatalog({ project, onChange, onOpenCard }: Props) {
   const exportZip = () => {
     try {
       const size = JSON.stringify(records).length +
-        project.cards.reduce((n, c) => n + (c.artwork?.length || 0) + (c.simpleOverframe?.image?.length || 0), 0);
+        records.reduce((n, r) => n +
+          (artworkFor(r, project.cards, "original").length) +
+          (artworkFor(r, project.cards, "overframe").length) +
+          (artworkFor(r, project.cards, "final").length), 0);
       if (size > 200 * 1024 * 1024) throw Error("이미지가 너무 많습니다. JSON/CSV로 먼저 백업하고 이미지를 나눠 관리하세요.");
       const bytes = catalogZip(records, project.cards);
       download(new Blob([new Uint8Array(bytes)], { type: "application/zip" }), "범용카드_도감_전체백업.zip");
