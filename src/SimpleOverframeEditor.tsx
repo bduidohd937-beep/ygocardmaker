@@ -20,8 +20,13 @@ interface Props {
 const imageType = /^(image\/png|image\/jpeg|image\/webp)$/;
 
 export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
-  const [config, setConfig] = useState<SimpleOverframe>({
-    ...DEFAULT_SIMPLE_OVERFRAME, ...card.simpleOverframe,
+  const [config, setConfig] = useState<SimpleOverframe>(() => {
+    const previous = card.simpleOverframe;
+    return previous
+      ? { ...DEFAULT_SIMPLE_OVERFRAME, ...previous,
+          // Legacy single-border styles must not silently become double-border.
+          panelBorder: previous.panelBorder }
+      : { ...DEFAULT_SIMPLE_OVERFRAME };
   });
   const [name, setName] = useState(card.name);
   const [attribute, setAttribute] = useState(card.attribute);
@@ -425,7 +430,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               </select>
             </label>
             <label>테두리 구성
-              <select aria-label="효과창 테두리 구성" value={config.panelBorder ?? "double"}
+              <select aria-label="효과창 테두리 구성" value={config.panelBorder ?? (config.effectStyle === "ocg" ? "double" : "single")}
                 onChange={e => update({ panelBorder: e.target.value as PanelBorder })}>
                 <option value="double">이중 정교 테두리</option>
                 <option value="single">단일 테두리</option>
@@ -490,8 +495,17 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               </label>
             )}
             <button type="button" className="simple-of-subtle" onClick={() => setConfig(s => ({
-              ...DEFAULT_SIMPLE_OVERFRAME, image: s.image,
-            }))}><RotateCcw size={15}/> 디자인 초기화</button>
+              ...s,
+              effectStyle: DEFAULT_SIMPLE_OVERFRAME.effectStyle,
+              effectOpacity: DEFAULT_SIMPLE_OVERFRAME.effectOpacity,
+              panelTint: DEFAULT_SIMPLE_OVERFRAME.panelTint,
+              panelBorder: DEFAULT_SIMPLE_OVERFRAME.panelBorder,
+              borderThickness: DEFAULT_SIMPLE_OVERFRAME.borderThickness,
+              panelTexture: DEFAULT_SIMPLE_OVERFRAME.panelTexture,
+              showTypeLine: DEFAULT_SIMPLE_OVERFRAME.showTypeLine,
+              showStats: DEFAULT_SIMPLE_OVERFRAME.showStats,
+              statsFontSize: DEFAULT_SIMPLE_OVERFRAME.statsFontSize,
+            }))}><RotateCcw size={15}/> 효과창 디자인 초기화</button>
           </div>}
         </aside>
       </div>
