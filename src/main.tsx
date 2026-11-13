@@ -47,6 +47,7 @@ import {
   type Project,
 } from "./model";
 import { renderCard } from "./render";
+import { DEFAULT_OVERFRAME } from "./overframe";
 import { ArtworkCropEditor } from "./CropEditor";
 import { getActivePack, importAssetZip, loadAssetPack, saveAssetPack, setActivePack } from "./assetPack";
 import { demoProject } from "./samples";
@@ -83,6 +84,7 @@ export function CardMakerApp() {
   const canvas = useRef<HTMLCanvasElement>(null),
     importInput = useRef<HTMLInputElement>(null),
     artInput = useRef<HTMLInputElement>(null),
+    overframeInput = useRef<HTMLInputElement>(null),
     assetInput = useRef<HTMLInputElement>(null);
   // Native embed can unmount on in-app navigation before the normal 500ms autosave.
   // Flush the latest card edit instead of silently dropping the last change.
@@ -284,6 +286,32 @@ export function CardMakerApp() {
       setToast("일러스트를 적용했습니다.");
     } catch (e) {
       setToast(e instanceof Error ? e.message : "이미지를 읽을 수 없습니다.");
+    }
+  };
+  const uploadOverframe = async (file: File) => {
+    try {
+      if (file.type !== "image/png" || file.size > 10 * 1024 * 1024)
+        throw Error("돌출 레이어는 10MB 이하의 투명 PNG만 지원합니다.");
+      const data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(Error("돌출 이미지를 읽을 수 없습니다."));
+        reader.readAsDataURL(file);
+      });
+      if (data.length >= 16_000_000)
+        throw Error("돌출 이미지의 데이터 크기가 너무 큽니다.");
+      const img = new Image();
+      img.src = data;
+      await img.decode();
+      if (!img.naturalWidth || !img.naturalHeight || img.naturalWidth * img.naturalHeight > 40_000_000)
+        throw Error("4000만 픽셀 이하의 PNG 이미지를 선택하세요.");
+      update({ overframe: {
+        ...DEFAULT_OVERFRAME, ...(card?.overframe ?? {}),
+        enabled: true, image: data,
+      } });
+      setToast("오버프레임 돌출 이미지를 적용했습니다.");
+    } catch (error) {
+      setToast(error instanceof Error ? error.message : "돌출 이미지를 읽을 수 없습니다.");
     }
   };
   const visibleCards = project?.cards.filter(
@@ -1098,6 +1126,65 @@ export function CardMakerApp() {
                 >
                   <RotateCcw size={14} /> 위치 초기화
                 </button>
+                <div className="section-label effect-heading">
+                  오버프레임 <span>03</span>
+                </div>
+                <div className="overframe-editor">
+                  <label className="overframe-toggle">
+                    <input type="checkbox"
+                      disabled={!card.overframe?.image}
+                      checked={!!card.overframe?.enabled}
+                      onChange={e => update({ overframe: {
+                        ...DEFAULT_OVERFRAME, ...card.overframe, enabled: e.target.checked,
+                      } })}
+                    />
+                    프레임 돌출 사용
+                  </label>
+                  <p className="helper">인물이 분리된 투명 PNG를 프레임 위에 합성합니다. 카드명·랭크·효과창은 보호하고 일러스트 테두리만 넘어옵니다.</p>
+                  <div className="overframe-actions">
+                    <button type="button" onClick={() => overframeInput.current?.click()}>
+                      <ImagePlus size={15} /> 돌출 PNG 업로드
+                    </button>
+                    {card.overframe?.image && (
+                      <button type="button" onClick={() => update({ overframe: undefined })}>
+                        <Trash2 size={14} /> 레이어 삭제
+                      </button>
+                    )}
+                  </div>
+                  {card.overframe?.image && (
+                    <>
+                      <img className="overframe-source" src={card.overframe.image} alt="돌출 레이어 투명 PNG" />
+                      {([
+                        ["가로 이동", "x", -350, 350, 1],
+                        ["세로 이동", "y", -400, 400, 1],
+                        ["크기", "scale", 0.25, 3, 0.01],
+                        ["회전", "rotation", -45, 45, 1],
+                      ] as const).map(([label, key, min, max, step]) => (
+                        <label className="field range" key={key}>
+                          {label}
+                          <span>{key === "scale"
+                            ? Math.round((card.overframe?.scale ?? 1) * 100) + "%"
+                            : (card.overframe?.[key] ?? 0) + (key === "rotation" ? "°" : "")}</span>
+                          <input type="range" min={min} max={max} step={step}
+                            value={(card.overframe ?? DEFAULT_OVERFRAME)[key]}
+                            onChange={e => update({ overframe: {
+                              ...DEFAULT_OVERFRAME, ...card.overframe,
+                              [key]: Number(e.target.value),
+                            } })}
+                          />
+                        </label>
+                      ))}
+                      <button className="full-width" type="button" onClick={() => update({
+                        overframe: {
+                          ...DEFAULT_OVERFRAME, ...card.overframe,
+                          x: 0, y: 0, scale: 1, rotation: 0,
+                        }
+                      })}>
+                        <RotateCcw size={14} /> 돌출 위치 초기화
+                      </button>
+                    </>
+                  )}
+                </div>
                 <div className="notice">
                   <Info size={15} />
                   <span>
@@ -1108,6 +1195,18 @@ export function CardMakerApp() {
                 </div>
               </>
             )}
+            <input
+              ref={overframeInput}
+              type="file"
+              accept="image/png"
+              aria-label="오버프레임 돌출 PNG 파일"
+              hidden
+              onChange={e => {
+                const file = e.target.files?.[0];
+                if (file) void uploadOverframe(file);
+                e.target.value = "";
+              }}
+            />
             <input
               ref={artInput}
               type="file"
