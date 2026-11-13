@@ -1,4 +1,5 @@
 import { validArtworkCrop, type ArtworkCrop } from "./artworkCrop";
+import { validOverframe, type OverframeLayer } from "./overframe";
 
 export const FRAMES = {
   effect: "효과",
@@ -89,6 +90,8 @@ export interface Card {
   artwork: string;
   /** Optional normalized selection; legacy cards render the entire image. */
   artCrop?: ArtworkCrop;
+  /** Optional transparent PNG foreground that crosses the illustration border. */
+  overframe?: OverframeLayer;
   zoom: number;
   offsetX: number;
   offsetY: number;
@@ -120,6 +123,7 @@ export function newCard(id = 210000401, theme = "새로운 테마"): Card {
     pendulumEffect: "",
     arrows: [1, 4],
     artwork: "",
+    overframe: undefined,
     zoom: 1,
     offsetX: 0,
     offsetY: 0,
@@ -156,6 +160,8 @@ export function validateCards(cards: Card[], requireArt = true): string[] {
        (!isMonster(c) && c.traits.length > 0)))
       errors.push(`${tag}: 몬스터 특성 설정이 올바르지 않습니다.`);
     if (requireArt && !c.artwork) errors.push(`${tag}: 일러스트가 없습니다.`);
+    if (c.overframe !== undefined && !validOverframe(c.overframe))
+      errors.push(`${tag}: 오버프레임 설정 또는 투명 PNG가 올바르지 않습니다.`);
     if (
       isMonster(c) &&
       (!Number.isInteger(c.level) || c.level < 0 || c.level > 13)
@@ -215,6 +221,10 @@ export function parseImport(raw: unknown): Card[] {
         ),
       } as Card;
       c.artwork = artData(item.artwork);
+      if (item.overframe !== undefined) {
+        if (!validOverframe(item.overframe)) throw Error("오버프레임 설정이 올바르지 않습니다.");
+        c.overframe = item.overframe;
+      }
       c.id = id;
       // Legacy project JSON has no traits; preserve all existing artwork and fields.
       if (!("traits" in item)) c.traits = [];
@@ -302,8 +312,9 @@ export function mergeCards(existing: Card[], incoming: Card[]): Card[] {
               zoom: prev.zoom,
               offsetX: prev.offsetX,
               offsetY: prev.offsetY,
+              ...(prev.overframe ? { overframe: prev.overframe } : {}),
             }
-          : {}),
+          : prev?.overframe ? { overframe: prev.overframe } : {}),
       },
     );
   }
