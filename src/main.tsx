@@ -1148,8 +1148,11 @@ export function CardMakerApp() {
                   <span>오버프레임 제작은 일반 일러스트와 독립적으로 관리됩니다.
                     3:4 간편 모드는 완성 원화 한 장을 사용하고, 정밀 모드는 별도 투명 PNG 돌출 레이어를 사용합니다.</span>
                 </div>
+                <div className="section-label">
+                  간편 오버프레임 <span>01</span>
+                </div>
                 <div className="simple-of-entry">
-                  <strong>3:4 오버프레임 간편 제작</strong>
+                  <strong>3:4 단일 원화 제작</strong>
                   <p>완성된 3:4 원화 하나 위에 카드명·속성·효과창만 추가. 복제 이미지와 마스크가 필요 없습니다.</p>
                   <button type="button" className="full-width" onClick={() => setSimpleOverframeOpen(true)}>
                     <ImagePlus size={16}/> 3:4 간편 모드 열기
@@ -1158,7 +1161,7 @@ export function CardMakerApp() {
                 </div>
 
                 <div className="section-label effect-heading">
-                  오버프레임 <span>03</span>
+                  정밀 오버프레임 <span>02</span>
                 </div>
                 <div className="overframe-editor">
                   <label className="overframe-toggle">
