@@ -2546,3 +2546,41 @@ a {
   .studio-hub-audit-variant { align-items: flex-start; }
   .studio-hub-audit-actions button { font-size: 10px; }
 }
+
+
+/* 범용 카드 도감: 메인에서 한 번에 여는 전용 진입 버튼 */
+.generic-catalog-top-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #a4c394;
+  border-radius: 6px;
+  padding: 9px 13px;
+  background: #bad79f;
+  color: #203329;
+  font-weight: 700;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.generic-catalog-top-button:hover {
+  background: #d1edb5;
+  border-color: #d1edb5;
+}
+.studio-hub-to-workspace {
+  margin-left: auto;
+  padding: 8px 12px;
+  border: 1px solid #60776d;
+  border-radius: 6px;
+  color: #d5e8db;
+  background: #2a3835;
+  font-size: 11px;
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .generic-catalog-top-button { padding: 8px; font-size: 10px; gap: 5px; }
+  .studio-hub-to-workspace { font-size: 10px; padding: 7px; }
+}
+@media (max-width: 620px) {
+  .top-actions .generic-catalog-top-button { font-size: 0; gap: 0; }
+  .top-actions .generic-catalog-top-button svg { width: 18px; height: 18px; }
+}
