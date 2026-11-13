@@ -22,6 +22,21 @@ describe("3:4 오버프레임 간편 모드", () => {
     const imported = { ...newCard(), name: "새 이름" };
     expect(mergeCards([old], [imported])[0].simpleOverframe).toEqual(settings);
   });
+  it("상단 검정 그라데이션은 기본값 OFF, 구버전 설정에서도 OFF로 유지한다", () => {
+    expect(DEFAULT_SIMPLE_OVERFRAME.titleBackdrop).toBe("none");
+    const legacy = { ...settings };
+    delete (legacy as { titleBackdrop?: string }).titleBackdrop;
+    expect(validSimpleOverframe(legacy)).toBe(true);
+    expect(parseImport([{ ...newCard(), simpleOverframe: legacy }])[0].simpleOverframe)
+      .toEqual(legacy);
+    for (const titleBackdrop of ["none", "shadow", "gradient"] as const) {
+      const config = { ...settings, titleBackdrop };
+      expect(validSimpleOverframe(config)).toBe(true);
+      expect(parseImport([{ ...newCard(), simpleOverframe: config }])[0].simpleOverframe?.titleBackdrop)
+        .toBe(titleBackdrop);
+    }
+    expect(validSimpleOverframe({ ...settings, titleBackdrop: "opaque" })).toBe(false);
+  });
   it("기존 프로젝트에는 간편 모드 필드가 없어도 문제없다", () => {
     const old = newCard();
     expect(parseImport([old])[0].simpleOverframe).toBeUndefined();
