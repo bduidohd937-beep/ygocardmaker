@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Download, ImagePlus, RotateCcw, X } from "lucide-react";
 import type { Card } from "./model";
 import { ATTRIBUTES } from "./model";
