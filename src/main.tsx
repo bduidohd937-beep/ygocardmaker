@@ -49,7 +49,7 @@ import {
 import { currentPreviewMode, renderCardVariant } from "./cardCompare";
 import { CardCompareEditor } from "./CardCompareEditor";
 import { StudioHub } from "./StudioHub";
-import { getGenericCards } from "./genericCatalog";
+import { getGenericCards, validateGenericCards, type GenericCard } from "./genericCatalog";
 import { applyHubImageAssignments } from "./studioHub";
 import { applyStudioSafeRepairs } from "./studioRepair";
 import { restoreHubImages } from "./studioImageRecovery";
@@ -238,16 +238,29 @@ export function CardMakerApp() {
       if (file.size > 60 * 1024 * 1024)
         throw Error("가져오기 파일은 60MB 이하로 선택하세요.");
       let incoming: Card[];
-      if (file.name.toLowerCase().endsWith(".cdb"))
+      let restoredCatalog: GenericCard[] | undefined;
+      if (file.name.toLowerCase().endsWith(".cdb")) {
         incoming = await readCDB(new Uint8Array(await file.arrayBuffer()));
-      else incoming = parseImport(JSON.parse(await file.text()));
+      } else {
+        const raw: unknown = JSON.parse(await file.text());
+        incoming = parseImport(raw);
+        if (raw && typeof raw === "object" && !Array.isArray(raw) &&
+            "genericCatalog" in raw) {
+          const catalog = validateGenericCards((raw as { genericCatalog: unknown }).genericCatalog);
+          if (window.confirm("JSON 백업에 범용 카드 도감 " + catalog.length +
+            "건이 있습니다. 현재 도감 기록을 이 백업으로 복원할까요?")) {
+            restoredCatalog = catalog;
+          }
+        }
+      }
       if (!incoming.length)
         throw Error("가져온 카드가 없습니다. CDB 또는 JSON 내용을 확인하세요.");
       if (incoming.length > 2000)
         throw Error("한 번에 2000장까지 가져올 수 있습니다.");
       setUndoDeletion(null);
       setProject((p) =>
-        p ? { ...p, cards: mergeCards(p.cards, incoming) } : p,
+        p ? { ...p, cards: mergeCards(p.cards, incoming),
+          ...(restoredCatalog ? { genericCatalog: restoredCatalog } : {}) } : p,
       );
       setActive(incoming[0].id);
       setSelected(incoming.map((c) => c.id));
