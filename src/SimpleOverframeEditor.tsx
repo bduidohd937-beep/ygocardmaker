@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Check, Download, ImagePlus, RotateCcw, X, Move, Save, ScanLine } from "lucide-react";
 import type { Card } from "./model";
 import { ATTRIBUTES, FRAMES, RACES, type Frame } from "./model";
@@ -7,6 +7,8 @@ import { applyFinishPreset, BUILT_IN_FINISH, DEFAULT_FINISH, FINISH_STYLES,
   recommendedFinish, type FinishStyle } from "./overframeFinish";
 import { DEFAULT_SIMPLE_OVERFRAME, renderSimpleOverframe, requiredSimpleOverframeAssets, type SimpleOverframe } from "./simpleOverframe";
 import { download } from "./export";
+import { recommendLayoutChoices, sampleArtworkForLayout, type ArtPixelSample } from "./overframeRecommend";
+import type { OverframeLayout } from "./overframeLayout";
 import { toBlob } from "./render";
 import {
   ART_W, ART_H, builtInLayout, clampOverlayRect, completeLayout, defaultOverlayRects,
@@ -54,6 +56,27 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
   const [presetName, setPresetName] = useState("내 레이아웃");
   const [finishPresetName, setFinishPresetName] = useState("내 광택");
   const [chosenFinish, setChosenFinish] = useState("");
+  const [artPixels, setArtPixels] = useState<ArtPixelSample | undefined>();
+  const [analysisState, setAnalysisState] = useState("원화를 올리면 밝기·윤곽선을 분석합니다.");
+  const [suggestionPreviews, setSuggestionPreviews] = useState<Record<string,string>>({});
+  const [recommendUndo, setRecommendUndo] = useState<{ layout?: OverframeLayout } | null>(null);
+  const suggestions = useMemo(() => recommendLayoutChoices(
+    {frame,level,name,effect},config,artPixels,
+  ),[frame,level,name,effect,config,artPixels]);
+  const applySuggestion = (key: string) => {
+    const proposal = suggestions.find(s => s.key === key);
+    if (!proposal) return;
+    setRecommendUndo({layout:config.layout ? structuredClone(config.layout) : undefined});
+    update({layout:structuredClone(proposal.layout)});
+    setStatus(proposal.label+"을 미리 적용했습니다. 카드에 저장하려면 아래 '설정 저장'을 누르세요.");
+    setError("");
+  };
+  const restoreSuggestion = () => {
+    if (!recommendUndo) return;
+    update({layout:recommendUndo.layout});
+    setRecommendUndo(null);
+    setStatus("추천을 적용하기 전 레이아웃으로 되돌렸습니다.");
+  };
   const fileInput = useRef<HTMLInputElement>(null);
   const update = (p: Partial<SimpleOverframe>) => setConfig(s => ({ ...s, ...p }));
   const boxes = overlayRects(config, frame, level);
@@ -178,6 +201,38 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
     window.addEventListener("keydown", keyDown);
     return () => window.removeEventListener("keydown", keyDown);
   }, [onCancel]);
+
+  useEffect(() => {
+    let live=true;
+    setArtPixels(undefined);
+    if (!config.image) {
+      setAnalysisState("원화를 올리면 밝기·윤곽선을 분석합니다.");
+      return;
+    }
+    setAnalysisState("원화 구도 분석 중…");
+    void sampleArtworkForLayout(config.image).then(p => {
+      if (live) {setArtPixels(p);setAnalysisState("원화 밝기·윤곽선 분석 완료");}
+    }).catch(() => {
+      if (live) {setArtPixels(undefined);setAnalysisState("원화 분석을 사용할 수 없어 카드 정보만 반영");}
+    });
+    return()=>{live=false};
+  },[config.image]);
+
+  useEffect(()=>{
+    let live=true;
+    setSuggestionPreviews({});
+    if (!config.image) return;
+    const keys = suggestions.map(s=>s.key);
+    void Promise.all(suggestions.map(async suggestion=>{
+      try {
+        const output=document.createElement("canvas");
+        await renderSimpleOverframe(output,{...config,layout:suggestion.layout},
+          name,attribute,effect,240,frame,level,{race,atk,def});
+        if (live) setSuggestionPreviews(prev=>({...prev,[suggestion.key]:output.toDataURL("image/png")}));
+      }catch { /* Missing original card fonts/icons are already shown elsewhere. */ }
+    }));
+    return()=>{live=false};
+  },[config,suggestions,name,attribute,effect,frame,level,race,atk,def]);
 
   useEffect(() => {
     if (!config.image) return;
@@ -437,6 +492,33 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
             </label>
             <button type="button" onClick={savePreset}><Save size={15}/> 현재 배치 프리셋 저장</button>
             <small>이 카드의 프리셋은 최대 5개까지 카드 JSON에 함께 저장됩니다.</small>
+          </div>
+          <div className="simple-of-group">
+            <strong>07 · 카드별 레이아웃 자동 추천</strong>
+            <small>{analysisState}</small>
+            <small>카드명 길이·효과문 길이·효과창 크기를 비교하고, 원화가 있으면 밝기·세부 윤곽선 밀도를 참고합니다. 인물이나 사물을 인식하는 AI 분석은 아닙니다.</small>
+            <div className="simple-of-suggestion-list">
+              {suggestions.map((suggestion,index)=><div key={suggestion.key}
+                className="simple-of-suggestion">
+                <div className="simple-of-suggestion-thumb">
+                  {suggestionPreviews[suggestion.key]
+                    ? <img alt={suggestion.label+" 추천 미리보기"} src={suggestionPreviews[suggestion.key]}/>
+                    : <span>{config.image ? "미리보기 준비 중" : "원화 필요"}</span>}
+                </div>
+                <div className="simple-of-suggestion-info">
+                  <strong>{index+1}순위 · {suggestion.label}</strong>
+                  <small>{suggestion.reason}</small>
+                  <button type="button" disabled={!config.image}
+                    aria-label={suggestion.label+" 추천 적용"}
+                    onClick={()=>applySuggestion(suggestion.key)}>
+                    이 레이아웃 적용
+                  </button>
+                </div>
+              </div>)}
+            </div>
+            {recommendUndo && <button type="button" className="simple-of-subtle"
+              onClick={restoreSuggestion}><RotateCcw size={15}/> 추천 적용 전 배치로 되돌리기</button>}
+            <small>추천 순위는 상대적인 편집 보조 지표이며 화질 점수가 아닙니다. 기존 카드 데이터에는 설정 저장 전까지 반영되지 않습니다.</small>
           </div>
           {config.showEffectBox && <div className="simple-of-group">
             <strong>05 · 효과창 디자인</strong>
