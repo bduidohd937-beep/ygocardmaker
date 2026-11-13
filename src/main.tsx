@@ -49,6 +49,7 @@ import {
 import { currentPreviewMode, renderCardVariant } from "./cardCompare";
 import { CardCompareEditor } from "./CardCompareEditor";
 import { StudioHub } from "./StudioHub";
+import { getGenericCards } from "./genericCatalog";
 import { applyHubImageAssignments } from "./studioHub";
 import { applyStudioSafeRepairs } from "./studioRepair";
 import { restoreHubImages } from "./studioImageRecovery";
@@ -114,7 +115,8 @@ export function CardMakerApp() {
       .then((p) => {
         if (!live) return;
         const value = p ?? demoProject();
-        const migrated = { ...value, cards: value.cards.map(normalizeCardTraits) };
+        const migrated = { ...value, cards: value.cards.map(normalizeCardTraits),
+          genericCatalog: getGenericCards(value.genericCatalog) };
         setProject(migrated);
         setActive(migrated.cards[0]?.id ?? 0);
         setSelected(migrated.cards.map((c) => c.id));
@@ -1306,6 +1308,7 @@ export function CardMakerApp() {
       {studioHubOpen && (
         <StudioHub project={project} activeId={card.id} selectedIds={selected}
           assetName={assetName} assetCount={assetCount}
+          onCatalogChange={records=>setProject(p=>p?{...p,genericCatalog:records}:p)}
           onClose={()=>setStudioHubOpen(false)}
           onImportCards={importFile} onImportAssets={uploadAssets}
           onApplyImages={plan=>{
