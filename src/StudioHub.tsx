@@ -6,7 +6,7 @@ import { compareAvailability } from "./cardCompare";
 import { download } from "./export";
 import { matchBatchImages, type ImageMap } from "./batchOverframe";
 import {
-  DEFAULT_HUB_OUTPUT, exportStudioHubZip, hubCardStates, hubSelected,
+  DEFAULT_HUB_OUTPUT, exportStudioHubZip, hubCardStates,
   planHubImageAssignments, type HubImageType, type HubOutputOptions,
   type HubExportReport,
 } from "./studioHub";
@@ -25,7 +25,7 @@ interface Props {
   onOpenCard: (id:number)=>void;
   onOpenFullArt: (id:number)=>void;
   onCompare: (id:number)=>void;
-  onOpenBatch: ()=>void;
+  onOpenBatch: (ids:number[])=>void;
 }
 const STAGES:{key:Stage;name:string;sub:string}[]=[
   {key:"data",name:"01 카드·CDB",sub:"카드 선택과 데이터 관리"},
@@ -335,7 +335,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
               <div className="studio-hub-tile">
                 <strong>대량 카드 제작</strong>
                 <p>V3.6의 ID 매칭·일괄 프리셋·미리보기·ZIP 기능을 유지합니다.</p>
-                <button type="button" onClick={onOpenBatch}>일괄 오버프레임 제작 열기</button>
+                <button type="button" onClick={()=>onOpenBatch(chosen)}>일괄 오버프레임 제작 열기</button>
               </div>
               <div className="studio-hub-tile">
                 <strong>출력 전 확인</strong>
