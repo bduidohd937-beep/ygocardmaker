@@ -2449,3 +2449,100 @@ a {
   .studio-hub-content {padding:10px;}
   .studio-hub-section-title h3 {font-size:14px;}
 }
+
+/* V4.1 — compact, actionable card-production preflight in the integrated studio. */
+.studio-hub-audit {
+  gap: 9px;
+  background: #222a34;
+  border-color: #616c78;
+}
+.studio-hub-audit > p {
+  font-size: 11px;
+  color: #c3c7d1;
+}
+.studio-hub-audit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+.studio-hub-audit-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: #333d49;
+  color: #e6e7f1;
+  border: 1px solid #74818b;
+  border-radius: 6px;
+  font-size: 11px;
+}
+.studio-hub-audit-actions button:disabled {
+  cursor: not-allowed;
+  opacity: .4;
+}
+.studio-hub-audit-list {
+  max-height: 305px;
+  overflow: auto;
+  border: 1px solid #424b56;
+  background: #181f28;
+  border-radius: 6px;
+  scrollbar-width: thin;
+}
+.studio-hub-audit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border-bottom: 1px solid #3b4652;
+}
+.studio-hub-audit-row:last-child { border-bottom: none; }
+.studio-hub-audit-row.complete {
+  border-left: 3px solid #8fb59a;
+}
+.studio-hub-audit-row.incomplete {
+  border-left: 3px solid #d0b68b;
+}
+.studio-hub-audit-card-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: space-between;
+}
+.studio-hub-audit-card-title strong {
+  font-size: 11px;
+  color: #f0edf2;
+  overflow-wrap: anywhere;
+}
+.studio-hub-audit-card-title small {
+  font-size: 10px;
+  color: #bfc7d4;
+}
+.studio-hub-audit-variant {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #c4cbd1;
+}
+.studio-hub-audit-variant span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.studio-hub-audit-variant button {
+  flex: none;
+  padding: 6px 9px;
+  color: #f1dfca;
+  background: #514434;
+  border: 1px solid #b59a79;
+  border-radius: 5px;
+  font-size: 10px;
+}
+@media (max-width: 620px) {
+  .studio-hub-audit-card-title { align-items: flex-start; }
+  .studio-hub-audit-variant { align-items: flex-start; }
+  .studio-hub-audit-actions button { font-size: 10px; }
+}

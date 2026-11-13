@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { ArrowDownToLine, ArrowUpFromLine, Check, Download,
   FileArchive, FileJson, ImagePlus, Layers, Search, Settings2, X } from "lucide-react";
 import type { Card, Project } from "./model";
-import { compareAvailability } from "./cardCompare";
+import { auditStudioProduction, type AuditCardResult, type AuditVariantResult } from "./studioAudit";
 import { download } from "./export";
 import { matchBatchImages, type ImageMap } from "./batchOverframe";
 import {
@@ -19,8 +19,8 @@ interface Props {
   assetName: string;
   assetCount: number;
   onClose: () => void;
-  onImportCards: (file:File)=>Promise<void>;
-  onImportAssets: (file:File)=>Promise<void>;
+  onImportCards: (file:File)=>Promise<{ok:true;ids:number[]} | {ok:false;error:string}>;
+  onImportAssets: (file:File)=>Promise<{ok:true;count:number} | {ok:false;error:string}>;
   onApplyImages: (plan:ReturnType<typeof planHubImageAssignments>)=>void;
   onOpenCard: (id:number)=>void;
   onOpenFullArt: (id:number)=>void;
@@ -79,21 +79,11 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   const assignment=useMemo(()=>planHubImageAssignments(
     project.cards,imageMap,chosen,imageType,overwrite),
   [project.cards,imageMap,chosen,imageType,overwrite]);
-  const outputModes=output.mode==="both"?(["normal","overframe"] as const):
-    ([output.mode] as ("normal"|"overframe")[]);
-  const outputCheck=useMemo(()=>{
-    let ready=0,missing=0;
-    const selectedCards=chosen.map(id=>cardsById.get(id)).filter((c):c is Card=>!!c);
-    for(const card of selectedCards){
-      const issues=compareAvailability(card);
-      for(const mode of outputModes){
-        if(issues[mode].length)missing++;
-        else ready++;
-      }
-    }
-    return {ready,missing};
-  // stable contents in project.cards are immutable, chosen/output change by state
-  },[project.cards,chosen,output.mode,assetCount]);
+  const audit=useMemo(
+    ()=>auditStudioProduction(project.cards,chosen,output.mode),
+    [project.cards,chosen,output.mode,assetCount],
+  );
+  const outputCheck={ready:audit.outputsReady,missing:audit.outputsMissing};
   const switchStage=(key:Stage)=>{setStage(key);setError("");setStatus("");};
   const choose=(id:number)=>{
     setReport(null);
@@ -112,8 +102,12 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
     if(!file)return;
     setBusy(true);setError("");
     try{
-      await onImportCards(file);
-      setStatus("카드 데이터 가져오기 요청을 처리했습니다. 새 카드가 목록에 표시되면 선택하세요.");
+      const result=await onImportCards(file);
+      if(!result.ok){setError(result.error);return;}
+      setChosen([...new Set(result.ids)].slice(0,100));
+      setStage("images");
+      setStatus(result.ids.length+"장의 카드 데이터를 가져왔습니다. 작업 대상 "+
+        Math.min(100,new Set(result.ids).size)+"장을 선택하고 이미지 연결을 진행하세요.");
     }catch(e){setError(e instanceof Error?e.message:"카드 데이터 가져오기 실패");}
     finally{setBusy(false);}
   };
@@ -121,8 +115,9 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
     if(!file)return;
     setBusy(true);setError("");
     try{
-      await onImportAssets(file);
-      setStatus("카드 에셋 불러오기 요청을 처리했습니다.");
+      const result=await onImportAssets(file);
+      if(!result.ok){setError(result.error);return;}
+      setStatus("카드 에셋 "+result.count+"종을 불러왔습니다.");
     }catch(e){setError(e instanceof Error?e.message:"리소스 에셋 가져오기 실패");}
     finally{setBusy(false);}
   };
@@ -162,6 +157,29 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   };
   const setOutputField=<K extends keyof HubOutputOptions>(key:K,value:HubOutputOptions[K])=>
     setOutput(prev=>({...prev,[key]:value}));
+  const downloadAudit=()=>{
+    const payload={version:"4.1",source:"YGO STUDIO 통합 작업실",
+      mode:output.mode,selected:chosen.length,
+      outputsReady:audit.outputsReady,outputsMissing:audit.outputsMissing,
+      cards:audit.cards};
+    download(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),
+      "YGO_STUDIO_출력전_검수표.json");
+  };
+  const routeAuditIssue=(card:AuditCardResult,item:AuditVariantResult)=>{
+    if(item.issues.some(issue=>issue.includes("설정이 올바르지")||
+      issue.includes("잘못된")||issue.includes("지원하지 않는")||
+      issue.includes("카드명 누락"))){
+      openEdit(card.id,item.mode==="overframe"?"full":"normal");
+    } else if(item.primaryAction==="assets"){
+      setStage("data");setStatus("누락된 원본 에셋을 확인하고 카드 에셋 ZIP을 불러오세요.");
+    } else {
+      setImageType(item.mode);
+      setImageMap({});setImageWarnings([]);
+      setStage("images");
+      setStatus(card.id+"번 카드의 "+(item.mode==="normal"?"일반":"3:4")+
+        " 원화를 확인하세요. 카드 ID 파일명을 맞춰 업로드하면 연결됩니다.");
+    }
+  };
   const openEdit=(id:number,kind:"normal"|"full"|"compare")=>{
     if(kind==="normal")onOpenCard(id);
     else if(kind==="full")onOpenFullArt(id);
@@ -378,6 +396,44 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
               <span>출력 가능 {outputCheck.ready}건</span>
               <span>누락 예상 {outputCheck.missing}건</span>
             </div>
+            <section className="studio-hub-tile studio-hub-audit" aria-label="V4.1 출력 전 자동 검수">
+              <div className="studio-hub-pane-title">
+                <strong>V4.1 출력 전 자동 검수</strong>
+                <small>카드 {audit.cards.length}장 · 완전 준비 {audit.cards.length-audit.incompleteCards.length}장
+                  · 보완 필요 {audit.incompleteCards.length}장</small>
+              </div>
+              <p>선택한 출력 형태의 원화·설정·필수 카드 에셋을 검사합니다. 실제 PNG 렌더링 오류는 최종 ZIP에서 별도로 보고됩니다.</p>
+              <div className="studio-hub-audit-actions">
+                <button type="button" disabled={busy||!audit.incompleteCards.length}
+                  onClick={()=>setChosen([...audit.incompleteCards])}>
+                  미완성 카드만 선택 ({audit.incompleteCards.length})
+                </button>
+                <button type="button" disabled={busy||!audit.readyCards.length}
+                  onClick={()=>setChosen([...audit.readyCards])}>
+                  출력 가능 카드만 선택 ({audit.readyCards.length})
+                </button>
+                <button type="button" disabled={!chosen.length}
+                  onClick={downloadAudit}>
+                  <FileJson size={14}/> 검수표 JSON 다운로드
+                </button>
+              </div>
+              <div className="studio-hub-audit-list">
+                {audit.cards.length===0&&<p>왼쪽 카드 목록에서 검수할 카드를 먼저 선택하세요.</p>}
+                {audit.cards.map(row=><div key={row.id}
+                    className={"studio-hub-audit-row"+(row.complete?" complete":" incomplete")}>
+                  <div className="studio-hub-audit-card-title">
+                    <strong>{row.id} · {row.name}</strong>
+                    <small>{row.complete?"선택 출력 전부 준비":row.ready?"일부 준비 · 보완 필요":"출력 불가 · 보완 필요"}</small>
+                  </div>
+                  {row.variants.map(item=><div key={item.mode} className="studio-hub-audit-variant">
+                    <span>{item.mode==="normal"?"일반 카드":"3:4 오버프레임"} · {item.ready?"준비 완료":item.issues.join(" / ")}</span>
+                    {!item.ready&&<button type="button" disabled={busy} 
+                      aria-label={row.id+" "+(item.mode==="normal"?"일반":"오버프레임")+" 문제 수정"}
+                      onClick={()=>routeAuditIssue(row,item)}>문제 수정</button>}
+                  </div>)}
+                </div>)}
+              </div>
+            </section>
             <div className="studio-hub-tile">
               <strong>ZIP 폴더 구성</strong>
               <p>{output.resolution==="original"
