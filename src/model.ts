@@ -69,6 +69,7 @@ export function monsterKindLabels(card: Card): string[] {
   labels.push(card.frame === "normal" ? "일반" : "효과");
   return labels;
 }
+export type CardPreviewMode = "normal" | "overframe";
 export interface Card {
   id: number;
   name: string;
@@ -95,6 +96,8 @@ export interface Card {
   overframe?: OverframeLayer;
   /** Standalone 3:4 full-art overlay, independent from the original art/frame. */
   simpleOverframe?: SimpleOverframe;
+  /** V3.8: preferred workspace preview only; the two artwork sources remain independent. */
+  previewMode?: CardPreviewMode;
   zoom: number;
   offsetX: number;
   offsetY: number;
@@ -128,6 +131,7 @@ export function newCard(id = 210000401, theme = "새로운 테마"): Card {
     artwork: "",
     overframe: undefined,
     simpleOverframe: undefined,
+    previewMode: "normal",
     zoom: 1,
     offsetX: 0,
     offsetY: 0,
@@ -168,6 +172,8 @@ export function validateCards(cards: Card[], requireArt = true): string[] {
       errors.push(`${tag}: 오버프레임 설정 또는 투명 PNG가 올바르지 않습니다.`);
     if (c.simpleOverframe !== undefined && !validSimpleOverframe(c.simpleOverframe))
       errors.push(`${tag}: 3:4 간편 오버프레임 설정이 올바르지 않습니다.`);
+    if (c.previewMode !== undefined && c.previewMode !== "normal" && c.previewMode !== "overframe")
+      errors.push(`${tag}: 카드 미리보기 모드가 올바르지 않습니다.`);
     if (
       isMonster(c) &&
       (!Number.isInteger(c.level) || c.level < 0 || c.level > 13)
@@ -316,6 +322,7 @@ export function mergeCards(existing: Card[], incoming: Card[]): Card[] {
         // manually assigned theme when refreshing that row from a CDB.
         ...(prev && c.theme === "가져온 테마" ? { theme: prev.theme } : {}),
         ...(prev?.simpleOverframe ? { simpleOverframe: prev.simpleOverframe } : {}),
+        ...(prev?.previewMode ? { previewMode: prev.previewMode } : {}),
         ...(prev?.artwork
           ? {
               artwork: prev.artwork,

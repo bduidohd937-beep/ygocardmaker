@@ -46,7 +46,8 @@ import {
   type Frame,
   type Project,
 } from "./model";
-import { renderCard } from "./render";
+import { currentPreviewMode, renderCardVariant } from "./cardCompare";
+import { CardCompareEditor } from "./CardCompareEditor";
 import { DEFAULT_OVERFRAME } from "./overframe";
 import { ArtworkCropEditor } from "./CropEditor";
 import { OverframeEditor } from "./OverframeEditor";
@@ -75,6 +76,7 @@ export function CardMakerApp() {
     [overframeEditorOpen, setOverframeEditorOpen] = useState(false),
     [simpleOverframeOpen, setSimpleOverframeOpen] = useState(false),
     [batchOverframeOpen, setBatchOverframeOpen] = useState(false),
+    [cardCompareOpen, setCardCompareOpen] = useState(false),
     [format, setFormat] = useState<"png" | "jpg">("png"),
     [size, setSize] = useState(1263),
     [busy, setBusy] = useState(""),
@@ -155,14 +157,14 @@ export function CardMakerApp() {
     setRenderError("");
     setRenderedFontSize(null);
     const target = document.createElement("canvas");
-    renderCard(card, target)
+    renderCardVariant(card, target, currentPreviewMode(card))
       .then((result) => {
         if (live && canvas.current) {
           canvas.current.width = target.width;
           canvas.current.height = target.height;
           canvas.current.getContext("2d")!.drawImage(target, 0, 0);
           setRenderError("");
-          setRenderedFontSize(result.fontSize);
+          setRenderedFontSize(result?.fontSize ?? null);
           setPreviewState("ready");
         }
       })
@@ -715,6 +717,17 @@ export function CardMakerApp() {
             </div>
           </div>
           <div className="preview-area">
+            <div className="compare-preview-toolbar" role="group" aria-label="카드 미리보기 형태">
+              <button type="button" aria-label="일반 카드 미리보기로 전환"
+                className={currentPreviewMode(card)==="normal"?"active":""}
+                onClick={()=>update({previewMode:"normal"})}>일반 카드</button>
+              <button type="button" aria-label="오버프레임 미리보기로 전환"
+                className={currentPreviewMode(card)==="overframe"?"active":""}
+                disabled={!card.simpleOverframe?.image}
+                onClick={()=>update({previewMode:"overframe"})}>3:4 오버프레임</button>
+              <button type="button" aria-label="일반 카드와 오버프레임 비교" className="compare-preview-open"
+                onClick={()=>setCardCompareOpen(true)}>나란히 비교·출력</button>
+            </div>
             <div className="preview-label">
               <span className="eyebrow">YOUR NEXT ACE</span>
               <h1>상상을, 한 장의 카드로.</h1>
@@ -741,7 +754,7 @@ export function CardMakerApp() {
             </div>
             <div className="preview-caption">
               <span className="small-diamond" /> {card.id}{" "}
-              <span className="separator">/</span> CUSTOM EDITION
+              <span className="separator">/</span> {currentPreviewMode(card)==="overframe"?"FULL ART 3:4":"CUSTOM EDITION"}
             </div>
             {renderError && (
               <div role="alert" className="render-error">
@@ -788,7 +801,7 @@ export function CardMakerApp() {
               <CheckCircle2 size={14} /> 브라우저에서 렌더링
             </span>
             <span>
-              421 × 614 px <span className="separator">·</span> EDOPro 비율
+              {currentPreviewMode(card)==="overframe"?"900 × 1200 px · 3:4 미리보기":"421 × 614 px · EDOPro 비율"}
             </span>
             <button className="text-button" onClick={() => setModal(true)}>
               출력 설정 <ChevronRight size={13} />
@@ -1151,6 +1164,16 @@ export function CardMakerApp() {
                     3:4 간편 모드는 완성 원화 한 장을 사용하고, 정밀 모드는 별도 투명 PNG 돌출 레이어를 사용합니다.</span>
                 </div>
                 <div className="section-label">
+                  비교·전환 <span>V3.8</span>
+                </div>
+                <div className="simple-of-entry">
+                  <strong>일반 카드 ↔ 3:4 오버프레임</strong>
+                  <p>두 형태를 동시에 비교하고 카드별 기본 보기와 PNG·ZIP 출력 형식을 선택합니다. 기존 원화와 설정은 그대로 유지합니다.</p>
+                  <button type="button" className="full-width" onClick={()=>setCardCompareOpen(true)}>
+                    <ImageIcon size={16}/> 일반 카드·오버프레임 비교 열기
+                  </button>
+                </div>
+                <div className="section-label">
                   간편 오버프레임 <span>01</span>
                 </div>
                 <div className="simple-of-entry">
@@ -1265,6 +1288,15 @@ export function CardMakerApp() {
           </div>
         </aside>
       </div>
+      {cardCompareOpen && (
+        <CardCompareEditor key={card.id} card={card}
+          onClose={()=>setCardCompareOpen(false)}
+          onPrefer={mode=>update({previewMode:mode})}
+          onEditFullArt={()=>{
+            setCardCompareOpen(false);
+            setSimpleOverframeOpen(true);
+          }}/>
+      )}
       {batchOverframeOpen && (
         <BatchOverframeEditor cards={project.cards} initialSelected={selected}
           onClose={() => setBatchOverframeOpen(false)}
