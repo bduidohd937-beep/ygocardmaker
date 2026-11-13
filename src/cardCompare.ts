@@ -51,8 +51,7 @@ export async function renderCardVariant(
   card: Card, canvas: HTMLCanvasElement, variant: CardPreviewMode, width?: number,
 ) {
   if (variant==="normal") {
-    await renderCard(card,canvas,width??842);
-    return;
+    return await renderCard(card,canvas,width??842);
   }
   if (!card.simpleOverframe?.image) throw Error("3:4 오버프레임 원화가 없습니다.");
   await renderSimpleOverframe(canvas,card.simpleOverframe,card.name,card.attribute,
