@@ -523,7 +523,7 @@ export function CardMakerApp() {
           >
             <FileJson size={15} /> JSON 저장
           </button>
-          <button type="button" className="studio-hub-top-button" aria-label="V4.0 통합 작업실 열기"
+          <button type="button" className="studio-hub-top-button" aria-label="V4.2 통합 작업실 열기"
             onClick={()=>setStudioHubOpen(true)}><Layers size={15}/> 통합 작업실 V4.2</button>
           <button className="primary" onClick={() => setModal(true)}>
             <ArrowDownToLine size={15} /> 내보내기
