@@ -19,7 +19,7 @@ async function makeCdb() {
 }
 async function openStudio(page) {
   await page.goto("/");
-  await page.getByRole("button",{name:/통합 작업실 V4.2/}).click();
+  await page.getByRole("button",{name:"V4.2 통합 작업실 열기"}).click();
   await expect(page.getByRole("dialog",{name:"카드 제작 통합 작업실"})).toBeVisible();
 }
 test("실제 CDB → PNG ZIP → 카드 ID 원화 저장 → EDOPro ZIP 다운로드", async ({page},testInfo)=>{
