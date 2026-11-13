@@ -12,6 +12,8 @@ const ATTRIBUTE_CODES: Record<string, string> = {
 export interface SimpleOverframe {
   image: string;
   showName: boolean;
+  /** None by default; legacy V3 projects missing this option also render without a top overlay. */
+  titleBackdrop?: "none" | "shadow" | "gradient";
   showAttribute: boolean;
   /** Optional for V3 projects written before the authentic rank/level overlay was added. */
   showLevel?: boolean;
@@ -25,7 +27,7 @@ export interface SimpleOverframe {
 
 export const DEFAULT_SIMPLE_OVERFRAME: SimpleOverframe = {
   image: "",
-  showName: true, showAttribute: true, showLevel: true, showEffectBox: true, showEffectText: false,
+  showName: true, titleBackdrop: "none", showAttribute: true, showLevel: true, showEffectBox: true, showEffectText: false,
   effectStyle: "glass", effectOpacity: 78, effectTop: 76, effectHeight: 21,
 };
 export const PORTRAIT_WIDTH = 900;
@@ -37,6 +39,8 @@ export function validSimpleOverframe(value: unknown): value is SimpleOverframe {
     (r.image === "" || (/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+=*$/.test(r.image) && r.image.length < 16_000_000)) &&
     ["showName", "showAttribute", "showEffectBox", "showEffectText"].every(k => typeof r[k] === "boolean") &&
     (r.showLevel === undefined || typeof r.showLevel === "boolean") &&
+    (r.titleBackdrop === undefined || r.titleBackdrop === "none" ||
+      r.titleBackdrop === "shadow" || r.titleBackdrop === "gradient") &&
     (r.effectStyle === "glass" || r.effectStyle === "classic" || r.effectStyle === "outline") &&
     typeof r.effectOpacity === "number" && Number.isFinite(r.effectOpacity) && r.effectOpacity >= 0 && r.effectOpacity <= 100 &&
     typeof r.effectTop === "number" && Number.isFinite(r.effectTop) && r.effectTop >= 55 && r.effectTop <= 87 &&
@@ -136,7 +140,7 @@ export async function renderSimpleOverframe(
   ctx.setTransform(width / PORTRAIT_WIDTH, 0, 0, canvas.height / PORTRAIT_HEIGHT, 0, 0);
   const c = cropToPortrait(image.naturalWidth, image.naturalHeight);
   ctx.drawImage(image, c.sx, c.sy, c.sw, c.sh, 0, 0, PORTRAIT_WIDTH, PORTRAIT_HEIGHT);
-  if (config.showName || config.showAttribute) {
+  if ((config.showName || config.showAttribute) && config.titleBackdrop === "gradient") {
     const gradient = ctx.createLinearGradient(0, 0, 0, 160);
     gradient.addColorStop(0, "rgba(5,6,18,.91)");
     gradient.addColorStop(.72, "rgba(5,6,18,.55)");
@@ -148,14 +152,22 @@ export async function renderSimpleOverframe(
   if (config.showName) {
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.shadowColor = "rgba(0,0,0,.8)";
-    ctx.shadowBlur = 6;
     const maxWidth = ASSET_LAYOUT.name.maxW * nativeScale;
     fitTitle(ctx, title, maxWidth);
+    const textX = ASSET_LAYOUT.name.x * nativeScale;
+    const textY = (ASSET_LAYOUT.name.y + ASSET_LAYOUT.name.opticalYOffset) * nativeScale;
+    // A restrained outline protects text legibility without darkening the entire artwork.
+    ctx.save();
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 2.2;
+    ctx.strokeStyle = "rgba(8,7,17,.72)";
+    ctx.strokeText(title, textX, textY, maxWidth);
+    ctx.shadowColor = "rgba(0,0,0,.75)";
+    ctx.shadowBlur = config.titleBackdrop === "shadow" ? 13 : 2;
+    ctx.shadowOffsetY = config.titleBackdrop === "shadow" ? 3 : 0;
     ctx.fillStyle = "#f7f3fc";
-    ctx.fillText(title, ASSET_LAYOUT.name.x * nativeScale,
-      (ASSET_LAYOUT.name.y + ASSET_LAYOUT.name.opticalYOffset) * nativeScale, maxWidth);
-    ctx.shadowBlur = 0;
+    ctx.fillText(title, textX, textY, maxWidth);
+    ctx.restore();
   }
   if (config.showAttribute) {
     const key = frame === "spell" || frame === "trap" ? frame : ATTRIBUTE_CODES[attribute] ?? "dark";
