@@ -2,6 +2,8 @@
 import type { Frame } from "./model";
 import { assetUrl, assetFont, ensureAssetFonts } from "./assetPack";
 import { ASSET_LAYOUT } from "./assetRender";
+import { overlayRects, validOverframeLayout, validLayoutPresets,
+  type OverframeLayout, type LayoutPreset } from "./overframeLayout";
 
 const NATIVE_CARD_WIDTH = 1394;
 const ATTRIBUTE_CODES: Record<string, string> = {
@@ -23,6 +25,10 @@ export interface SimpleOverframe {
   effectOpacity: number;
   effectTop: number;
   effectHeight: number;
+  /** V3.3 position/scale overrides, stored in the canonical 900×1200 coordinate system. */
+  layout?: OverframeLayout;
+  /** Up to five presets travel with the card JSON instead of disappearing on another browser. */
+  savedPresets?: LayoutPreset[];
 }
 
 export const DEFAULT_SIMPLE_OVERFRAME: SimpleOverframe = {
@@ -45,7 +51,8 @@ export function validSimpleOverframe(value: unknown): value is SimpleOverframe {
     typeof r.effectOpacity === "number" && Number.isFinite(r.effectOpacity) && r.effectOpacity >= 0 && r.effectOpacity <= 100 &&
     typeof r.effectTop === "number" && Number.isFinite(r.effectTop) && r.effectTop >= 55 && r.effectTop <= 87 &&
     typeof r.effectHeight === "number" && Number.isFinite(r.effectHeight) && r.effectHeight >= 10 && r.effectHeight <= 32 &&
-    r.effectTop + r.effectHeight <= 99;
+    r.effectTop + r.effectHeight <= 99 &&
+    validOverframeLayout(r.layout) && validLayoutPresets(r.savedPresets);
 }
 export function cropToPortrait(imageWidth: number, imageHeight: number) {
   if (imageWidth <= 0 || imageHeight <= 0) throw Error("원화의 크기가 올바르지 않습니다.");
@@ -149,50 +156,49 @@ export async function renderSimpleOverframe(
     ctx.fillRect(0, 0, PORTRAIT_WIDTH, 160);
   }
   const nativeScale = PORTRAIT_WIDTH / NATIVE_CARD_WIDTH;
+  const rects = overlayRects(config, frame, level);
   if (config.showName) {
+    ctx.save();
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    const maxWidth = ASSET_LAYOUT.name.maxW * nativeScale;
-    fitTitle(ctx, title, maxWidth);
-    const textX = ASSET_LAYOUT.name.x * nativeScale;
-    const textY = (ASSET_LAYOUT.name.y + ASSET_LAYOUT.name.opticalYOffset) * nativeScale;
-    // A restrained outline protects text legibility without darkening the entire artwork.
-    ctx.save();
+    const baseTitleWidth = ASSET_LAYOUT.name.maxW * nativeScale;
+    const scale = rects.name.w / baseTitleWidth;
+    ctx.translate(rects.name.x, rects.name.y);
+    ctx.scale(scale, scale);
+    fitTitle(ctx, title, baseTitleWidth);
+    // A restrained outline stays attached to the text even after moving/resizing.
     ctx.lineJoin = "round";
     ctx.lineWidth = 2.2;
     ctx.strokeStyle = "rgba(8,7,17,.72)";
-    ctx.strokeText(title, textX, textY, maxWidth);
+    ctx.strokeText(title, 0, 0, baseTitleWidth);
     ctx.shadowColor = "rgba(0,0,0,.75)";
     ctx.shadowBlur = config.titleBackdrop === "shadow" ? 13 : 2;
     ctx.shadowOffsetY = config.titleBackdrop === "shadow" ? 3 : 0;
     ctx.fillStyle = "#f7f3fc";
-    ctx.fillText(title, textX, textY, maxWidth);
+    ctx.fillText(title, 0, 0, baseTitleWidth);
     ctx.restore();
   }
   if (config.showAttribute) {
     const key = frame === "spell" || frame === "trap" ? frame : ATTRIBUTE_CODES[attribute] ?? "dark";
     const img = await loadArtwork(assetUrl("attribute:" + key)!);
-    const area = ASSET_LAYOUT.attribute;
-    ctx.drawImage(img, area.x * nativeScale, area.y * nativeScale,
-      area.w * nativeScale, area.h * nativeScale);
+    const r = rects.attribute;
+    ctx.drawImage(img, r.x, r.y, r.w, r.h);
   }
   const starKey = config.showLevel !== false ? sourceAssetKeyForLevel(frame) : null;
   if (starKey && level > 0) {
     const star = await loadArtwork(assetUrl(starKey)!);
-    const step = ASSET_LAYOUT.level.step * nativeScale;
-    const size = ASSET_LAYOUT.level.size * nativeScale;
-    for (let i = 0; i < Math.min(level, 13); i++) {
-      const base = level < 13 ? 147 : 101;
-      const x = frame === "xyz"
-        ? (base * nativeScale + i * step)
-        : (PORTRAIT_WIDTH - base * nativeScale - size - i * step);
-      ctx.drawImage(star, x, ASSET_LAYOUT.level.y * nativeScale, size, size);
+    const count = Math.min(level, 13);
+    const baseSize = ASSET_LAYOUT.level.size * nativeScale;
+    const baseStep = ASSET_LAYOUT.level.step * nativeScale;
+    const baseWidth = baseSize + (count - 1) * baseStep;
+    const r = rects.level;
+    const scale = r.w / baseWidth;
+    for (let i = 0; i < count; i++) {
+      ctx.drawImage(star, r.x + i * baseStep * scale, r.y, baseSize * scale, baseSize * scale);
     }
   }
   if (config.showEffectBox) {
-    const x = 36, w = 828;
-    const y = Math.round(PORTRAIT_HEIGHT * config.effectTop / 100);
-    const h = Math.round(PORTRAIT_HEIGHT * config.effectHeight / 100);
+    const { x, y, w, h } = rects.effect;
     ctx.save();
     const opacity = config.effectOpacity / 100;
     if (config.effectStyle !== "outline") {
