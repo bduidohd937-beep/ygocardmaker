@@ -2070,3 +2070,180 @@ a {
   cursor: pointer;
 }
 .simple-of-suggestion-info button:disabled { opacity: .45; cursor: not-allowed; }
+
+/* V3.8: two independent renderers with no distortion or image conversion. */
+.compare-preview-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  max-width: 100%;
+  margin: 0 0 12px;
+  padding: 4px;
+  border: 1px solid #3f4d52;
+  border-radius: 8px;
+  background: #202831;
+  flex-shrink: 0;
+}
+.compare-preview-toolbar button {
+  font-size: 10px;
+  color: #aab8ba;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+.compare-preview-toolbar button.active {
+  color: #e2fae8;
+  background: #365044;
+  border-color: #6b947c;
+}
+.compare-preview-toolbar button:disabled {opacity: .35; cursor: not-allowed;}
+.compare-preview-toolbar button.compare-preview-open {
+  color: #e8d6fc;
+  border-color: #675478;
+}
+.compare-card-backdrop {z-index: 65; padding: 12px;}
+.compare-card-modal {
+  width: min(1440px, 100%);
+  max-height: 97dvh;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 20px;
+  color: #e8e2f4;
+  background: #1e212c;
+  border: 1px solid #675c7b;
+  border-radius: 13px;
+  box-shadow: 0 30px 90px #000c;
+  overflow: hidden;
+}
+.compare-card-body {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(255px, 1fr);
+  gap: 17px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 14px 0 10px;
+}
+.compare-card-panels {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+  min-height: 0;
+}
+.compare-card-side {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  gap: 10px;
+  padding: 12px;
+  background: #151922;
+  border: 1px solid #4e4c60;
+  border-radius: 10px;
+}
+.compare-card-side.selected {
+  border-color: #c2a1df;
+  box-shadow: inset 0 0 0 1px #ad8dd344;
+}
+.compare-card-side-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.compare-card-side-title > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.compare-card-side-title strong {font-size: 14px; color: #f5f0ff;}
+.compare-card-side-title small {font-size: 10px; line-height: 1.4; color: #b5acc4;}
+.compare-card-side-title > span {font: 11px monospace; color: #cdb6e7;}
+.compare-card-art {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+  padding: 6px;
+  background: #101219;
+  border: 1px solid #343341;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.compare-card-art img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 3px;
+}
+.compare-card-placeholder {
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.6;
+  color: #dcc7ac;
+  padding: 15px;
+}
+.compare-card-choose {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  width: 100%;
+  border: 1px solid #746781;
+  border-radius: 6px;
+  padding: 9px;
+  font-size: 11px;
+  color: #e5dbf1;
+  background: #353044;
+}
+.compare-card-choose.active {border-color: #b6a0dc; background: #443855;}
+.compare-card-choose:disabled {opacity: .45;cursor: not-allowed;}
+.compare-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 4px;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.compare-card-actions .simple-of-group {
+  flex: none;
+}
+.compare-card-actions .simple-of-group small {
+  color: #b9b4c9;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.compare-card-actions .simple-of-group p {
+  color: #c5bed2;
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 0;
+}
+@media(max-width:900px){
+  .compare-card-body {display:flex;flex-direction:column;overflow-y:auto;}
+  .compare-card-panels {min-height: 400px;}
+  .compare-card-art {min-height: 240px;max-height: 520px;}
+  .compare-card-actions {overflow: visible;}
+}
+@media(max-width:570px){
+  .compare-card-modal {padding: 10px;max-height:98dvh;}
+  .compare-card-side {padding: 6px;}
+  .compare-card-panels {gap: 6px;}
+  .compare-card-art {min-height: 170px;}
+  .compare-card-side-title strong {font-size: 12px;}
+  .compare-card-side-title small {font-size: 9px;}
+  .compare-preview-toolbar {margin-bottom: 9px;}
+  .compare-preview-toolbar button {font-size: 9px;padding: 6px;}
+}
