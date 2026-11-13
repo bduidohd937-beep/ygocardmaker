@@ -1998,3 +1998,75 @@ a {
   .batch-of-card-state { max-width: 80px; }
   .batch-of-edit-button { padding: 5px; }
 }
+
+/* V3.7: local artwork-based layout recommendation previews */
+.simple-of-suggestion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.simple-of-suggestion {
+  display: flex;
+  gap: 10px;
+  padding: 9px;
+  border: 1px solid #655776;
+  border-radius: 8px;
+  background: #292638;
+  align-items: flex-start;
+}
+.simple-of-suggestion:first-child {
+  border-color: #c8acd7;
+}
+.simple-of-suggestion-thumb {
+  flex: none;
+  width: 73px;
+  aspect-ratio: 3/4;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #17151f;
+  border: 1px solid #4c4359;
+  display: grid;
+  place-items: center;
+}
+.simple-of-suggestion-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.simple-of-suggestion-thumb span {
+  color: #b6abc7;
+  font-size: 10px;
+  padding: 7px;
+  text-align: center;
+}
+.simple-of-suggestion-info {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.simple-of-suggestion-info strong {
+  color: #e9dcfc;
+  font-size: 12px;
+}
+.simple-of-suggestion-info small {
+  color: #bbb5c9;
+  overflow-wrap: anywhere;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.simple-of-suggestion-info button {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid #9e86b5;
+  background: #443851;
+  color: #f4edfc;
+  border-radius: 5px;
+  padding: 7px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.simple-of-suggestion-info button:disabled { opacity: .45; cursor: not-allowed; }

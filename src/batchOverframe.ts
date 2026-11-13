@@ -9,12 +9,13 @@ import {
 } from "./simpleOverframe";
 import { builtInLayout } from "./overframeLayout";
 import { recommendedFinish } from "./overframeFinish";
+import { recommendLayoutChoices } from "./overframeRecommend";
 import { toBlob } from "./render";
 
 export const BATCH_MAX_CARDS = 100;
 export const BATCH_IMAGE_MAX_BYTES = 10 * 1024 * 1024;
 export const BATCH_TOTAL_MAX_BYTES = 120 * 1024 * 1024;
-export type BatchLayoutMode = "keep" | "default" | "center" | "bottom";
+export type BatchLayoutMode = "keep" | "default" | "center" | "bottom" | "recommend";
 export type BatchFinishMode = "keep" | "off" | "auto";
 export type EDOProFitMode = "crop" | "pad";
 export type BatchOutput = "full" | "edopro" | "both";
@@ -149,8 +150,10 @@ export function batchCardConfig(card: Card, images: ImageMap, settings: BatchSet
   const result: SimpleOverframe = { ...base, image };
   if (settings.layout !== "keep") {
     result.layout = settings.layout === "default" ? undefined :
-      builtInLayout(settings.layout === "center" ? "중앙형" : "상단 여백형",
-        card.frame, card.level, result.effectTop, result.effectHeight);
+      settings.layout === "recommend"
+        ? recommendLayoutChoices(card,result)[0].layout
+        : builtInLayout(settings.layout === "center" ? "중앙형" : "상단 여백형",
+          card.frame, card.level, result.effectTop, result.effectHeight);
   }
   if (settings.finish === "off") {
     result.finishEnabled = false;
