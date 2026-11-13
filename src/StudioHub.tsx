@@ -200,7 +200,7 @@ export function StudioHub({project,activeId,selectedIds,assetName,assetCount,
   return <div className="modal-backdrop studio-hub-backdrop">
     <section className="studio-hub-modal" role="dialog" aria-modal="true" aria-labelledby="studio-hub-title">
       <header className="simple-of-header">
-        <div><span className="eyebrow">YGO STUDIO · INTEGRATED WORKSPACE V4.0</span>
+        <div><span className="eyebrow">YGO STUDIO · INTEGRATED WORKSPACE V4.2</span>
           <h2 id="studio-hub-title">카드 제작 통합 작업실</h2>
           <p>카드 데이터 → 이미지 ID 연결 → 디자인 편집 → EDOPro 출력 · 같은 프로젝트에서 관리</p>
         </div>
