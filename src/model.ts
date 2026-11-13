@@ -1,4 +1,5 @@
 import { validArtworkCrop, type ArtworkCrop } from "./artworkCrop";
+import type { GenericCard } from "./genericCatalog";
 import { validOverframe, type OverframeLayer } from "./overframe";
 import { validSimpleOverframe, type SimpleOverframe } from "./simpleOverframe";
 
@@ -107,6 +108,8 @@ export interface Project {
   version: 1;
   name: string;
   cards: Card[];
+  /** Independent metadata; never overwrites CDB/Lua or card artwork. */
+  genericCatalog?: GenericCard[];
 }
 export const isMonster = (c: Card) => !["spell", "trap"].includes(c.frame);
 export function newCard(id = 210000401, theme = "새로운 테마"): Card {
