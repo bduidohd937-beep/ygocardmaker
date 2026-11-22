@@ -73,6 +73,29 @@ describe("오버프레임 V3.6 이미지 자동 매칭과 일괄 출력",()=>{
     expect(off.finishEnabled).toBe(false);
     expect(off.layout).toEqual(cfg.layout);
   });
+  it("원화 전체 보기와 외곽 색상을 여러 장에 일괄 적용하되 기존 카드를 변경하지 않는다",()=>{
+    const source={...cards[0],simpleOverframe:{...DEFAULT_SIMPLE_OVERFRAME,
+      image:data,artFit:"cover" as const,frameColor:"#123456",frameWidth:8,
+    }};
+    const before=JSON.stringify(source);
+    const keep=batchCardConfig(source,{},DEFAULT_BATCH_SETTINGS);
+    expect(keep.artFit).toBe("cover");
+    expect(keep.frameColor).toBe("#123456");
+    expect(keep.frameWidth).toBe(8);
+    const bulk=batchCardConfig(source,{},{
+      ...DEFAULT_BATCH_SETTINGS,artFit:"blur",frameMode:"custom",
+      frameColor:"#abcdef",frameWidth:5,includeArtwork:true,
+    });
+    expect(bulk.artFit).toBe("blur");
+    expect(bulk.frameColor).toBe("#abcdef");
+    expect(bulk.frameWidth).toBe(5);
+    const plain=batchCardConfig(source,{},{
+      ...DEFAULT_BATCH_SETTINGS,artFit:"contain",frameMode:"off",
+    });
+    expect(plain.artFit).toBe("contain");
+    expect(plain.frameWidth).toBe(0);
+    expect(JSON.stringify(source)).toBe(before);
+  });
   it("원화 누락을 판정하고 일반 카드 원화 대체는 명시적으로만 허용한다",()=>{
     const empty=batchCardConfig(cards[0],{},DEFAULT_BATCH_SETTINGS);
     expect(batchCardIssues(cards[0],empty)).toContain("3:4 원화 없음");

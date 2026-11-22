@@ -35,6 +35,9 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
   const [checked,setChecked] = useState<number[]>(()=>
     [...new Set(initialSelected.filter(id=>known.has(id)))].slice(0,BATCH_MAX_CARDS));
   const [search,setSearch] = useState("");
+  const [showPicker,setShowPicker] = useState(false);
+  const [pickerFilter,setPickerFilter] = useState<"all"|"selected"|"art">("all");
+  const [autoSelectUpload,setAutoSelectUpload] = useState(true);
   const [settings,setSettings] = useState<BatchSettings>({...DEFAULT_BATCH_SETTINGS});
   const [images,setImages] = useState<ImageMap>({});
   const [imageWarnings,setImageWarnings] = useState<string[]>([]);
@@ -50,9 +53,13 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
   const selected=new Set(checked);
   const filtered=useMemo(()=>cards.filter(c=>{
     const q=search.trim().toLowerCase();
-    return !q || String(c.id).includes(q) ||
-      c.name.toLowerCase().includes(q) || c.theme.toLowerCase().includes(q);
-  }),[cards,search]);
+    if (q && !String(c.id).includes(q) &&
+      !c.name.toLowerCase().includes(q) && !c.theme.toLowerCase().includes(q)) return false;
+    if (pickerFilter==="selected" && !selected.has(c.id)) return false;
+    if (pickerFilter==="art" && !images[c.id] && !c.simpleOverframe?.image &&
+      !(settings.fallbackArtwork && c.artwork)) return false;
+    return true;
+  }),[cards,search,pickerFilter,checked,images,settings.fallbackArtwork]);
   const selectedCards=useMemo(()=>checked.map(id=>cards.find(c=>c.id===id))
     .filter((c):c is Card=>!!c),[checked,cards]);
   const cardRows=useMemo(()=>selectedCards.map(card=>{
@@ -64,8 +71,8 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
   }),[selectedCards,images,settings]);
   const ready=cardRows.filter(x=>!x.issues.length);
   const omitted=cardRows.filter(x=>!!x.issues.length);
-  const previewCards=ready.slice(page*8,page*8+8);
-  const allPages=Math.max(1,Math.ceil(ready.length/8));
+  const previewCards=ready.slice(page*6,page*6+6);
+  const allPages=Math.max(1,Math.ceil(ready.length/6));
 
   useEffect(()=>{
     let live=true;
@@ -94,6 +101,14 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
   };
   const chooseVisible=()=>{
     setChecked(prev=>[...new Set([...prev,...filtered.map(c=>c.id)])].slice(0,BATCH_MAX_CARDS));
+    setStatus("검색 결과에서 최대 100장을 선택했습니다.");
+  };
+  const chooseReadyArtwork=()=>{
+    const ids=cards.filter(c=>images[c.id] || c.simpleOverframe?.image ||
+      (settings.fallbackArtwork && c.artwork)).map(c=>c.id);
+    setChecked(ids.slice(0,BATCH_MAX_CARDS));
+    setPage(0);
+    setStatus("원화가 연결된 카드 "+Math.min(ids.length,BATCH_MAX_CARDS)+"장을 선택했습니다. 원본 데이터는 변경되지 않았습니다.");
   };
   const importImages=async(files:FileList|null)=>{
     if(!files?.length)return;
@@ -101,9 +116,15 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
     try {
       const result=await matchBatchImages(Array.from(files),cards);
       setImages(prev=>({...prev,...result.images}));
+      if (autoSelectUpload && result.matched) {
+        setChecked(prev=>[...new Set([...prev,...Object.keys(result.images).map(Number)])].slice(0,BATCH_MAX_CARDS));
+        setPage(0);
+      }
       setImageWarnings(result.warnings);
       setReport(null);
-      setStatus(result.matched+"장 자동 매칭 · "+result.ignored+"건 제외. 기존 카드 데이터는 변경되지 않았습니다.");
+      setStatus(result.matched+"장 자동 매칭 · "+result.ignored+"건 제외."+
+        (autoSelectUpload ? " 연결된 카드를 작업 대상으로 자동 선택했습니다." : "")+
+        " 기존 카드 데이터는 변경되지 않았습니다.");
     } catch(e){setError(e instanceof Error?e.message:"원화 가져오기 실패");}
     finally{setImporting(false);}
   };
@@ -143,7 +164,7 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
         <div>
           <span className="eyebrow">FULL ART OVERFRAME · BATCH V3.6</span>
           <h2 id="batch-of-title">오버프레임 일괄 제작·ZIP 출력</h2>
-          <p>카드 ID로 원화를 자동 연결하고 카드별 기존 설정을 유지한 채 여러 장을 출력합니다.</p>
+          <p>① 원화 연결 · ② 선택 및 미리보기 · ③ 공통 디자인 설정 · ④ ZIP 다운로드</p>
         </div>
         <button type="button" disabled={exporting} aria-label="일괄 제작 닫기" onClick={onClose}><X size={18}/></button>
       </header>
@@ -161,6 +182,13 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
               }}/>
             <small>예: 918760001.png, 918760002_원화.png · 최대 100개 · 이미지당 10MB</small>
             <small>불러온 원화 {Object.keys(images).length}장 · 작업 종료 전까지 임시 보관</small>
+            <label className="simple-of-check">
+              <input type="checkbox" checked={autoSelectUpload}
+                onChange={e=>setAutoSelectUpload(e.target.checked)}/>
+              업로드한 카드 ID 자동 선택
+            </label>
+            <button type="button" className="batch-of-quick-button" disabled={exporting}
+              onClick={chooseReadyArtwork}>원화 있는 카드만 자동 선택</button>
             <label className="simple-of-check">
               <input type="checkbox" checked={settings.fallbackArtwork}
                 onChange={e=>setSetting("fallbackArtwork",e.target.checked)}/>
@@ -185,7 +213,34 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
                 {finishOptions.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </label>
-            <small>개별 카드 수정 사항은 기본적으로 유지됩니다. 변경한 설정은 일괄 출력에만 적용되며, 별도 저장할 수 있습니다.</small>
+            <label>정사각형 원화 맞춤
+              <select aria-label="일괄 원화 맞춤" value={settings.artFit}
+                onChange={e=>setSetting("artFit",e.target.value as BatchSettings["artFit"])}>
+                <option value="keep">카드별 원화 맞춤 유지</option>
+                <option value="blur">원화 전체 표시 · 흐린 배경 (추천)</option>
+                <option value="contain">원화 전체 표시 · 단색 여백</option>
+                <option value="cover">화면 채우기 · 원화 일부 자르기</option>
+              </select>
+            </label>
+            <label>외곽 프레임 일괄 디자인
+              <select aria-label="일괄 외곽 프레임 설정" value={settings.frameMode}
+                onChange={e=>setSetting("frameMode",e.target.value as BatchSettings["frameMode"])}>
+                <option value="keep">카드별 기존 설정 유지</option>
+                <option value="custom">선택한 색상·두께 일괄 적용</option>
+                <option value="off">프레임 전체 끄기</option>
+              </select>
+            </label>
+            {settings.frameMode==="custom" && <div className="batch-of-color-grid">
+              <label>프레임 색상
+                <input type="color" aria-label="일괄 프레임 색상" value={settings.frameColor}
+                  onChange={e=>setSetting("frameColor",e.target.value)}/>
+              </label>
+              <label>두께 {settings.frameWidth}px
+                <input type="range" aria-label="일괄 프레임 두께" min={0} max={24} step={1}
+                  value={settings.frameWidth} onChange={e=>setSetting("frameWidth",Number(e.target.value))}/>
+              </label>
+            </div>}
+            <small>개별 카드 원화·배치·광택은 기본적으로 유지됩니다. 변경한 설정은 미리보기와 ZIP에 적용되며 별도 저장할 수 있습니다.</small>
             {settings.layout==="recommend" && <small>일괄 추천은 카드 종류·효과문 길이를 기준으로 선택합니다. 원화 픽셀을 반영하는 상세 추천은 카드별 3:4 간편 모드에서 비교·적용할 수 있습니다.</small>}
           </div>
           <div className="simple-of-group">
@@ -205,7 +260,12 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
                 <option value="pad">여백 추가 (원화 전체 유지)</option>
               </select>
             </label>}
-            <small>3:4와 EDOPro 비율이 다릅니다. 이미지를 비틀어 늘리지 않습니다. 엔진용 파일은 pics/ID.png에 저장됩니다.</small>
+            <label className="simple-of-check">
+              <input type="checkbox" checked={settings.includeArtwork}
+                onChange={e=>setSetting("includeArtwork",e.target.checked)}/>
+              원본 원화도 ZIP에 포함 (ID 파일명 유지)
+            </label>
+            <small>고화질·EDOPro·원화 원본을 ZIP 한 번에 받습니다. 파일 용량이 늘어날 수 있습니다. 엔진용 파일은 pics/ID.png에 저장됩니다.</small>
           </div>
         </aside>
         <section className="batch-of-results">
@@ -215,9 +275,20 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
               <span>출력 가능 {ready.length}장 · 누락/오류 {omitted.length}장</span>
             </div>
             <div className="batch-of-actions">
-              <button type="button" onClick={chooseVisible}>검색 결과 선택 (최대 100)</button>
-              <button type="button" onClick={()=>setChecked([])}>전체 선택 해제</button>
+              <button type="button" className="batch-of-picker-toggle"
+                aria-expanded={showPicker} onClick={()=>setShowPicker(v=>!v)}>
+                {showPicker ? "카드 선택 목록 접기" : "카드 목록에서 선택·변경"}
+              </button>
+              <button type="button" onClick={chooseReadyArtwork}>원화 있는 카드 선택</button>
+              <button type="button" onClick={()=>{setChecked([]);setPage(0);}}>선택 해제</button>
             </div>
+          </div>
+          {showPicker && <>
+          <div className="batch-of-filterbar" role="group" aria-label="카드 선택 필터">
+            <button type="button" aria-pressed={pickerFilter==="all"} onClick={()=>setPickerFilter("all")}>전체</button>
+            <button type="button" aria-pressed={pickerFilter==="selected"} onClick={()=>setPickerFilter("selected")}>선택된 카드</button>
+            <button type="button" aria-pressed={pickerFilter==="art"} onClick={()=>setPickerFilter("art")}>원화 있는 카드</button>
+            <button type="button" onClick={chooseVisible}>현재 검색 결과 선택 (최대 100)</button>
           </div>
           <label className="batch-of-search">
             <Search size={15}/>
@@ -244,11 +315,12 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
               </label>;
             })}
           </div>
+          </>}
           <div className="batch-of-preview-head">
             <strong>실제 렌더링 미리보기</strong>
-            <span>출력 가능 카드 8장씩</span>
+            <span>출력 가능 카드 6장씩 · 즉시 반영</span>
           </div>
-          <div className="batch-of-thumbnails">
+          <div className="batch-of-thumbnails" aria-label="선택 카드 오버프레임 미리보기">
             {previewCards.length===0 && <div className="batch-of-empty">
               연결된 원화 또는 필수 에셋이 없습니다. 원화를 불러오고 누락 항목을 확인하세요.
             </div>}
@@ -258,6 +330,10 @@ export function BatchOverframeEditor({cards,initialSelected,onClose,onApply,onEd
                 : <div className="batch-of-thumb-loading">렌더링 중…</div>}
               <span>{row.card.name}</span>
               <small>{row.card.id} · {row.origin}</small>
+              <div className="batch-of-thumb-actions">
+                <button type="button" disabled={exporting} onClick={()=>onEditCard(row.card.id)}>개별 수정</button>
+                <button type="button" disabled={exporting} onClick={()=>toggle(row.card.id)}>선택 해제</button>
+              </div>
             </div>)}
           </div>
           {allPages>1 && <div className="batch-of-pagination">

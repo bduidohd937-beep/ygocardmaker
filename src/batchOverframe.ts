@@ -19,6 +19,8 @@ export type BatchLayoutMode = "keep" | "default" | "center" | "bottom" | "recomm
 export type BatchFinishMode = "keep" | "off" | "auto";
 export type EDOProFitMode = "crop" | "pad";
 export type BatchOutput = "full" | "edopro" | "both";
+export type BatchArtworkFit = "keep" | "cover" | "contain" | "blur";
+export type BatchFrameMode = "keep" | "off" | "custom";
 export type ImageMap = Record<number, string>;
 export interface ImageMatchResult {
   images: ImageMap;
@@ -30,11 +32,18 @@ export interface BatchSettings {
   layout: BatchLayoutMode;
   finish: BatchFinishMode;
   fallbackArtwork: boolean;
+  artFit: BatchArtworkFit;
+  frameMode: BatchFrameMode;
+  frameColor: string;
+  frameWidth: number;
+  includeArtwork: boolean;
   output: BatchOutput;
   edoFit: EDOProFitMode;
 }
 export const DEFAULT_BATCH_SETTINGS: BatchSettings = {
-  layout: "keep", finish: "keep", fallbackArtwork: false, output: "both", edoFit: "crop",
+  layout: "keep", finish: "keep", fallbackArtwork: false,
+  artFit: "keep", frameMode: "keep", frameColor: "#bca7dd", frameWidth: 4,
+  includeArtwork: false, output: "both", edoFit: "crop",
 };
 export interface BatchOutputReport {
   successful: number[];
@@ -151,6 +160,12 @@ export function batchCardConfig(card: Card, images: ImageMap, settings: BatchSet
   const image = images[card.id] || card.simpleOverframe?.image ||
     (settings.fallbackArtwork ? card.artwork : "") || "";
   const result: SimpleOverframe = { ...base, image };
+  if (settings.artFit !== "keep") result.artFit = settings.artFit;
+  if (settings.frameMode === "off") result.frameWidth = 0;
+  if (settings.frameMode === "custom") {
+    result.frameColor = settings.frameColor;
+    result.frameWidth = settings.frameWidth;
+  }
   if (settings.layout !== "keep") {
     result.layout = settings.layout === "default" ? undefined :
       settings.layout === "recommend"
@@ -223,7 +238,12 @@ export async function exportBatchOverframes(
 ): Promise<BatchExportResult> {
   const selected = ensureValidBatchSelection(selectedIds,cards);
   if (!["full","edopro","both"].includes(settings.output) ||
-      !["crop","pad"].includes(settings.edoFit)) throw Error("출력 설정이 올바르지 않습니다.");
+      !["crop","pad"].includes(settings.edoFit) ||
+      !["keep","cover","contain","blur"].includes(settings.artFit) ||
+      !["keep","off","custom"].includes(settings.frameMode) ||
+      !/^#[0-9a-fA-F]{6}$/.test(settings.frameColor) ||
+      !Number.isInteger(settings.frameWidth) || settings.frameWidth < 0 || settings.frameWidth > 24)
+    throw Error("출력 설정이 올바르지 않습니다.");
   const byId = new Map(cards.map(c => [c.id,c]));
   const report: BatchOutputReport = { successful: [], skipped: [], manifest: [] };
   const zipFiles: Record<string, Uint8Array> = {};
@@ -245,6 +265,16 @@ export async function exportBatchOverframes(
         card.effect,wantsFull?1500:900,card.frame,card.level,
         {race:card.race,atk:card.atk,def:card.def});
       const item: { id:number;name:string;full?:string;edopro?:string } = {id:card.id,name:card.name};
+      if (settings.includeArtwork) {
+        // Preserve the original source bytes and extension without re-encoding.
+        const match = /^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/]+=*)$/.exec(config.image);
+        if (!match) throw Error("원본 원화의 데이터 형식이 올바르지 않습니다.");
+        const ext = match[1] === "image/jpeg" ? "jpg" : match[1] === "image/webp" ? "webp" : "png";
+        const decoded = atob(match[2]);
+        const originalBytes = new Uint8Array(decoded.length);
+        for (let i = 0; i < decoded.length; i++) originalBytes[i] = decoded.charCodeAt(i);
+        zipFiles["원본_원화/"+card.id+"."+ext] = originalBytes;
+      }
       if (wantsFull) {
         const name = "고화질_3대4/"+card.id+".png";
         zipFiles[name] = new Uint8Array(await (await toBlob(canvas,"png")).arrayBuffer());
@@ -270,6 +300,8 @@ export async function exportBatchOverframes(
     schema_version:1,application:"YGO STUDIO 오버프레임",format:"png",
     full_art_size:[1500,2000],edopro_size:[421,614],
     edopro_fit:settings.edoFit,
+    art_fit:settings.artFit, frame_mode:settings.frameMode,
+    includes_source_artwork:settings.includeArtwork,
     requested:selected.length,successful:report.successful.length,
     skipped:report.skipped,files:report.manifest,
   };
