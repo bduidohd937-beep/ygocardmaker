@@ -16,6 +16,11 @@ const ATTRIBUTE_CODES: Record<string, string> = {
 
 export interface SimpleOverframe extends FinishSettings {
   image: string;
+  /** Legacy cards default to center crop; new 1:1 art can be kept in full. */
+  artFit?: "cover" | "contain" | "blur";
+  /** Optional decorative outer line; independent of the actual CDB card type. */
+  frameColor?: string;
+  frameWidth?: number;
   showName: boolean;
   /** None by default; legacy V3 projects missing this option also render without a top overlay. */
   titleBackdrop?: "none" | "shadow" | "gradient";
@@ -43,7 +48,7 @@ export interface SimpleOverframe extends FinishSettings {
 }
 
 export const DEFAULT_SIMPLE_OVERFRAME: SimpleOverframe = {
-  image: "",
+  image: "", artFit: "cover", frameColor: "#bca7dd", frameWidth: 0,
   showName: true, titleBackdrop: "none", showAttribute: true, showLevel: true, showEffectBox: true, showEffectText: false,
   effectStyle: "ocg", effectOpacity: 84, effectTop: 76, effectHeight: 21,
   panelTint: "auto", panelBorder: "double", borderThickness: 2, panelTexture: 22,
@@ -57,6 +62,9 @@ export function validSimpleOverframe(value: unknown): value is SimpleOverframe {
   const r = value as Record<string, unknown>;
   return typeof r.image === "string" &&
     (r.image === "" || (/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+=*$/.test(r.image) && r.image.length < 16_000_000)) &&
+    (r.artFit === undefined || ["cover", "contain", "blur"].includes(String(r.artFit))) &&
+    (r.frameColor === undefined || (typeof r.frameColor === "string" && /^#[0-9a-fA-F]{6}$/.test(r.frameColor))) &&
+    (r.frameWidth === undefined || (typeof r.frameWidth === "number" && Number.isFinite(r.frameWidth) && r.frameWidth >= 0 && r.frameWidth <= 24)) &&
     ["showName", "showAttribute", "showEffectBox", "showEffectText"].every(k => typeof r[k] === "boolean") &&
     (r.showLevel === undefined || typeof r.showLevel === "boolean") &&
     (r.titleBackdrop === undefined || r.titleBackdrop === "none" ||
@@ -140,9 +148,34 @@ export async function renderSimpleOverframe(
   canvas.height = Math.round(width * 4 / 3);
   ctx.setTransform(width / PORTRAIT_WIDTH, 0, 0, canvas.height / PORTRAIT_HEIGHT, 0, 0);
   const c = cropToPortrait(image.naturalWidth, image.naturalHeight);
-  ctx.drawImage(image, c.sx, c.sy, c.sw, c.sh, 0, 0, PORTRAIT_WIDTH, PORTRAIT_HEIGHT);
+  const fit = config.artFit ?? "cover";
+  if (fit === "cover") {
+    ctx.drawImage(image, c.sx, c.sy, c.sw, c.sh, 0, 0, PORTRAIT_WIDTH, PORTRAIT_HEIGHT);
+  } else {
+    ctx.fillStyle = "#151720";
+    ctx.fillRect(0, 0, PORTRAIT_WIDTH, PORTRAIT_HEIGHT);
+    if (fit === "blur") {
+      ctx.save();
+      ctx.filter = "blur(32px) brightness(0.62)";
+      ctx.drawImage(image, c.sx, c.sy, c.sw, c.sh,
+        -40, -40, PORTRAIT_WIDTH + 80, PORTRAIT_HEIGHT + 80);
+      ctx.restore();
+    }
+    const scale = Math.min(PORTRAIT_WIDTH / image.naturalWidth, PORTRAIT_HEIGHT / image.naturalHeight);
+    const w = image.naturalWidth * scale, h = image.naturalHeight * scale;
+    ctx.drawImage(image, (PORTRAIT_WIDTH - w) / 2, (PORTRAIT_HEIGHT - h) / 2, w, h);
+  }
   // Finish affects illustration only and is applied before native OCG text/icons.
   paintFinish(ctx, config);
+  const border = config.frameWidth ?? 0;
+  if (border > 0) {
+    ctx.save();
+    ctx.strokeStyle = config.frameColor ?? "#bca7dd";
+    ctx.lineWidth = border;
+    ctx.strokeRect(border / 2, border / 2,
+      PORTRAIT_WIDTH - border, PORTRAIT_HEIGHT - border);
+    ctx.restore();
+  }
   if ((config.showName || config.showAttribute) && config.titleBackdrop === "gradient") {
     const gradient = ctx.createLinearGradient(0, 0, 0, 160);
     gradient.addColorStop(0, "rgba(5,6,18,.91)");
