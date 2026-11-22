@@ -37,6 +37,27 @@ describe("3:4 오버프레임 간편 모드", () => {
     }
     expect(validSimpleOverframe({ ...settings, titleBackdrop: "opaque" })).toBe(false);
   });
+  it("정사각형 원화의 전체 표시 및 프레임 색상 설정을 호환 저장한다", () => {
+    for (const artFit of ["cover", "contain", "blur"] as const) {
+      const config = { ...settings, artFit, frameColor: "#ab34CD", frameWidth: 12 };
+      expect(validSimpleOverframe(config)).toBe(true);
+      expect(parseImport([{ ...newCard(), simpleOverframe: config }])[0].simpleOverframe).toEqual(config);
+    }
+    const legacy = { ...settings } as Record<string, unknown>;
+    delete legacy.artFit;
+    delete legacy.frameColor;
+    delete legacy.frameWidth;
+    expect(validSimpleOverframe(legacy)).toBe(true);
+    for (const invalid of [
+      { ...settings, artFit: "stretch" },
+      { ...settings, frameColor: "red" },
+      { ...settings, frameWidth: -1 },
+      { ...settings, frameWidth: 25 },
+      { ...settings, frameWidth: Number.NaN },
+    ]) {
+      expect(validSimpleOverframe(invalid)).toBe(false);
+    }
+  });
   it("기존 프로젝트에는 간편 모드 필드가 없어도 문제없다", () => {
     const old = newCard();
     expect(parseImport([old])[0].simpleOverframe).toBeUndefined();
