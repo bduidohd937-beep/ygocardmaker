@@ -44,6 +44,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [advanced, setAdvanced] = useState(false);
   const canvas = useRef<HTMLCanvasElement>(null);
   const interactiveCard = useRef<HTMLDivElement>(null);
   const drag = useRef<{
@@ -291,7 +292,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
       await img.decode();
       if (!img.naturalWidth || !img.naturalHeight || img.naturalWidth * img.naturalHeight > 40_000_000)
         throw Error("이미지는 최대 4천만 픽셀까지 지원합니다.");
-      update({ image: data });
+      update({ image: data, artFit: Math.abs(img.naturalWidth / img.naturalHeight - 0.75) > 0.02 ? "blur" : "cover" });
       setStatus("원화를 불러왔습니다. 프레임이나 이미지 복제 없이 한 장만 사용합니다.");
       setError("");
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
@@ -314,6 +315,16 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
     finally { setBusy(false); }
   };
+  const exportOriginal = async () => {
+    if (!config.image) { setError("원화를 먼저 선택하세요."); return; }
+    try {
+      const blob = await (await fetch(config.image)).blob();
+      const ext = blob.type === "image/jpeg" ? "jpg" : blob.type === "image/webp" ? "webp" : "png";
+      download(blob, `${card.id}_원화.${ext}`);
+      setStatus("원본 원화를 변형하지 않고 다운로드했습니다.");
+      setError("");
+    } catch (e) { setError(e instanceof Error ? e.message : "원화 다운로드 실패"); }
+  };
   const missingAssets = requiredSimpleOverframeAssets(config, attribute, frame, level);
   return <div className="modal-backdrop simple-of-backdrop" onMouseDown={e => {
     if (e.target === e.currentTarget) onCancel();
@@ -327,6 +338,16 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
         </div>
         <button type="button" aria-label="간편 제작 닫기" onClick={onCancel}><X size={18}/></button>
       </header>
+      <div className="simple-of-quickbar" role="toolbar" aria-label="오버프레임 빠른 편집">
+        <button type="button" onClick={() => fileInput.current?.click()}><ImagePlus size={15}/> 원화 변경</button>
+        {!!card.artwork && <button type="button" onClick={() => update({ image: card.artwork, artFit: "blur" })}>기존 원화 사용</button>}
+        <span className="simple-of-quickbar-divider" aria-hidden="true"/>
+        <button type="button" onClick={() => applyPreset("built:기본")}>기본형</button>
+        <button type="button" onClick={() => applyPreset("built:중앙형")}>중앙형</button>
+        <button type="button" onClick={() => applyPreset("built:상단 여백형")}>하단 효과창형</button>
+        <button type="button" className="simple-of-advanced-toggle" aria-pressed={advanced}
+          onClick={() => setAdvanced(v => !v)}>{advanced ? "고급 설정 접기" : "고급 설정 보기"}</button>
+      </div>
       <div className="simple-of-layout">
         <div className="simple-of-workspace">
           <div className="simple-of-canvas-wrap">
@@ -357,10 +378,13 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
             onChange={e => setSnap(e.target.checked)}/> 가운데·안전 여백에 자동 정렬</label>
           <p>최종 PNG 1500 × 2000 · 원화 하나만 사용 · 선택 테두리와 가이드는 출력되지 않음</p>
           {Math.abs(imageAspect - 0.75) > 0.02 && config.image && (
-            <p className="simple-of-warning" role="status">현재 원화는 3:4가 아니므로 좌우 또는 상하가 일부 잘려요. 3:4 원화를 권장합니다.</p>
+            <p className="simple-of-warning" role="status">
+              {config.artFit === "cover" ? "원화 일부가 잘립니다. 오른쪽 '원화 표시 방식'에서 전체 표시를 선택하세요." :
+                "원화 전체 표시 모드입니다. 원본 비율을 유지하고 남는 영역만 배경으로 채웁니다."}
+            </p>
           )}
         </div>
-        <aside className="simple-of-controls">
+        <aside className={"simple-of-controls" + (advanced ? " is-advanced" : "")}>
           <div className="simple-of-group">
             <strong>01 · 3:4 원화</strong>
             <button type="button" onClick={() => fileInput.current?.click()}>
@@ -373,11 +397,32 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
                 e.target.value = "";
               }}/>
             {!!card.artwork && (
-              <button type="button" className="simple-of-subtle" onClick={() => update({ image: card.artwork })}>
+              <button type="button" className="simple-of-subtle" onClick={() => update({ image: card.artwork, artFit: "blur" })}>
                 현재 카드 원화 가져오기
               </button>
             )}
-            <small>3:4 비율 권장 · PNG/JPG/WebP · 최대 10MB</small>
+            <label>원화 표시 방식
+              <select aria-label="원화 표시 방식" value={config.artFit ?? "cover"}
+                onChange={e => update({ artFit: e.target.value as NonNullable<SimpleOverframe["artFit"]> })}>
+                <option value="cover">화면 채우기 · 원화 일부 자르기</option>
+                <option value="contain">원화 전체 표시 · 단색 여백</option>
+                <option value="blur">원화 전체 표시 · 흐린 배경</option>
+              </select>
+            </label>
+            <div className="simple-of-color-grid">
+              <label>외곽 프레임 색상
+                <input type="color" aria-label="외곽 프레임 색상"
+                  value={config.frameColor ?? "#bca7dd"}
+                  onChange={e => update({ frameColor: e.target.value })}/>
+              </label>
+              <label>프레임 두께 <b>{config.frameWidth ?? 0}px</b>
+                <input type="range" min={0} max={24} step={1}
+                  aria-label="외곽 프레임 두께" value={config.frameWidth ?? 0}
+                  onChange={e => update({ frameWidth: Number(e.target.value) })}/>
+              </label>
+            </div>
+            <small>프레임 두께 0은 기존 모습 그대로입니다. 카드 종류·CDB는 바뀌지 않습니다.</small>
+            <small>PNG/JPG/WebP · 최대 10MB · 정사각형 원화도 전체 표시 가능</small>
             {missingAssets.length > 0 && <small className="simple-of-warning" role="status">
               원본 에셋 필요: {missingAssets.join(", ")}. 왼쪽 '카드 프레임 ZIP 불러오기'에서 기존 리소스를 불러와 주세요.
             </small>}
@@ -433,7 +478,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               disabled={!config.showEffectBox}
               onChange={e => update({ showEffectText: e.target.checked })}/> 효과창에 텍스트 표시</label>
           </div>
-          <div className="simple-of-group">
+          <div className="simple-of-group simple-of-advanced">
             <strong>03 · 자유 배치 에디터</strong>
             <label>편집할 요소
               <select aria-label="배치 요소 선택" value={selected}
@@ -473,7 +518,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               <RotateCcw size={15}/> 전체 위치 초기화
             </button>
           </div>
-          <div className="simple-of-group">
+          <div className="simple-of-group simple-of-advanced">
             <strong>04 · 레이아웃 프리셋</strong>
             <label>불러오기
               <select aria-label="오버프레임 프리셋 불러오기" value=""
@@ -493,7 +538,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
             <button type="button" onClick={savePreset}><Save size={15}/> 현재 배치 프리셋 저장</button>
             <small>이 카드의 프리셋은 최대 5개까지 카드 JSON에 함께 저장됩니다.</small>
           </div>
-          <div className="simple-of-group">
+          <div className="simple-of-group simple-of-advanced">
             <strong>07 · 카드별 레이아웃 자동 추천</strong>
             <small>{analysisState}</small>
             <small>카드명 길이·효과문 길이·효과창 크기를 비교하고, 원화가 있으면 밝기·세부 윤곽선 밀도를 참고합니다. 인물이나 사물을 인식하는 AI 분석은 아닙니다.</small>
@@ -620,7 +665,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
               statsFontSize: DEFAULT_SIMPLE_OVERFRAME.statsFontSize,
             }))}><RotateCcw size={15}/> 효과창 디자인 초기화</button>
           </div>}
-          <div className="simple-of-group">
+          <div className="simple-of-group simple-of-advanced">
             <strong>06 · 오버프레임 광택·홀로그램</strong>
             <label className="simple-of-check">
               <input type="checkbox" aria-label="오버프레임 연출 사용" checked={config.finishEnabled ?? false}
@@ -672,6 +717,7 @@ export function SimpleOverframeEditor({ card, onCancel, onSave }: Props) {
       {!!status && <p className="simple-of-status" role="status">{status}</p>}
       <footer className="simple-of-footer">
         <button type="button" onClick={onCancel}>취소</button>
+        <button type="button" onClick={() => void exportOriginal()} disabled={!config.image}><Download size={16}/> 원본 원화</button>
         <button type="button" onClick={save}><Check size={16}/> 설정 저장</button>
         <button type="button" className="simple-of-primary" disabled={busy} onClick={() => void exportPng()}>
           <Download size={16}/> {busy ? "생성 중..." : "3:4 PNG 다운로드"}
